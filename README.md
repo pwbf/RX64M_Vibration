@@ -10,7 +10,7 @@
 
 ## Current Function Information:  
 > ## leadwellVibr.master.current:  
->> Version: leadwellVibr.master.v1.1.2  
+>> Version: leadwellVibr.master.v1.1.3  
 - [x] Ethernet  
 - [x] 1ch Vibration(UART)  
 - [x] 1ch Temperature(ADC)  

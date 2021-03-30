@@ -180,7 +180,7 @@ TCPUDP_ENV tcpudp_env[] =
 /*    Set of Ethernet-related                                               */
 /*--------------------------------------------------------------------------*/
 /* Local MAC address (Set all 0s when unspecified) */
-#define MY_MAC_ADDR0    0x48,0x0C,0xA7,0xFE,0xDC,0x12
+#define MY_MAC_ADDR0    0x48,0x0C,0xA7,0xFE,0xDC,0x13
 #define MY_MAC_ADDR1    0xFE,0x98,0x76,0x54,0x32,0x10
 
 UB _myethaddr[][6] =

@@ -9,13 +9,14 @@
 
 
 //Data Length [HEADER][DATA0][DATA1]...
+// 1+ for not rewrite first data
 #define	VIBR_SENS_RETURN_LENGTH			(2055)			//Returned Data Length
 #define	EDS_SENS_RETURN_LENGTH			(9)			//Returned Data Length
 
 #define	VIBR_DATA_LENGTH			(1024)			//Vibration Data Length
 #define	FREQ_DATA_LENGTH			VIBR_DATA_LENGTH / 2	//Vibration Data Length
-#define	EDS_DATA_LENGTH				(4)			//EDS Data Length
-#define TEMP_DATA_LENGTH			(3)			//Temperature Data Length
+#define	EDS_DATA_LENGTH				(1 + 2)			//EDS Data Length
+#define TEMP_DATA_LENGTH			(1 + 2)			//Temperature Data Length
 
 #define	HL_VIBR_DATA_LENGTH			VIBR_DATA_LENGTH * 2	//Vibration Data Length (HL Byte)
 #define	HL_FREQ_DATA_LENGTH			FREQ_DATA_LENGTH * 4	//Frequency Data Length (HL Byte)

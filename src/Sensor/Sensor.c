@@ -64,7 +64,7 @@ void vibrSensorProcess(uint8_t status){
 			*(p_vibrRtnRAWData + index++) = rtnbyte;
 			if((*(p_vibrRtnRAWData + (VIBR_SENS_RETURN_LENGTH - 1)) != 0)){
 				printf(">> Vibration buffer p+2054 = %d\n", *(p_vibrRtnRAWData + (VIBR_SENS_RETURN_LENGTH - 1)));
-				mergeHLbyte(p_vibrRtnRAWData, p_vibrateData, VIBR_DATA_LENGTH);
+				mergeHLbyte(p_vibrRtnRAWData, p_vibrateData, VIBR_DATA_LENGTH, 5, 0);
 				break;
 			}
 			// printf(".");
@@ -83,10 +83,10 @@ void edsSensorProcess(uint8_t status){
 		rtnRecieve = R_SCI_Receive(EDS_UART_HANDLE,&rtnbyte,1);
 		if(rtnRecieve == SCI_SUCCESS){
 			*(p_EDSRtnRAWData + index++) = rtnbyte;
-			printf(">> EDS = %d(0x%02X)\n", rtnbyte, rtnbyte);
+			// printf(">> EDS = %d(0x%02X)\n", rtnbyte, rtnbyte);
 			if((*(p_EDSRtnRAWData + (EDS_SENS_RETURN_LENGTH - 1)) != 0)){
 				printf(">> EDS buffer p+8 = %d\n", *(p_EDSRtnRAWData + (EDS_SENS_RETURN_LENGTH - 1)));
-				mergeHLbyte(p_EDSRtnRAWData, p_EDSData, EDS_DATA_LENGTH);
+				mergeHLbyte(p_EDSRtnRAWData, p_EDSData, EDS_DATA_LENGTH, 3, 1);
 				break;
 			}
 			 // printf(".");
@@ -95,14 +95,13 @@ void edsSensorProcess(uint8_t status){
 	}	
 }
 
-void mergeHLbyte(uint8_t * inputBuffer, int16_t * outputBuffer, uint16_t length){
+void mergeHLbyte(uint8_t * inputBuffer, int16_t * outputBuffer, uint16_t length, uint16_t inShift, uint16_t outShift){
+	/* inshift: [SKIP0][SKIP1] = 1*/
 	/* 5L-6H -> 2051L-2052H */
 	/*   0         >1024    */
 	printf(">> Merging High Low Data\n");
-	for(int idx = 0; idx < length; idx++){
-		*(outputBuffer + idx) = *(inputBuffer + (2*idx) + 5) | *(inputBuffer + (2*idx + 1) + 5) *256;
-		// printf("(2*idx)+5 = %d | (2*idx+1)+6 = %d\n", idx, *(outputBuffer + idx) );
-		// printf("%d\n", *(outputBuffer + idx) );
+	for(int idx = 0; idx < (length - outShift); idx++){
+		*(outputBuffer + idx + outShift) = *(inputBuffer + (2*idx) + inShift) | *(inputBuffer + (2*idx + 1) + inShift) *256;
 	}
 }
 

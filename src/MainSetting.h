@@ -8,7 +8,7 @@
 //#define		TAR_SERVER_IP		10,0,0,178
 #define		TAR_SERVER_PT		8120
 
-#define		LOOPIN_DELAY_TIME	(5)			//Second
+#define		LOOPIN_DELAY_TIME	(10)			//Second
 
 //MODE_ENABLE | MODE_DISABLE
 //Functions
@@ -17,8 +17,8 @@
 #define		ENABLE_UART			(MODE_ENABLE)
 #define		ENABLE_VIBR			(MODE_ENABLE)
 #define		ENABLE_DSP			(MODE_ENABLE)
-#define		ENABLE_EDS			(MODE_DISABLE)
-#define		ENABLE_ADC			(MODE_DISABLE)
+#define		ENABLE_EDS			(MODE_ENABLE)
+#define		ENABLE_ADC			(MODE_ENABLE)
 
 //Mode
 #define		FLUSH_BUF_AFTER_SENDING		(MODE_ENABLE)

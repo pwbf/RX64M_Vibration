@@ -8,8 +8,6 @@ extern volatile int16_t EDSData[EDS_DATA_LENGTH];
 extern volatile uint16_t TempData[TEMP_DATA_LENGTH];
 
 volatile int8_t HLvibrateData[HL_VIBR_DATA_LENGTH];
-volatile int8_t HLfrequencyData[HL_FREQ_DATA_LENGTH];
-volatile int8_t HLEDSData[HL_EDS_DATA_LENGTH];
 volatile int8_t HLTempData[HL_TEMP_DATA_LENGTH];
 
 
@@ -20,6 +18,11 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 */
 	printf("Bootup Process\n");
 	printf("==========INIT==========\n");
+	
+	LED2 = LED_ON;
+	LED3 = LED_ON;
+	LED4 = LED_ON;
+	LED5 = LED_ON;
 	
 	Rx64MInitPorts();
 	
@@ -66,10 +69,20 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 	printf("-- INIT: [Disabled] ADC\n");
 #endif
 
+	LED2 = LED_OFF;
+	LED3 = LED_OFF;
+	LED4 = LED_OFF;
+	LED5 = LED_OFF;
+	R_BSP_SoftwareDelay (100, BSP_DELAY_MILLISECS);
 
 #if ENABLE_ETHERNET == MODE_ENABLE
 	printf("-- INIT: [Enabled] Ethernet\n");
 	printf("-- INIT: Ethernet Link Process\n");
+	
+	LED2 = LED_ON;
+	LED3 = LED_OFF;
+	LED4 = LED_OFF;
+	LED5 = LED_ON;
 	
 	EthernetInit(ENABLE_DHCP);
 	while(!ETHERNET_RDY[0]){
@@ -77,6 +90,10 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 		R_ETHER_LinkProcess(0);
 		R_BSP_SoftwareDelay (500, BSP_DELAY_MILLISECS);
 	}
+	LED2 = LED_OFF;
+	LED3 = LED_ON;
+	LED4 = LED_ON;
+	LED5 = LED_OFF;
 #else
 	printf("-- INIT: [Disabled] Ethernet\n");
 #endif
@@ -91,11 +108,19 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 	
 	printf("========================\n");
 	printf("BOOTED\n");
+	LED2 = LED_OFF;
+	LED3 = LED_OFF;
+	LED4 = LED_OFF;
+	LED5 = LED_OFF;
 	
 /*MAIN WHILE LOOP START POINT*/	
     while(1){
 
 #if ENABLE_VIBR == MODE_ENABLE
+	LED2 = LED_ON;
+	LED3 = LED_OFF;
+	LED4 = LED_OFF;
+	LED5 = LED_OFF;
 		vibrSensorSend();
 		R_BSP_SoftwareDelay (100, BSP_DELAY_MILLISECS);
 		vibrSensorProcess(0);
@@ -104,6 +129,10 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 #endif
 
 #if ENABLE_DSP == MODE_ENABLE
+	LED2 = LED_ON;
+	LED3 = LED_ON;
+	LED4 = LED_OFF;
+	LED5 = LED_OFF;
 		printf(">> Calculate FFT Data\n");
 		R_DSP_REAL_FFT_Operation(vibrateData, frequencyData);
 		R_BSP_SoftwareDelay (100, BSP_DELAY_MILLISECS);
@@ -120,7 +149,6 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 
 
 #if ENABLE_ADC == MODE_ENABLE
-	TempData[0] = 0xDDDD;
 	printf(">> ADC0 = %d(0x%X)\n",TempData[1],TempData[1]);
 	printf(">> ADC1 = %d(0x%X)\n",TempData[2],TempData[2]);
 	conv_int16_int8(TempData, HLTempData, TEMP_DATA_LENGTH);
@@ -132,6 +160,10 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 #if ENABLE_ETHERNET == MODE_ENABLE
 
 	#if ENABLE_VIBR == MODE_ENABLE
+	LED2 = LED_ON;
+	LED3 = LED_ON;
+	LED4 = LED_ON;
+	LED5 = LED_OFF;
 		printf(">> TCP Sending: HLvibrateData\n");
 		HLvibrateData[0] = 0xAA;
 		TCP_SendingData(TCP_CONNID_TD, HLvibrateData, HL_VIBR_DATA_LENGTH);
@@ -140,6 +172,10 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 	#endif
 
 	#if ENABLE_DSP == MODE_ENABLE
+	LED2 = LED_ON;
+	LED3 = LED_ON;
+	LED4 = LED_ON;
+	LED5 = LED_ON;
 		printf(">> TCP Sending: frequencyData\n");
 		frequencyData[0] = 0xBBBBBBBB;
 		TCP_SendingData(TCP_CONNID_TD, frequencyData, HL_FREQ_DATA_LENGTH);
@@ -149,6 +185,7 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 	
 	#if ENABLE_EDS == MODE_ENABLE
 		printf(">> TCP Sending: EDSData\n");
+		EDSData[0] = 0xCCCC;
 		TCP_SendingData(TCP_CONNID_TD, EDSData, (EDS_DATA_LENGTH) * 2);
 		R_BSP_SoftwareDelay (1, BSP_DELAY_SECS);
 		printf(">> TCP Sending Completed\n\n");
@@ -156,6 +193,7 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 	
 	#if ENABLE_ADC == MODE_ENABLE
 		printf(">> TCP Sending: HLTempData\n");
+		HLTempData[0] = 0xDD;
 		TCP_SendingData(TCP_CONNID_TD, HLTempData, (TEMP_DATA_LENGTH) * 2);
 		R_BSP_SoftwareDelay (1, BSP_DELAY_SECS);
 		printf(">> TCP Sending Completed\n\n");
@@ -164,35 +202,71 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 
 
 #if FLUSH_BUF_AFTER_SENDING == MODE_ENABLE
+	LED2 = LED_ON;
+	LED3 = LED_ON;
+	LED4 = LED_ON;
+	LED5 = LED_OFF;
 		printf(">> Flushing vibrRtnRAWData\n");
 		flushBuffer(vibrRtnRAWData, VIBR_SENS_RETURN_LENGTH);
 		printf(">> Flushing vibrateData\n");
 		flushBuffer(vibrateData, VIBR_DATA_LENGTH);
+		printf(">> Flushing HLvibrateData\n");
+		flushBuffer(HLvibrateData, VIBR_DATA_LENGTH);
 		printf(">> Flushing frequencyData\n");
 		flushBuffer(frequencyData, VIBR_DATA_LENGTH / 2);
+	LED2 = LED_ON;
+	LED3 = LED_ON;
+	LED4 = LED_OFF;
+	LED5 = LED_OFF;
 		printf(">> Flushing EDSRtnRAWData\n");
 		flushBuffer(EDSRtnRAWData, EDS_SENS_RETURN_LENGTH);
 		printf(">> Flushing EDSData\n");
 		flushBuffer(EDSData, EDS_DATA_LENGTH);
+	LED2 = LED_ON;
+	LED3 = LED_OFF;
+	LED4 = LED_OFF;
+	LED5 = LED_OFF;
 		printf(">> Flushing TempData\n");
 		flushBuffer(TempData, TEMP_DATA_LENGTH);
-		
-		printf(">> Flushing HLEDSData\n");
-		flushBuffer(HLEDSData, TEMP_DATA_LENGTH * 2);
+		printf(">> Flushing HLTempData\n");
+		flushBuffer(HLTempData, TEMP_DATA_LENGTH);
+	LED2 = LED_OFF;
+	LED3 = LED_OFF;
+	LED4 = LED_OFF;
+	LED5 = LED_OFF;
 #endif
 		printf(">> One Loop\n");
-		R_BSP_SoftwareDelay(LOOPIN_DELAY_TIME, BSP_DELAY_SECS);
+		R_BSP_SoftwareDelay(LOOPIN_DELAY_TIME/4, BSP_DELAY_SECS);
+	LED2 = LED_ON;
+	LED3 = LED_OFF;
+	LED4 = LED_OFF;
+	LED5 = LED_OFF;
+		R_BSP_SoftwareDelay(LOOPIN_DELAY_TIME/4, BSP_DELAY_SECS);
+	LED2 = LED_OFF;
+	LED3 = LED_ON;
+	LED4 = LED_OFF;
+	LED5 = LED_OFF;
+		R_BSP_SoftwareDelay(LOOPIN_DELAY_TIME/4, BSP_DELAY_SECS);
+	LED2 = LED_OFF;
+	LED3 = LED_OFF;
+	LED4 = LED_ON;
+	LED5 = LED_OFF;
+		R_BSP_SoftwareDelay(LOOPIN_DELAY_TIME/4, BSP_DELAY_SECS);
+	LED2 = LED_OFF;
+	LED3 = LED_OFF;
+	LED4 = LED_OFF;
+	LED5 = LED_ON;
     }/*MAIN WHILE LOOP END POINT*/
 }/*MAIN FUNCTION END POINT*/
 
 void Rx64MInitPorts(void){
         R_BSP_RegisterProtectDisable(BSP_REG_PROTECT_MPC); // Use BSP function to unlock the MPC register.
-/*
+
 	LED2_PDR = MODE_IO_OUTPUT;
 	LED3_PDR = MODE_IO_OUTPUT;
 	LED4_PDR = MODE_IO_OUTPUT;
 	LED5_PDR = MODE_IO_OUTPUT;
-*/	
+	
 	/*Setting for P40 as AN000*/
 	MPC.P40PFS.BYTE = 0x80;
         PORT4.PDR.BIT.B0 = 0;

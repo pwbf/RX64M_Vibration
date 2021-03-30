@@ -1,9 +1,9 @@
 ﻿<CubeSuiteProject>
-  <ProductVersion>9.04.00.00</ProductVersion>
+  <ProductVersion>9.05.00.00</ProductVersion>
   <Class Guid="68f4a651-b9cd-473b-a595-b00447132ffa">
     <Instance Guid="00000000-0000-0000-0000-000000000000">
       <FormatVersion>2.0</FormatVersion>
-      <FileVersion>9.4</FileVersion>
+      <FileVersion>9.5</FileVersion>
       <ProjectGuid>ca51d19f-5bb7-4f22-ac95-b743fb676e42</ProjectGuid>
       <ProjectItemGuid>c40d099a-9de1-48b5-b432-104c040e9dc4</ProjectItemGuid>
       <FileCategoryGuid>4555c314-c18b-4094-9fc7-6af74d4a0319</FileCategoryGuid>
@@ -1786,7 +1786,7 @@
       <GeneralOptionPatch-DefaultValue>None</GeneralOptionPatch-DefaultValue>
       <GeneralOptionSaveAcc-DefaultValue>False</GeneralOptionSaveAcc-DefaultValue>
       <IsLockedByUser>False</IsLockedByUser>
-      <TimeTagModified--0>-8585940996073132785</TimeTagModified--0>
+      <TimeTagModified--0>-8585845897771315483</TimeTagModified--0>
       <BuildMode-0>DefaultBuild</BuildMode-0>
       <Memo-0 />
       <OutputMessageFormat-0>%TargetFiles%</OutputMessageFormat-0>
@@ -1845,7 +1845,7 @@
       <GeneralOptionBaseAddressRegister-0>None</GeneralOptionBaseAddressRegister-0>
       <GeneralOptionPatch-0>None</GeneralOptionPatch-0>
       <GeneralOptionSaveAcc-0>False</GeneralOptionSaveAcc-0>
-      <LastCompilerVersion-0>V3.02.00</LastCompilerVersion-0>
+      <LastCompilerVersion-0>V3.03.00</LastCompilerVersion-0>
     </Instance>
     <Instance Guid="95a63257-4aa7-40c0-a74a-7991543b099b">
       <COptionLangC-DefaultValue>C</COptionLangC-DefaultValue>
@@ -2001,6 +2001,7 @@
       <COptionCheck-DefaultValue>No</COptionCheck-DefaultValue>
       <COptionFloatOrder-DefaultValue>False</COptionFloatOrder-DefaultValue>
       <COptionIncode-DefaultValue>Sjis</COptionIncode-DefaultValue>
+      <COptionBranchChaining-DefaultValue>None</COptionBranchChaining-DefaultValue>
       <IsLockedByUser>False</IsLockedByUser>
       <TimeTagModified--0>-8585851079602607777</TimeTagModified--0>
       <COptionLangC-0>C99</COptionLangC-0>
@@ -2194,6 +2195,7 @@ src\general
       <COptionCheck-0>No</COptionCheck-0>
       <COptionFloatOrder-0>False</COptionFloatOrder-0>
       <COptionIncode-0>Sjis</COptionIncode-0>
+      <COptionBranchChaining-0>None</COptionBranchChaining-0>
     </Instance>
     <Instance Guid="5ad1746c-d03e-4610-a91f-aaa4fb37bc10">
       <AsmOptionChkpm-DefaultValue>False</AsmOptionChkpm-DefaultValue>
@@ -2498,6 +2500,7 @@ D_2=R_2
       <HexOptionCrcType-DefaultValue>Ccitt</HexOptionCrcType-DefaultValue>
       <HexOptionCrcInitialValue-DefaultValue />
       <HexOptionCrcEndian-DefaultValue>None</HexOptionCrcEndian-DefaultValue>
+      <HexOptionVerboseCrc-DefaultValue>False</HexOptionVerboseCrc-DefaultValue>
       <HexOptionEndRecord-DefaultValue>None</HexOptionEndRecord-DefaultValue>
       <LinkOptionS9-DefaultValue>False</LinkOptionS9-DefaultValue>
       <HexOptionCreateUnfilledArea-DefaultValue>False</HexOptionCreateUnfilledArea-DefaultValue>
@@ -2540,6 +2543,7 @@ D_2=R_2
       <HexOptionCrcType-0>Ccitt</HexOptionCrcType-0>
       <HexOptionCrcInitialValue-0 />
       <HexOptionCrcEndian-0>None</HexOptionCrcEndian-0>
+      <HexOptionVerboseCrc-0>False</HexOptionVerboseCrc-0>
       <HexOptionEndRecord-0>None</HexOptionEndRecord-0>
       <LinkOptionS9-0>False</LinkOptionS9-0>
       <HexOptionCreateUnfilledArea-0>False</HexOptionCreateUnfilledArea-0>
@@ -2684,8 +2688,9 @@ D_2=R_2
       <LbgOptionSimpleFloatConv-DefaultValue>False</LbgOptionSimpleFloatConv-DefaultValue>
       <LbgOptionFpu-DefaultValue>Fpu</LbgOptionFpu-DefaultValue>
       <LbgOptionFloatOrder-DefaultValue>False</LbgOptionFloatOrder-DefaultValue>
+      <LbgOptionBranchChaining-DefaultValue>None</LbgOptionBranchChaining-DefaultValue>
       <IsLockedByUser>False</IsLockedByUser>
-      <TimeTagModified--0>-8585866808043897575</TimeTagModified--0>
+      <TimeTagModified--0>-8585845897771275787</TimeTagModified--0>
       <LbgOptionLanguage-0>C99</LbgOptionLanguage-0>
       <LbgOptionLibraryMode-0>MakeOptionChanged</LbgOptionLibraryMode-0>
       <LbgOptionLogo-0>False</LbgOptionLogo-0>
@@ -2756,6 +2761,7 @@ D_2=R_2
       <LbgOptionSimpleFloatConv-0>False</LbgOptionSimpleFloatConv-0>
       <LbgOptionFpu-0>Fpu</LbgOptionFpu-0>
       <LbgOptionFloatOrder-0>False</LbgOptionFloatOrder-0>
+      <LbgOptionBranchChaining-0>None</LbgOptionBranchChaining-0>
     </Instance>
     <Instance Guid="73a6c434-5876-4703-87a2-035c233fda17">
       <LinkOrder-0>0</LinkOrder-0>

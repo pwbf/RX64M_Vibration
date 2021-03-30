@@ -52,7 +52,7 @@ uint8_t edsSensorSend(void);
 void vibrSensorProcess(uint8_t status);
 void edsSensorProcess(uint8_t status);
 void flushBuffer(uint8_t * aryBuffer, uint16_t length);
-void mergeHLbyte(uint8_t * inputBuffer, int16_t * outputBuffer, uint16_t length);
+void mergeHLbyte(uint8_t * inputBuffer, int16_t * outputBuffer, uint16_t length, uint16_t inShift, uint16_t outShift);
 void UARTInit(void);
 void my_sci_callback_ch1(void *pArgs);
 void my_sci_callback_ch2(void *pArgs);

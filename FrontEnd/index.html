@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="#480ca7">
+	<meta http-equiv="pragma" content="no-cache">
+	<meta http-equiv="expires" content="0">
+	<meta http-equiv="cache-control" content="no-cache">
+	
+	<meta property="og:title" content="ASTARC Vibration Chart" />
+	<meta property="og:description" content="Vibration Chart Demo Page" />
+	<meta property="og:site_name" content="ASTARC Vibration Chart" />
+	<meta property="og:url" content="https://vibr.astarc.tk" />
+	<meta property="og:type" content="website" />
+	<meta property="og:image" content="https://static.res.pwbf.pw/global/img/PFCico.png" />
+	
+	<title>LeadWell Vibration Monitor System</title>
+	
+	<link rel="shortcut icon" href="https://static.res.pwbf.pw/global/img/PFCico.png" type="image/x-icon">
+	<link rel="apple-touch-icon-precomposed" href="images/apple-touch-icon.png">
+	<link rel="stylesheet" href="https://static.res.pwbf.pw/ChartJS2/Chart.min.css">
+	<link rel="stylesheet" href="https://static.res.pwbf.pw/uikit3/css/uikit.min.css">
+	<link rel="stylesheet" href="https://static.res.pwbf.pw/uikit3/css/crossall.css">
+	<link href="https://fonts.googleapis.com/css?family=Noto+Sans+TC&display=swap" rel="stylesheet">
+	
+	<script src="https://static.res.pwbf.pw/ChartJS2/Chart.min.js"></script>
+	<script src="https://static.res.pwbf.pw/jquery/3/jquery-3.5.1.min.js"></script>
+	<script src="https://static.res.pwbf.pw/uikit3/js/uikit.min.js"></script>
+	<script src="https://static.res.pwbf.pw/uikit3/js/uikit-icons.min.js"></script>
+<script>
+var uInterval = 20000;
+var timeleft = uInterval;
+var TDScale = 100;
+
+$(document).ready(function() {
+var prog = document.getElementById('prog');
+	prog.max = uInterval;
+	renderChart();
+	loadDataPage();
+});
+setInterval(function(){ loadDataPage(); }, uInterval);
+setInterval(function(){ countdown(); }, 100);
+function countdown(){
+	timeleft -= 100;
+	prog.value = timeleft;
+}
+var configtimedomain = {
+	type: 'line',
+	data: {
+		labels: [],
+		datasets: [{
+			borderColor: '#ffb75d',
+			label: 'Time Domain',
+			data: [],
+			fill: false,
+		}]
+	},
+	options: {
+		responsive: true,
+		title: {
+			display: true,
+			text: 'Vibration Data'
+		},
+		tooltips: {
+			mode: 'index',
+			intersect: false,
+		},
+		hover: {
+			mode: 'nearest',
+			intersect: true
+		},
+		scales: {
+			xAxes: [{
+				display: true,
+				scaleLabel: {
+					display: true,
+					labelString: 'Time Domain'
+				}
+			}],
+			yAxes: [{
+				display: true,
+				scaleLabel: {
+					display: true,
+					labelString: 'Vibration(mg)'
+				},
+				ticks: {
+					max: 1000,
+					min: -1000,
+					stepSize: 100
+				}
+			}]
+		}
+	}
+};
+
+var configfreqdomain = {
+	type: 'line',
+	data: {
+		labels: [],
+		datasets: [{
+			borderColor: '#ffb75d',
+			label: 'Frequency Domain',
+			data: [],
+			fill: false,
+		}]
+	},
+	options: {
+		responsive: true,
+		title: {
+			display: true,
+			text: 'Vibration Data'
+		},
+		tooltips: {
+			mode: 'index',
+			intersect: false,
+		},
+		hover: {
+			mode: 'nearest',
+			intersect: true
+		},
+		scales: {
+			xAxes: [{
+				display: true,
+				scaleLabel: {
+					display: true,
+					labelString: 'Frequency Domain(HZ)'
+				}
+			}],
+			yAxes: [{
+				display: true,
+				scaleLabel: {
+					display: true,
+					labelString: 'Amplitude( )'
+				}
+			}]
+		}
+	}
+};
+
+var configtempch0 = {
+	type: 'doughnut',
+	data: {
+		datasets: [{
+			data: [],
+			backgroundColor: [
+				'#d4d4d4'
+			]
+		}],
+		labels: [
+			'Celsius',
+			'Buffer'
+		]
+	},
+	options: {
+		responsive: true,
+		legend: {
+			position: 'top',
+		},
+		title: {
+			display: true,
+			text: 'Temperature(C)'
+		},
+		animation: {
+			animateScale: true,
+			animateRotate: true
+		},
+		circumference: Math.PI,
+		rotation: -Math.PI,
+		cutoutPercentage: 60,
+	}
+};
+
+var configtempch0L = {
+	type: 'line',
+	data: {
+		labels: [],
+		datasets: [{
+			borderColor: '#ffb75d',
+			label: 'Temperature(C)',
+			data: [],
+			fill: false,
+		}]
+	},
+	options: {
+		responsive: true,
+		title: {
+			display: true,
+			text: 'Temperature Historic Data'
+		},
+		tooltips: {
+			mode: 'index',
+			intersect: false,
+		},
+		hover: {
+			mode: 'nearest',
+			intersect: true
+		},
+		scales: {
+			xAxes: [{
+				display: true,
+				scaleLabel: {
+					display: true,
+					labelString: 'Time'
+				}
+			}],
+			yAxes: [{
+				display: true,
+				scaleLabel: {
+					display: true,
+					labelString: 'Degree C'
+				}
+			}]
+		}
+	}
+}
+
+var configedsData = {
+	type: 'line',
+	data: {
+		labels: [],
+		datasets: [{
+			borderColor: '#ffb75d',
+			label: 'Displacement Data',
+			data: [],
+			fill: false,
+		}]
+	},
+	options: {
+		responsive: true,
+		title: {
+			display: true,
+			text: 'EDS Data'
+		},
+		tooltips: {
+			mode: 'index',
+			intersect: false,
+		},
+		hover: {
+			mode: 'nearest',
+			intersect: true
+		},
+		scales: {
+			xAxes: [{
+				display: true,
+				scaleLabel: {
+					display: true,
+					labelString: 'Time'
+				}
+			}],
+			yAxes: [{
+				display: true,
+				scaleLabel: {
+					display: true,
+					labelString: ''
+				}
+			}]
+		}
+	}
+}
+
+
+function loadDataPage(){
+	timeleft = uInterval;
+	$.get("http://vibr.astarc.tk/getData.php?r=TD", "json", 
+		function(data){
+			var jsonDecoded = JSON.parse(data);
+			var timedomain = document.getElementById('timedomain').getContext('2d');
+			var int16Data = [];
+			var graphLabel = [];
+			$.each(jsonDecoded, function( k, v ) {
+				int16Data.push(v);
+				graphLabel.push(k);
+			});
+			configtimedomain.data.labels = graphLabel;
+			configtimedomain.data.datasets[0].data = int16Data;
+			if(Math.max.apply(null, int16Data) > TDScale)
+				configtimedomain.options.scales.yAxes[0].ticks.max = Math.max.apply(null, int16Data) + TDScale;
+			else
+				configtimedomain.options.scales.yAxes[0].ticks.max = Math.max.apply(null, int16Data) + 10;
+				
+			if(Math.max.apply(null, int16Data) < -TDScale)
+				configtimedomain.options.scales.yAxes[0].ticks.min = Math.min.apply(null, int16Data) - TDScale;
+			else
+				configtimedomain.options.scales.yAxes[0].ticks.min = Math.min.apply(null, int16Data) - 10;
+				
+			window.TD.update();
+		}
+	);
+	$.get("http://vibr.astarc.tk/getData.php?r=FD", "json", 
+		function(data){
+			var jsonDecoded = JSON.parse(data);
+			var freqdomain = document.getElementById('freqdomain').getContext('2d');
+			var int32Data = [];
+			var graphLabel = [];
+			$.each(jsonDecoded, function( k, v ) {
+				int32Data.push(v);
+				graphLabel.push(k);
+			});
+			configfreqdomain.data.labels = graphLabel;
+			configfreqdomain.data.datasets[0].data = int32Data;
+			
+			window.FD.update();
+		}
+	);
+	$.get("http://vibr.astarc.tk/getData.php?r=TP", "json", 
+		function(data){
+			var miscConfig = new Object();
+				miscConfig.threshold1 = 70;
+				miscConfig.threshold2 = 150;
+				miscConfig.range1Hex = '#94f0a4';
+				miscConfig.range2Hex = '#f4ca63';
+				miscConfig.range3Hex = '#f29b8b';
+				miscConfig.maxRange = 200;
+				miscConfig.minRange = -50;
+				
+			var jsonDecoded = JSON.parse(data);
+			var tempch0 = document.getElementById('tempch0').getContext('2d');
+			
+			var color0 = '';
+			var color1 = '';
+			if(jsonDecoded[0] < miscConfig.threshold1)
+				color0 = miscConfig.range1Hex;
+			else if(jsonDecoded[0] >= miscConfig.threshold1 && jsonDecoded[0] < miscConfig.threshold2)
+				color0 = miscConfig.range2Hex;
+			else
+				color0 = miscConfig.range3Hex;
+			
+			configtempch0.data.datasets[0].data = [jsonDecoded[0].toFixed(2), (miscConfig.maxRange-jsonDecoded[0]).toFixed(2)];
+			configtempch0.data.datasets[0].backgroundColor = [color0, '#d4d4d4'];
+			
+			window.TE0.update();
+		}
+	);
+	$.get("http://vibr.astarc.tk/getData.php?r=TP0L", "json", 
+		function(data){
+			var jsonDecoded = JSON.parse(data);
+			var tempch0L = document.getElementById('tempch0L').getContext('2d');
+			var floatData = [];
+			var graphLabel = [];
+			$.each(jsonDecoded, function( k, v ) {
+				floatData.push(v.toFixed(2));
+				graphLabel.push(k);
+			});
+			
+			configtempch0L.data.labels = graphLabel;
+			configtempch0L.data.datasets[0].data = floatData;
+			
+			window.TE0L.update();
+		}
+	);
+	$.get("http://vibr.astarc.tk/getData.php?r=EDS", "json", 
+		function(data){
+			var jsonDecoded = JSON.parse(data);
+			var edsData = document.getElementById('edsData').getContext('2d');
+			var floatData = [];
+			var graphLabel = [];
+			$.each(jsonDecoded, function( k, v ) {
+				floatData.push(v.toFixed(2));
+				graphLabel.push(k);
+			});
+			
+			configedsData.data.labels = graphLabel;
+			configedsData.data.datasets[0].data = floatData;
+			
+			window.EDS.update();
+		}
+	);
+}
+
+function renderChart(){
+	window.TD = new Chart(timedomain, configtimedomain);
+	window.FD = new Chart(freqdomain, configfreqdomain);
+	window.EDS = new Chart(edsData, configedsData);
+	window.TE0 = new Chart(tempch0, configtempch0);
+	window.TE0L = new Chart(tempch0L, configtempch0L);
+}
+
+
+</script>
+</head>
+<body>
+		<div class="uk-section uk-section-muted uk-flex uk-flex-middle uk-animation-fade crosshair" uk-height-viewport>			
+			<div class="uk-width-1-1">
+				<div class="uk-container uk-container-expand">
+					<div class="uk-grid-margin uk-grid uk-grid-stack" uk-grid >
+						<div class="uk-width-1-1 uk-margin-small">
+							<div class="uk-child-width-1-3@s uk-grid-column-small uk-grid-small uk-grid-match" uk-grid>
+								<div>
+									<div class="uk-card uk-card-default uk-card-body uk-card-hover uk-card-small">
+										<canvas id="tempch0"></canvas>
+									</div>
+								</div>
+								<div>
+									<div class="uk-card uk-card-default uk-card-body uk-card-hover uk-card-small">
+										<canvas id="tempch0L"></canvas>
+									</div>
+								</div>
+								<div>
+									<div class="uk-card uk-card-default uk-card-body uk-card-hover uk-card-small">
+										<canvas id="edsData"></canvas>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="uk-width-1-1 uk-margin-small">
+							<div class="uk-child-width-1-2@s uk-grid-column-small uk-grid-small uk-grid-match" uk-grid>
+								<div>
+									<div class="uk-card uk-card-default uk-card-body uk-card-hover uk-card-small">
+										<canvas id="timedomain"></canvas>
+									</div>
+								</div>
+								<div>
+									<div class="uk-card uk-card-default uk-card-body uk-card-hover uk-card-small">
+										<canvas id="freqdomain"></canvas>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<div class="uk-width-1-1 uk-margin-small">
+							<div class="uk-child-width-1-1@s uk-grid-column-small uk-grid-small uk-grid-match" uk-grid>
+								<div>
+									<progress class="uk-progress" value="" max="" id="prog"></progress>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="uk-width-1-1 uk-margin-small uk-text-center">
+							<div class="uk-background-muted uk-padding">
+								<p class="uk-text-large ">
+									LeadWell Vibration Monitor System
+								</p>
+							</div>
+					</div>
+				</div>
+			</div>
+		</div>
+</body>
+</html>
