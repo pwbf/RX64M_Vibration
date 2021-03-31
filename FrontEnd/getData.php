@@ -12,7 +12,7 @@ if($_GET['r'] == 'TD'){
 	if ($conn->connect_error) {
 		die("Connection failed: " . $conn->connect_error);
 	}
-	$sql = 'SELECT VDATA FROM vibrationTD ORDER BY TIMEMARK DESC LIMIT 1';
+	$sql = 'SELECT VDATA FROM vibrationTD WHERE STATUS = 1 ORDER BY TIMEMARK DESC LIMIT 1';
 	$result = $conn->query($sql);
 
 	$TimeDomain = array();
@@ -41,7 +41,7 @@ if($_GET['r'] == 'FD'){
 	if ($conn->connect_error) {
 		die("Connection failed: " . $conn->connect_error);
 	}
-	$sql = 'SELECT VDATA FROM vibrationFD ORDER BY TIMEMARK DESC LIMIT 1';
+	$sql = 'SELECT VDATA FROM vibrationFD WHERE STATUS = 1 ORDER BY TIMEMARK DESC LIMIT 1';
 	$result = $conn->query($sql);
 
 	$FreqDomain = array();
@@ -72,7 +72,7 @@ if($_GET['r'] == 'TP'){
 	if ($conn->connect_error) {
 		die("Connection failed: " . $conn->connect_error);
 	}
-	$sql = 'SELECT VDATA FROM temperature ORDER BY TIMEMARK DESC LIMIT 1';
+	$sql = 'SELECT VDATA FROM temperature WHERE STATUS = 1 ORDER BY TIMEMARK DESC LIMIT 1';
 	$result = $conn->query($sql);
 
 	$TempData = str_split(($result->fetch_assoc())['VDATA'], 4);
@@ -93,7 +93,7 @@ if($_GET['r'] == 'TP0L'){
 	if ($conn->connect_error) {
 		die("Connection failed: " . $conn->connect_error);
 	}
-	$sql = 'SELECT TIMEMARK,VDATA FROM temperature ORDER BY TIMEMARK DESC LIMIT 60';
+	$sql = 'SELECT TIMEMARK,VDATA FROM temperature WHERE STATUS = 1 ORDER BY TIMEMARK DESC LIMIT 60';
 	$result = $conn->query($sql);
 
 	$TempJson = array();
@@ -104,7 +104,7 @@ if($_GET['r'] == 'TP0L'){
 	}
 	
 	//echo '<pre>'.print_r($TempData, true).'</pre>';
-	echo json_encode($TempJson);
+	echo json_encode(array_reverse($TempJson));
 	$conn->close();
 }
 
@@ -113,9 +113,9 @@ if($_GET['r'] == 'TP1L'){
 	if ($conn->connect_error) {
 		die("Connection failed: " . $conn->connect_error);
 	}
-	$sql = 'SELECT TIMEMARK,VDATA FROM temperature ORDER BY TIMEMARK DESC LIMIT 60';
+	$sql = 'SELECT TIMEMARK,VDATA FROM temperature WHERE STATUS = 1 ORDER BY TIMEMARK DESC LIMIT 120';
 	$result = $conn->query($sql);
-
+	
 	$TempJson = array();
 	while($row = $result->fetch_assoc()){
 		$TempData = adc2temp(str_split($row['VDATA'],4)[2]);
@@ -133,7 +133,7 @@ if($_GET['r'] == 'EDS'){
 	if ($conn->connect_error) {
 		die("Connection failed: " . $conn->connect_error);
 	}
-	$sql = 'SELECT TIMEMARK,VDATA FROM EDS ORDER BY TIMEMARK DESC LIMIT 60';
+	$sql = 'SELECT TIMEMARK,VDATA FROM EDS WHERE STATUS = 1 ORDER BY TIMEMARK DESC LIMIT 60';
 	$result = $conn->query($sql);
 
 	$EDSJson = array();
@@ -144,12 +144,12 @@ if($_GET['r'] == 'EDS'){
 	}
 	
 	//echo '<pre>'.print_r($TempData, true).'</pre>';
-	echo json_encode($EDSJson);
+	echo json_encode(array_reverse($EDSJson));
 	$conn->close();
 }
 
 function adc2temp($adc){
-	return hexdec($adc) * 0.061 - 50;
+	return hexdec($adc) * 0.061 - 55;
 }
 
 function covint($bits, $input){

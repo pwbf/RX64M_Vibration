@@ -56,6 +56,7 @@ void vibrSensorProcess(uint8_t status){
 	uint16_t index = 0;
 	int8_t rtnRecieve;
 	uint8_t rtnbyte;
+	uint16_t tmoutCounter = 0;
 	
 	printf(">> Recieve Vibration Data--->\n");
 	while(status == SCI_SUCCESS){
@@ -65,9 +66,19 @@ void vibrSensorProcess(uint8_t status){
 			if((*(p_vibrRtnRAWData + (VIBR_SENS_RETURN_LENGTH - 1)) != 0)){
 				printf(">> Vibration buffer p+2054 = %d\n", *(p_vibrRtnRAWData + (VIBR_SENS_RETURN_LENGTH - 1)));
 				mergeHLbyte(p_vibrRtnRAWData, p_vibrateData, VIBR_DATA_LENGTH, 5, 0);
+				DATA_RDY[DATA_RDY_IND_VIBR] = STATE_TRUE;
 				break;
 			}
 			// printf(".");
+		}
+		else{
+			tmoutCounter++;
+			DATA_RDY[DATA_RDY_IND_VIBR] = STATE_FALSE;
+			
+			if(tmoutCounter >= UART_TIMEOUT){
+				printf(">> [Timeout] Recieve Vibration Data\n");
+				break;
+			}
 		}
 		R_BSP_SoftwareDelay (1, BSP_DELAY_MILLISECS);
 	}	
@@ -77,6 +88,7 @@ void edsSensorProcess(uint8_t status){
 	uint16_t index = 0;
 	int8_t rtnRecieve;
 	uint8_t rtnbyte;
+	uint16_t tmoutCounter = 0;
 	
 	printf(">> Recieve EDS Data--->\n");
 	while(status == SCI_SUCCESS){
@@ -87,9 +99,19 @@ void edsSensorProcess(uint8_t status){
 			if((*(p_EDSRtnRAWData + (EDS_SENS_RETURN_LENGTH - 1)) != 0)){
 				printf(">> EDS buffer p+8 = %d\n", *(p_EDSRtnRAWData + (EDS_SENS_RETURN_LENGTH - 1)));
 				mergeHLbyte(p_EDSRtnRAWData, p_EDSData, EDS_DATA_LENGTH, 3, 1);
+				DATA_RDY[DATA_RDY_IND_EDS] = STATE_TRUE;
 				break;
 			}
 			 // printf(".");
+		}
+		else{
+			tmoutCounter++;
+			DATA_RDY[DATA_RDY_IND_EDS] = STATE_FALSE;
+			
+			if(tmoutCounter >= UART_TIMEOUT){
+				printf(">> [Timeout] Recieve EDS Data\n");
+				break;
+			}
 		}
 		R_BSP_SoftwareDelay (10, BSP_DELAY_MILLISECS);
 	}	
@@ -316,8 +338,9 @@ void ADC_READ(void *pArgs){
         /* Read conversion value and store in global variable */
 		adc_err0 = R_ADC_Read(USING_ADC_UNIT, TEMP_ADC_CH0, &TempData[1]);
 		adc_err1 = R_ADC_Read(USING_ADC_UNIT, TEMP_ADC_CH1, &TempData[2]);
-        while (ADC_SUCCESS != adc_err0){
-            /* Error - loop here for debug */
-        }
+		DATA_RDY[DATA_RDY_IND_TEMP] = STATE_TRUE;
+    }
+    else{
+		DATA_RDY[DATA_RDY_IND_TEMP] = STATE_FALSE;
     }
 }

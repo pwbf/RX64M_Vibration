@@ -32,19 +32,121 @@
 var uInterval = 20000;
 var timeleft = uInterval;
 var TDScale = 100;
+var TPScale = 2;
+var TPDif = 2;
 
 $(document).ready(function() {
-var prog = document.getElementById('prog');
-	prog.max = uInterval;
 	renderChart();
 	loadDataPage();
 });
 setInterval(function(){ loadDataPage(); }, uInterval);
-setInterval(function(){ countdown(); }, 100);
-function countdown(){
+setInterval(function(){ countDownTimer(); }, 100);
+
+Chart.pluginService.register({
+      beforeDraw: function(chart) {
+        if (chart.config.options.elements.center) {
+          // Get ctx from string
+          var ctx = chart.chart.ctx;
+
+          // Get options from the center object in options
+          var centerConfig = chart.config.options.elements.center;
+          var fontStyle = centerConfig.fontStyle || 'Arial';
+          var txt = centerConfig.text;
+          var color = centerConfig.color || '#000';
+          var maxFontSize = centerConfig.maxFontSize || 50;
+          var sidePadding = centerConfig.sidePadding || 20;
+          var sidePaddingCalculated = (sidePadding / 100) * (chart.innerRadius * 2)
+          // Start with a base font of 30px
+          ctx.font = "30px " + fontStyle;
+
+          // Get the width of the string and also the width of the element minus 10 to give it 5px side padding
+          var stringWidth = ctx.measureText(txt).width;
+          var elementWidth = (chart.innerRadius * 2) - sidePaddingCalculated;
+
+          // Find out how much the font can grow in width.
+          var widthRatio = elementWidth / stringWidth;
+          var newFontSize = Math.floor(30 * widthRatio);
+          var elementHeight = (chart.innerRadius * 2);
+
+          // Pick a new font size so it will not be larger than the height of label.
+          var fontSizeToUse = Math.min(newFontSize, elementHeight, maxFontSize);
+          var minFontSize = centerConfig.minFontSize;
+          var lineHeight = centerConfig.lineHeight || 25;
+          var wrapText = false;
+
+          if (minFontSize === undefined) {
+            minFontSize = 20;
+          }
+
+          if (minFontSize && fontSizeToUse < minFontSize) {
+            fontSizeToUse = minFontSize;
+            wrapText = true;
+          }
+
+          // Set font settings to draw it correctly.
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'top';
+          var centerX = ((chart.chartArea.left + chart.chartArea.right) / 2);
+          var centerY = ((chart.chartArea.top + chart.chartArea.bottom) / 2);
+          ctx.font = fontSizeToUse + "px " + fontStyle;
+          ctx.fillStyle = color;
+
+          if (!wrapText) {
+            ctx.fillText(txt, centerX, centerY);
+            return;
+          }
+
+          var words = txt.split(' ');
+          var line = '';
+          var lines = [];
+
+          // Break words up into multiple lines if necessary
+          for (var n = 0; n < words.length; n++) {
+            var testLine = line + words[n] + ' ';
+            var metrics = ctx.measureText(testLine);
+            var testWidth = metrics.width;
+            if (testWidth > elementWidth && n > 0) {
+              lines.push(line);
+              line = words[n] + ' ';
+            } else {
+              line = testLine;
+            }
+          }
+
+          // Move the center up depending on line height and number of lines
+          centerY -= (lines.length / 2) * lineHeight;
+
+          for (var n = 0; n < lines.length; n++) {
+            ctx.fillText(lines[n], centerX, centerY);
+            centerY += lineHeight;
+          }
+          //Draw text in center
+          ctx.fillText(line, centerX, centerY);
+        }
+      }
+    });
+
+function countDownTimer(){
+	var timeleftSec = (timeleft/1000).toFixed(1);
+	var colorCode = 'rgb('+colorR(timeleftSec)+','+ colorG(timeleftSec)+','+ colorB(timeleftSec)+')';
+	configcountdown.options.elements.center.text = timeleftSec;
+	configcountdown.options.elements.center.color = colorCode;
+	configcountdown.data.datasets[0].data = [timeleft, uInterval - timeleft];
+	configcountdown.data.datasets[0].backgroundColor = [colorCode, '#d4d4d4'];
 	timeleft -= 100;
-	prog.value = timeleft;
+	window.TM.update();
 }
+
+function colorR(tm){
+	return 4.9*tm + 144;
+}
+function colorG(tm){
+	return -6.2*tm + 246;
+}
+function colorB(tm){
+	return 0.1*tm + 121;
+}
+
 var configtimedomain = {
 	type: 'line',
 	data: {
@@ -138,6 +240,40 @@ var configfreqdomain = {
 	}
 };
 
+var configcountdown = {
+	type: 'doughnut',
+	data: {
+		datasets: [{
+			data: [],
+			backgroundColor: []
+		}]
+	},
+	options: {
+		elements: {
+			center: {
+				text: '00.0',
+				color: '#FF6384', // Default is #000000
+				sidePadding: 50, // Default is 20 (as a percentage)
+				minFontSize: 10, // Default is 20 (in px), set to false and text will not wrap.
+				lineHeight: 500 // Default is 25 (in px), used for when text wraps
+			}
+		},
+		responsive: true,
+		title: {
+			display: true,
+			text: 'Refresh'
+		},
+		animation: {
+			animateScale: true,
+			animateRotate: true
+		},
+		tooltips: {
+			enabled: false
+		},
+		cutoutPercentage: 80,
+	}
+};
+
 var configtempch0 = {
 	type: 'doughnut',
 	data: {
@@ -153,13 +289,22 @@ var configtempch0 = {
 		]
 	},
 	options: {
+		elements: {
+			center: {
+				text: '000.00',
+				color: '#FF6384', // Default is #000000
+				sidePadding: 50, // Default is 20 (as a percentage)
+				minFontSize: 10, // Default is 20 (in px), set to false and text will not wrap.
+				lineHeight: 500 // Default is 25 (in px), used for when text wraps
+			}
+		},
 		responsive: true,
 		legend: {
 			position: 'top',
 		},
 		title: {
 			display: true,
-			text: 'Temperature(C)'
+			text: 'Temperature'
 		},
 		animation: {
 			animateScale: true,
@@ -167,7 +312,7 @@ var configtempch0 = {
 		},
 		circumference: Math.PI,
 		rotation: -Math.PI,
-		cutoutPercentage: 60,
+		cutoutPercentage: 80,
 	}
 };
 
@@ -209,6 +354,9 @@ var configtempch0L = {
 				scaleLabel: {
 					display: true,
 					labelString: 'Degree C'
+				},
+				ticks: {
+					stepSize: 1
 				}
 			}]
 		}
@@ -265,7 +413,6 @@ function loadDataPage(){
 	$.get("http://vibr.astarc.tk/getData.php?r=TD", "json", 
 		function(data){
 			var jsonDecoded = JSON.parse(data);
-			var timedomain = document.getElementById('timedomain').getContext('2d');
 			var int16Data = [];
 			var graphLabel = [];
 			$.each(jsonDecoded, function( k, v ) {
@@ -279,7 +426,7 @@ function loadDataPage(){
 			else
 				configtimedomain.options.scales.yAxes[0].ticks.max = Math.max.apply(null, int16Data) + 10;
 				
-			if(Math.max.apply(null, int16Data) < -TDScale)
+			if(Math.min.apply(null, int16Data) < -TDScale)
 				configtimedomain.options.scales.yAxes[0].ticks.min = Math.min.apply(null, int16Data) - TDScale;
 			else
 				configtimedomain.options.scales.yAxes[0].ticks.min = Math.min.apply(null, int16Data) - 10;
@@ -290,7 +437,6 @@ function loadDataPage(){
 	$.get("http://vibr.astarc.tk/getData.php?r=FD", "json", 
 		function(data){
 			var jsonDecoded = JSON.parse(data);
-			var freqdomain = document.getElementById('freqdomain').getContext('2d');
 			var int32Data = [];
 			var graphLabel = [];
 			$.each(jsonDecoded, function( k, v ) {
@@ -315,7 +461,6 @@ function loadDataPage(){
 				miscConfig.minRange = -50;
 				
 			var jsonDecoded = JSON.parse(data);
-			var tempch0 = document.getElementById('tempch0').getContext('2d');
 			
 			var color0 = '';
 			var color1 = '';
@@ -325,9 +470,11 @@ function loadDataPage(){
 				color0 = miscConfig.range2Hex;
 			else
 				color0 = miscConfig.range3Hex;
-			
-			configtempch0.data.datasets[0].data = [jsonDecoded[0].toFixed(2), (miscConfig.maxRange-jsonDecoded[0]).toFixed(2)];
+				
+			configtempch0.data.datasets[0].data = [jsonDecoded[0].toFixed(1), (miscConfig.maxRange-jsonDecoded[0]).toFixed(2)];
 			configtempch0.data.datasets[0].backgroundColor = [color0, '#d4d4d4'];
+			configtempch0.options.elements.center.color = color0;
+			configtempch0.options.elements.center.text = jsonDecoded[0].toFixed(1) + ' °C';
 			
 			window.TE0.update();
 		}
@@ -335,16 +482,30 @@ function loadDataPage(){
 	$.get("http://vibr.astarc.tk/getData.php?r=TP0L", "json", 
 		function(data){
 			var jsonDecoded = JSON.parse(data);
-			var tempch0L = document.getElementById('tempch0L').getContext('2d');
 			var floatData = [];
 			var graphLabel = [];
 			$.each(jsonDecoded, function( k, v ) {
-				floatData.push(v.toFixed(2));
+				floatData.push(v.toFixed(1));
 				graphLabel.push(k);
 			});
 			
 			configtempch0L.data.labels = graphLabel;
 			configtempch0L.data.datasets[0].data = floatData;
+			
+			if(Math.max.apply(null, floatData) > TPScale)
+				configtempch0L.options.scales.yAxes[0].ticks.max = Math.max.apply(null, floatData) + TPScale;
+			else
+				configtempch0L.options.scales.yAxes[0].ticks.max = Math.max.apply(null, floatData) + 0.5;
+				
+			if(Math.min.apply(null, floatData) < -TPScale)
+				configtempch0L.options.scales.yAxes[0].ticks.min = Math.min.apply(null, floatData) - TPScale;
+			else
+				configtempch0L.options.scales.yAxes[0].ticks.min = Math.min.apply(null, floatData) - 0.5;
+				
+			if((Math.max.apply(null, floatData) - Math.min.apply(null, floatData)) > TPDif)
+				configtempch0L.options.scales.yAxes[0].ticks.stepSize = TPDif;
+			else
+				configtempch0L.options.scales.yAxes[0].ticks.stepSize = 0.5;
 			
 			window.TE0L.update();
 		}
@@ -352,11 +513,10 @@ function loadDataPage(){
 	$.get("http://vibr.astarc.tk/getData.php?r=EDS", "json", 
 		function(data){
 			var jsonDecoded = JSON.parse(data);
-			var edsData = document.getElementById('edsData').getContext('2d');
 			var floatData = [];
 			var graphLabel = [];
 			$.each(jsonDecoded, function( k, v ) {
-				floatData.push(v.toFixed(2));
+				floatData.push(v.toFixed(1));
 				graphLabel.push(k);
 			});
 			
@@ -369,6 +529,7 @@ function loadDataPage(){
 }
 
 function renderChart(){
+	window.TM = new Chart(countdown, configcountdown);
 	window.TD = new Chart(timedomain, configtimedomain);
 	window.FD = new Chart(freqdomain, configfreqdomain);
 	window.EDS = new Chart(edsData, configedsData);
@@ -385,7 +546,12 @@ function renderChart(){
 				<div class="uk-container uk-container-expand">
 					<div class="uk-grid-margin uk-grid uk-grid-stack" uk-grid >
 						<div class="uk-width-1-1 uk-margin-small">
-							<div class="uk-child-width-1-3@s uk-grid-column-small uk-grid-small uk-grid-match" uk-grid>
+							<div class="uk-child-width-1-4@s uk-grid-column-small uk-grid-small uk-grid-match" uk-grid>
+								<div>
+									<div class="uk-card uk-card-default uk-card-body uk-card-hover uk-card-small">
+										<canvas id="countdown"></canvas>
+									</div>
+								</div>
 								<div>
 									<div class="uk-card uk-card-default uk-card-body uk-card-hover uk-card-small">
 										<canvas id="tempch0"></canvas>
@@ -414,14 +580,6 @@ function renderChart(){
 									<div class="uk-card uk-card-default uk-card-body uk-card-hover uk-card-small">
 										<canvas id="freqdomain"></canvas>
 									</div>
-								</div>
-							</div>
-						</div>
-						
-						<div class="uk-width-1-1 uk-margin-small">
-							<div class="uk-child-width-1-1@s uk-grid-column-small uk-grid-small uk-grid-match" uk-grid>
-								<div>
-									<progress class="uk-progress" value="" max="" id="prog"></progress>
 								</div>
 							</div>
 						</div>

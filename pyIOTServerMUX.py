@@ -23,19 +23,45 @@ def insert2DB(tablename, fedData, srcIP, srcPort, status):
         if tablename:
             dbconn = mysql.connector.connect(
                 host="mysql.lan.astarc.tk",
-                user="astarc",
-                passwd="#astarc377",
-                database="astarc_iot"
+                user="",
+                passwd="",
+                database=""
             )
             NOW = time.strftime("%Y/%m/%d %H:%M:%S",time.localtime())
             dbCursor = dbconn.cursor()
-            sqlQuery = 'INSERT INTO '+tablename+' (TIMEMARK,SOURCEIP,SOURCEPORT,STATUS,VDATA) VALUES("'+str(NOW)+'","'+str(srcIP)+'","'+str(srcPort)+'",'+str(status)+',"'+str(fedData)+'")'
-            print(">>> [" + NOW + "] inserting: " + tablename)
-            dbCursor.execute(sqlQuery)
-            dbconn.commit()
-
+            if(tablename != 'ErrorLogging'):
+                sqlQuery = 'INSERT INTO '+tablename+' (TIMEMARK,SOURCEIP,SOURCEPORT,STATUS,VDATA) VALUES("'+str(NOW)+'","'+str(srcIP)+'","'+str(srcPort)+'",'+str(status)+',"'+str(fedData)+'")'
+                print(">>> [" + NOW + "] inserting: " + tablename)
+                dbCursor.execute(sqlQuery)
+                dbconn.commit()
+            else:
+                print("Error Logging:")
+                chunks = [fedData[i:i+2] for i in range(0, len(fedData), 2)]
+                
+                if(chunks[1] == '00'):
+                    sqlQuery = 'INSERT INTO vibrationTD (TIMEMARK,SOURCEIP,SOURCEPORT,STATUS,VDATA) VALUES("'+str(NOW)+'","'+str(srcIP)+'","'+str(srcPort)+'",0,"00")'
+                    print(">>> [" + NOW + "] ErrorLogging: vibrationTD")
+                    dbCursor.execute(sqlQuery)
+                    dbconn.commit()
+                if(chunks[2] == '00'):
+                    sqlQuery = 'INSERT INTO vibrationFD (TIMEMARK,SOURCEIP,SOURCEPORT,STATUS,VDATA) VALUES("'+str(NOW)+'","'+str(srcIP)+'","'+str(srcPort)+'",0,"00")'
+                    print(">>> [" + NOW + "] ErrorLogging: vibrationFD")
+                    dbCursor.execute(sqlQuery)
+                    dbconn.commit()
+                if(chunks[3] == '00'):
+                    sqlQuery = 'INSERT INTO EDS (TIMEMARK,SOURCEIP,SOURCEPORT,STATUS,VDATA) VALUES("'+str(NOW)+'","'+str(srcIP)+'","'+str(srcPort)+'",0,"00")'
+                    print(">>> [" + NOW + "] ErrorLogging: EDS")
+                    dbCursor.execute(sqlQuery)
+                    dbconn.commit()
+                if(chunks[4] == '00'):
+                    sqlQuery = 'INSERT INTO temperature (TIMEMARK,SOURCEIP,SOURCEPORT,STATUS,VDATA) VALUES("'+str(NOW)+'","'+str(srcIP)+'","'+str(srcPort)+'",0,"00")'
+                    print(">>> [" + NOW + "] ErrorLogging: temperature")
+                    dbCursor.execute(sqlQuery)
+                    dbconn.commit()
+                
             dbCursor.close()
             dbconn.close()
+            print("")
     except Exception as e:
         print("Error: " + str(e))
 
@@ -54,6 +80,8 @@ def dataAry2String(displacedData):
             tablename = 'EDS'
         elif displacedData[0] == 0xDD:
             tablename = 'temperature'
+        elif displacedData[0] == 0xEE:
+            tablename = 'ErrorLogging'
         else:
             tablename = ''
             

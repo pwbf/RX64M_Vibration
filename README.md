@@ -10,7 +10,7 @@
 
 ## Current Function Information:  
 > ## leadwellVibr.master.current:  
->> Version: leadwellVibr.master.v1.1.4  
+>> Version: leadwellVibr.master.v1.1.5  
 - [x] Ethernet  
 - [x] 1ch Vibration(UART)  
 - [x] 1ch Temperature(ADC)  
@@ -47,8 +47,15 @@
 - [x]  ADC Read  
 
 ## Highlight: 
+#### Timeout indicator  
+Update 1.1.5
+UART Timeout Skipper for continuous data sending  
+If any sensor failed or data failed to send  
+It will write into database for future debugging  
+
+#### /src/MainSetting.h  
+Update 1.1.0
 You only need to change this configuration file in order to enable/disable function  
-/src/MainSetting.h
 ```cpp  
 //src/MainSetting.h
 #define		TCP_CONNID_TD		1

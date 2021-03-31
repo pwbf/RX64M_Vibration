@@ -42,6 +42,7 @@
 #define MASK_ADC_CH0			ADC_MASK_CH0		//Temperature channel 0 ADC reg (AN00x or AN10x) ADC_REG_CHx
 #define MASK_ADC_CH1			ADC_MASK_CH1		//Temperature channel 1 ADC reg (AN00x or AN10x) ADC_REG_CHx
 
+#define UART_TIMEOUT			(1000)
 
 
 static sci_hdl_t   g_my_sci_handle_ch1;
@@ -62,5 +63,6 @@ void ADCInit(void);
 void ADCStart(void);
 void ADC_READ(void *pArgs);
 
+extern uint8_t DATA_RDY[DATA_RDY_IND_LENGTH];
 
 #endif

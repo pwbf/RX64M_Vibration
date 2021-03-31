@@ -133,9 +133,12 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 	LED3 = LED_ON;
 	LED4 = LED_OFF;
 	LED5 = LED_OFF;
-		printf(">> Calculate FFT Data\n");
-		R_DSP_REAL_FFT_Operation(vibrateData, frequencyData);
-		R_BSP_SoftwareDelay (100, BSP_DELAY_MILLISECS);
+		if(DATA_RDY[DATA_RDY_IND_VIBR]){
+			printf(">> Calculate FFT Data\n");
+			R_DSP_REAL_FFT_Operation(vibrateData, frequencyData);
+			DATA_RDY[DATA_RDY_IND_FREQ] = STATE_TRUE;
+			R_BSP_SoftwareDelay (100, BSP_DELAY_MILLISECS);
+		}
 #endif
 
 
@@ -155,7 +158,14 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 	R_BSP_SoftwareDelay (200, BSP_DELAY_MILLISECS);
 #endif
 
-
+printf("\n-----------------------\n");
+printf("Pre-Sending Data Check:\n");
+printf("[%d] Vibration Data\n", DATA_RDY[DATA_RDY_IND_VIBR]);
+printf("[%d] Frequency Data\n", DATA_RDY[DATA_RDY_IND_FREQ]);
+printf("[%d] EDS Data\n", DATA_RDY[DATA_RDY_IND_EDS]);
+printf("[%d] Temperature Data\n", DATA_RDY[DATA_RDY_IND_TEMP]);
+	DATA_RDY[0] = 0xEE;
+printf("-----------------------\n\n");
 
 #if ENABLE_ETHERNET == MODE_ENABLE
 
@@ -164,11 +174,13 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 	LED3 = LED_ON;
 	LED4 = LED_ON;
 	LED5 = LED_OFF;
-		printf(">> TCP Sending: HLvibrateData\n");
-		HLvibrateData[0] = 0xAA;
-		TCP_SendingData(TCP_CONNID_TD, HLvibrateData, HL_VIBR_DATA_LENGTH);
-		R_BSP_SoftwareDelay (1, BSP_DELAY_SECS);
-		printf(">> TCP Sending Completed\n\n");
+		if(DATA_RDY[DATA_RDY_IND_VIBR]){
+			printf(">> TCP Sending: HLvibrateData\n");
+			HLvibrateData[0] = 0xAA;
+			TCP_SendingData(TCP_CONNID_TD, HLvibrateData, HL_VIBR_DATA_LENGTH);
+			R_BSP_SoftwareDelay (1, BSP_DELAY_SECS);
+			printf(">> TCP Sending Completed\n\n");
+		}
 	#endif
 
 	#if ENABLE_DSP == MODE_ENABLE
@@ -176,28 +188,49 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 	LED3 = LED_ON;
 	LED4 = LED_ON;
 	LED5 = LED_ON;
-		printf(">> TCP Sending: frequencyData\n");
-		frequencyData[0] = 0xBBBBBBBB;
-		TCP_SendingData(TCP_CONNID_TD, frequencyData, HL_FREQ_DATA_LENGTH);
-		R_BSP_SoftwareDelay (1, BSP_DELAY_SECS);
-		printf(">> TCP Sending Completed\n\n");
+		if(DATA_RDY[DATA_RDY_IND_FREQ]){
+			printf(">> TCP Sending: frequencyData\n");
+			frequencyData[0] = 0xBBBBBBBB;
+			TCP_SendingData(TCP_CONNID_TD, frequencyData, HL_FREQ_DATA_LENGTH);
+			R_BSP_SoftwareDelay (1, BSP_DELAY_SECS);
+			printf(">> TCP Sending Completed\n\n");
+		}
 	#endif
 	
 	#if ENABLE_EDS == MODE_ENABLE
-		printf(">> TCP Sending: EDSData\n");
-		EDSData[0] = 0xCCCC;
-		TCP_SendingData(TCP_CONNID_TD, EDSData, (EDS_DATA_LENGTH) * 2);
-		R_BSP_SoftwareDelay (1, BSP_DELAY_SECS);
-		printf(">> TCP Sending Completed\n\n");
+		if(DATA_RDY[DATA_RDY_IND_EDS]){
+			printf(">> TCP Sending: EDSData\n");
+			EDSData[0] = 0xCCCC;
+			TCP_SendingData(TCP_CONNID_TD, EDSData, (EDS_DATA_LENGTH) * 2);
+			R_BSP_SoftwareDelay (1, BSP_DELAY_SECS);
+			printf(">> TCP Sending Completed\n\n");
+		}
 	#endif
 	
 	#if ENABLE_ADC == MODE_ENABLE
-		printf(">> TCP Sending: HLTempData\n");
-		HLTempData[0] = 0xDD;
-		TCP_SendingData(TCP_CONNID_TD, HLTempData, (TEMP_DATA_LENGTH) * 2);
+		if(DATA_RDY[DATA_RDY_IND_TEMP]){
+			printf(">> TCP Sending: HLTempData\n");
+			HLTempData[0] = 0xDD;
+			TCP_SendingData(TCP_CONNID_TD, HLTempData, (TEMP_DATA_LENGTH) * 2);
+			R_BSP_SoftwareDelay (1, BSP_DELAY_SECS);
+			printf(">> TCP Sending Completed\n\n");
+		}
+	#endif
+	
+	if(
+		!(
+			DATA_RDY[DATA_RDY_IND_VIBR] && 
+			DATA_RDY[DATA_RDY_IND_FREQ] && 
+			DATA_RDY[DATA_RDY_IND_EDS] && 
+			DATA_RDY[DATA_RDY_IND_TEMP]
+		)
+	){
+		printf(">> TCP Sending: Error Logging\n");
+		TCP_SendingData(TCP_CONNID_TD, DATA_RDY, DATA_RDY_IND_LENGTH);
 		R_BSP_SoftwareDelay (1, BSP_DELAY_SECS);
 		printf(">> TCP Sending Completed\n\n");
-	#endif
+	}
+	
 #endif
 
 
@@ -230,6 +263,9 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 		flushBuffer(TempData, TEMP_DATA_LENGTH);
 		printf(">> Flushing HLTempData\n");
 		flushBuffer(HLTempData, TEMP_DATA_LENGTH);
+		
+		printf(">> Flushing Data Indicator\n");
+		flushBuffer(DATA_RDY, DATA_RDY_IND_LENGTH);
 	LED2 = LED_OFF;
 	LED3 = LED_OFF;
 	LED4 = LED_OFF;
