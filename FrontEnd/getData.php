@@ -69,17 +69,14 @@ if($_GET['r'] == 'TP'){
 	if ($conn->connect_error) {
 		die("Connection failed: " . $conn->connect_error);
 	}
-	$sql = 'SELECT VDATA FROM temperature WHERE STATUS = 1 ORDER BY TIMEMARK DESC LIMIT 1';
+	$sql = 'SELECT TIMEMARK,VDATA FROM temperature WHERE STATUS = 1 ORDER BY TIMEMARK DESC LIMIT 1';
 	$result = $conn->query($sql);
 
 	$TempData = str_split(($result->fetch_assoc())['VDATA'], 4);
 	$TempJson = array();
 	
-	$TempCH0 = adc2temp($TempData[1]);
-	$TempCH1 = adc2temp($TempData[1]);
-	
+	$TempCH0 = adc2temp($TempData[0]);
 	array_push($TempJson, $TempCH0);
-	array_push($TempJson, $TempCH1);
 	//echo '<pre>'.print_r($TempData, true).'</pre>';
 	echo json_encode($TempJson);
 	$conn->close();
