@@ -18,7 +18,7 @@ print('Start Listening on: ' + str(host) + ':' + str(port))
 ServerSideSocket.listen(5)
 
 
-def insert2DB(tablename, fedData, srcIP, srcPort, status):
+def insert2DB(tablename, fedData, srcIP, srcPort, hdrLength):
     try:
         if tablename:
             dbconn = mysql.connector.connect(
@@ -30,7 +30,7 @@ def insert2DB(tablename, fedData, srcIP, srcPort, status):
             NOW = time.strftime("%Y/%m/%d %H:%M:%S",time.localtime())
             dbCursor = dbconn.cursor()
             if(tablename != 'ErrorLogging'):
-                sqlQuery = 'INSERT INTO '+tablename+' (TIMEMARK,SOURCEIP,SOURCEPORT,STATUS,VDATA) VALUES("'+str(NOW)+'","'+str(srcIP)+'","'+str(srcPort)+'",'+str(status)+',"'+str(fedData)+'")'
+                sqlQuery = 'INSERT INTO '+tablename+' (TIMEMARK,SOURCEIP,SOURCEPORT,STATUS,VDATA) VALUES("'+str(NOW)+'","'+str(srcIP)+'","'+str(srcPort)+'",1,"'+str(fedData[hdrLength:])+'")'
                 print(">>> [" + NOW + "] inserting: " + tablename)
                 dbCursor.execute(sqlQuery)
                 dbconn.commit()
@@ -68,18 +68,23 @@ def insert2DB(tablename, fedData, srcIP, srcPort, status):
 def dataAry2String(displacedData):
     cleanData = ''
     tablename = ''
+    hdrLength = 0
     for idx,ch in enumerate(displacedData):
         cleanData += str('{:02x}'.format(ch))
     
     if displacedData:
         if displacedData[0] == 0xAA:
             tablename = 'vibrationTD'
+            hdrLength = 2
         elif displacedData[0] == 0xBB:
             tablename = 'vibrationFD'
+            hdrLength = 8
         elif displacedData[0] == 0xCC:
             tablename = 'EDS'
+            hdrLength = 4
         elif displacedData[0] == 0xDD:
             tablename = 'temperature'
+            hdrLength = 4
         elif displacedData[0] == 0xEE:
             tablename = 'ErrorLogging'
         else:
@@ -95,7 +100,7 @@ def dataAry2String(displacedData):
             print(displacedData[0])
             print('Raw data length>>> ' + str(len(displacedData)))
         
-    return [tablename, cleanData]
+    return [tablename, cleanData, hdrLength]
 
 
 def multi_threaded_client(connection, addr):
@@ -110,7 +115,7 @@ def multi_threaded_client(connection, addr):
             break
         else:
             if rtnData[0]:
-                insert2DB(rtnData[0], rtnData[1], addr[0], addr[1], 1)
+                insert2DB(rtnData[0], rtnData[1], addr[0], addr[1], rtnData[2])
         
         # connection.sendall(str.encode(str(rtnData[2])))
     connection.close()

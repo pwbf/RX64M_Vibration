@@ -1,7 +1,4 @@
 <?php
-const	TD_SHIFT = 2;
-const	FD_SHIFT = 4;
-
 const	DB_HOST = "mysql.lan.astarc.tk";
 const	DB_USER = "astarc";
 const	DB_PASS = "#astarc377";
@@ -23,8 +20,8 @@ if($_GET['r'] == 'TD'){
 		array_push($TimeDomain, 
 			covint(16,
 				hexdec(
-					'0x'. $HL[( TD_SHIFT * $index ) + TD_SHIFT] 
-					. $HL[( TD_SHIFT * $index + 1 ) + TD_SHIFT]
+					'0x'. $HL[2 * $index - 1] 
+					. $HL[2 * $index ]
 				)
 			)
 		);
@@ -52,18 +49,18 @@ if($_GET['r'] == 'FD'){
 		array_push($FreqDomain, 
 			// covint(32,
 				hexdec(
-					'0x'. $HL[( FD_SHIFT * $index + 3 ) + FD_SHIFT] 
-						. $HL[( FD_SHIFT * $index + 2 ) + FD_SHIFT] 
-						. $HL[( FD_SHIFT * $index + 1 ) + FD_SHIFT] 
-						. $HL[( FD_SHIFT * $index ) + FD_SHIFT]
+					'0x'. $HL[( 4 * $index + 3 )]
+						. $HL[( 4 * $index + 2 )] 
+						. $HL[( 4 * $index + 1 )] 
+						. $HL[( 4 * $index + 0 )]
 					)
 			// )
 		);
 	}
 
 
-	echo json_encode($FreqDomain);
 	// echo '<pre>'.print_r($FreqDomain, true).'</pre>';
+	echo json_encode($FreqDomain);
 	$conn->close();
 }
 
@@ -98,33 +95,13 @@ if($_GET['r'] == 'TP0L'){
 
 	$TempJson = array();
 	while($row = $result->fetch_assoc()){
-		$TempData = adc2temp(str_split($row['VDATA'],4)[1]);
+		$TempData = adc2temp(str_split($row['VDATA'],4)[0]);
 		$TimeData = explode(' ', $row['TIMEMARK'])[1];
 		$TempJson[$TimeData] = $TempData;
 	}
 	
 	//echo '<pre>'.print_r($TempData, true).'</pre>';
 	echo json_encode(array_reverse($TempJson));
-	$conn->close();
-}
-
-if($_GET['r'] == 'TP1L'){
-	$conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-	if ($conn->connect_error) {
-		die("Connection failed: " . $conn->connect_error);
-	}
-	$sql = 'SELECT TIMEMARK,VDATA FROM temperature WHERE STATUS = 1 ORDER BY TIMEMARK DESC LIMIT 120';
-	$result = $conn->query($sql);
-	
-	$TempJson = array();
-	while($row = $result->fetch_assoc()){
-		$TempData = adc2temp(str_split($row['VDATA'],4)[2]);
-		$TimeData = explode(' ', $row['TIMEMARK'])[1];
-		$TempJson[$TimeData] = $TempData;
-	}
-	
-	//echo '<pre>'.print_r($TempData, true).'</pre>';
-	echo json_encode($TempJson);
 	$conn->close();
 }
 
@@ -138,7 +115,7 @@ if($_GET['r'] == 'EDS'){
 
 	$EDSJson = array();
 	while($row = $result->fetch_assoc()){
-		$EDSData = adc2temp(str_split($row['VDATA'],4)[1]);
+		$EDSData = adc2temp(str_split($row['VDATA'],4)[0]);
 		$TimeData = explode(' ', $row['TIMEMARK'])[1];
 		$EDSJson[$TimeData] = $EDSData;
 	}
