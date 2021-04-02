@@ -10,7 +10,7 @@
 
 ## Current Function Information:  
 > ## leadwellVibr.master.current:  
->> Version: leadwellVibr.master.v1.1.6  
+>> Version: leadwellVibr.master.v1.1.5  
 - [x] Ethernet  
 - [x] 1ch Vibration(UART)  
 - [x] 1ch Temperature(ADC)  
@@ -46,42 +46,15 @@
 >> Version: leadwellVibr.ET.v1.0.1  
 - [x]  ADC Read  
 
-## Highlight:  
-
-#### Update 1.1.6  
-###### Debug Message Enabler  
-```cpp
-#define		PRINT_DEBUGGING_MESSAGE		(MODE_DISABLE)
-```  
-###### Wait for TCP connection  
-```cpp
-while(tcp_connection_status != 0 && tcp_connection_status != -57){
-		#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
-			printf("        Waiting for Server Respond...\n");
-		#endif
-		R_BSP_SoftwareDelay (500, BSP_DELAY_MILLISECS);
-		tcp_connection_status = TCP_Connect(encodeIPv4(TAR_SERVER_IP), TAR_SERVER_PT, TCP_CONNID_TD);
-	}
-```  
-###### Unplug and stop, Plus and play  
-```cpp
-while(!ETHERNET_RDY[0]){
-		#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
-			printf("        Waiting for Plug in signal...\n");
-		#endif
-		R_ETHER_LinkProcess(0);
-		R_BSP_SoftwareDelay (500, BSP_DELAY_MILLISECS);
-	}
-```  
-
-#### Update 1.1.5  
+## Highlight: 
 #### Timeout indicator  
+Update 1.1.5
 UART Timeout Skipper for continuous data sending  
 If any sensor failed or data failed to send  
 It will write into database for future debugging  
 
-#### Update 1.1.0  
-###### /src/MainSetting.h  
+#### /src/MainSetting.h  
+Update 1.1.0
 You only need to change this configuration file in order to enable/disable function  
 ```cpp  
 //src/MainSetting.h

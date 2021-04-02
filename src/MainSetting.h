@@ -8,9 +8,9 @@
 //#define		TAR_SERVER_IP		10,0,0,178
 #define		TAR_SERVER_PT		8120
 
-#define		LOOPIN_DELAY_TIME	(100)			//Mili Second
+#define		LOOPIN_DELAY_TIME	(500)			//Mili Second
 #define		TCP_SEND_DELAY_TIME	(150)			//Mili Second
-#define		SENSOR_DELAY_TIME	(200)			//Mili Second
+#define		SENSOR_DELAY_TIME	(100)			//Mili Second
 
 //MODE_ENABLE | MODE_DISABLE
 //Functions

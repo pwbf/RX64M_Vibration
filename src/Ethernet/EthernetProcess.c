@@ -31,7 +31,7 @@ ER TCP_Connect(uint32_t dstIP, uint16_t portno, uint8_t connID){
 		printf(">> Target ip=%d.%d.%d.%d:%d\n",dstdeIP[0],dstdeIP[1],dstdeIP[2],dstdeIP[3], tcpPacket->dst.portno);
 	#endif
 	
-	rtn = tcp_con_cep(connID, (&tcpPacket->src), (&tcpPacket->dst), TMO_NBLK);
+	rtn = tcp_con_cep(connID, (&tcpPacket->src), (&tcpPacket->dst), TMO_FEVR);
 	
 	return rtn;
 }

@@ -213,7 +213,6 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 	printf("[%d] Frequency Data\n", DATA_RDY[DATA_RDY_IND_FREQ]);
 	printf("[%d] EDS Data\n", DATA_RDY[DATA_RDY_IND_EDS]);
 	printf("[%d] Temperature Data\n", DATA_RDY[DATA_RDY_IND_TEMP]);
-		DATA_RDY[0] = 0xEE;
 	printf("-----------------------\n\n");
 #endif
 
@@ -294,6 +293,7 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 		#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
 			printf(">> TCP Sending: Error Logging\n");
 		#endif
+		DATA_RDY[0] = 0xEE;
 		TCP_SendingData(TCP_CONNID_TD, DATA_RDY, DATA_RDY_IND_LENGTH);
 		R_BSP_SoftwareDelay (TCP_SEND_DELAY_TIME, BSP_DELAY_MILLISECS);
 		#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE

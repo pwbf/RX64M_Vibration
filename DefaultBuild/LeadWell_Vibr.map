@@ -1,4 +1,4 @@
-Renesas Optimizing Linker (W3.01.00 )             02-Apr-2021 13:14:36
+Renesas Optimizing Linker (W3.01.00 )             02-Apr-2021 14:53:18
 
 *** Options ***
 
@@ -526,11 +526,11 @@ D_2
 D
                                   ffc0162c  ffc01c47       61c   4
 P
-                                  ffc01c48  ffc11053      f40c   1
+                                  ffc01c48  ffc11056      f40f   1
 W_1
-                                  ffc11054  ffc11070        1d   1
+                                  ffc11057  ffc11073        1d   1
 W_2
-                                  ffc11072  ffc11091        20   2
+                                  ffc11074  ffc11093        20   2
 W
                                   ffc11094  ffc11094         0   4
 L
@@ -544,7 +544,7 @@ RESETVECT
 
 RAMDATA SECTION:  00011ad0 Byte(s)
 ROMDATA SECTION:  00001d9c Byte(s)
-PROGRAM SECTION:  0000f40c Byte(s)
+PROGRAM SECTION:  0000f40f Byte(s)
 
 *** Symbol List ***
 
@@ -2028,1013 +2028,1013 @@ FILE=DefaultBuild\EthernetProcess.obj
   _tcp_callback
                                   ffc06d6d         3   func ,g         * 
 FILE=DefaultBuild\LeadWell_Vibr.obj
-                                  ffc06d70  ffc0711c       3ad
+                                  ffc06d70  ffc0711f       3b0
   _main
-                                  ffc06d70       319   func ,g         * 
+                                  ffc06d70       31c   func ,g         * 
   _Rx64MInitPorts
-                                  ffc07089        58   func ,g         * 
+                                  ffc0708c        58   func ,g         * 
   _conv_int16_int8
-                                  ffc070e1        18   func ,g         * 
+                                  ffc070e4        18   func ,g         * 
   _conv_int32_int8
-                                  ffc070f9        24   func ,g         * 
+                                  ffc070fc        24   func ,g         * 
 FILE=DefaultBuild\r_s12ad_rx.obj
-                                  ffc0711d  ffc07174        58
+                                  ffc07120  ffc07177        58
   _R_ADC_Open
-                                  ffc0711d         4   func ,g         * 
+                                  ffc07120         4   func ,g         * 
   _R_ADC_Control
-                                  ffc07121         4   func ,g         * 
+                                  ffc07124         4   func ,g         * 
   _R_ADC_Read
-                                  ffc07125        34   func ,g         * 
+                                  ffc07128        34   func ,g         * 
   _R_ADC_ReadAll
-                                  ffc07159        12   func ,g         * 
+                                  ffc0715c        12   func ,g         * 
   _R_ADC_Close
-                                  ffc0716b         4   func ,g         * 
+                                  ffc0716e         4   func ,g         * 
   _R_ADC_GetVersion
-                                  ffc0716f         6   func ,g         * 
+                                  ffc07172         6   func ,g         * 
 FILE=DefaultBuild\r_s12ad_rx64m.obj
-                                  ffc07175  ffc07e0e       c9a
+                                  ffc07178  ffc07e11       c9a
   _adc_open
-                                  ffc07175       21f   func ,g         * 
+                                  ffc07178       21f   func ,g         * 
   _adc_check_open_cfg
-                                  ffc07394        71   func ,l         * 
+                                  ffc07397        71   func ,l         * 
   _adc_control
-                                  ffc07405       192   func ,g         * 
+                                  ffc07408       192   func ,g         * 
   _adc_en_comparator_level0
-                                  ffc07597       136   func ,l         * 
+                                  ffc0759a       136   func ,l         * 
   _adc_s12cmpi0_isr
-                                  ffc076cd        2e   func ,g         * 
+                                  ffc076d0        2e   func ,g         * 
   _adc_s12cmpi1_isr
-                                  ffc076fb        2e   func ,g         * 
+                                  ffc076fe        2e   func ,g         * 
   _adc_get_and_clr_cmpi_flags
-                                  ffc07729        40   func ,l         * 
+                                  ffc0772c        40   func ,l         * 
   _adc_configure_scan
-                                  ffc07769       181   func ,l         * 
+                                  ffc0776c       181   func ,l         * 
   _adc_check_scan_config
-                                  ffc078ea       158   func ,l         * 
+                                  ffc078ed       158   func ,l         * 
   _adc_configure_sensors
-                                  ffc07a42        c1   func ,l         * 
+                                  ffc07a45        c1   func ,l         * 
   _adc_enable_s12adi
-                                  ffc07b03        3f   func ,l         * 
+                                  ffc07b06        3f   func ,l         * 
   _adc_enable_s12gbadi
-                                  ffc07b42        3f   func ,l         * 
+                                  ffc07b45        3f   func ,l         * 
   _adc_s12adi0_isr
-                                  ffc07b81        2c   func ,l         * 
+                                  ffc07b84        2c   func ,l         * 
   _adc_s12adi1_isr
-                                  ffc07bad        2c   func ,l         * 
+                                  ffc07bb0        2c   func ,l         * 
   _adc_s12gbadi0_isr
-                                  ffc07bd9        2c   func ,l         * 
+                                  ffc07bdc        2c   func ,l         * 
   _adc_s12gbadi1_isr
-                                  ffc07c05        2c   func ,l         * 
+                                  ffc07c08        2c   func ,l         * 
   _adc_close
-                                  ffc07c31       138   func ,g         * 
+                                  ffc07c34       138   func ,g         * 
   _adc_read_all
-                                  ffc07d69        a6   func ,g         * 
+                                  ffc07d6c        a6   func ,g         * 
 FILE=freopen
-                                  ffc07e0f  ffc07e3d        2f
+                                  ffc07e12  ffc07e40        2f
   _freopen
-                                  ffc07e0f        2f   func ,g         * 
+                                  ffc07e12        2f   func ,g         * 
 FILE=fclose
-                                  ffc07e3e  ffc07e91        54
+                                  ffc07e41  ffc07e94        54
   _fclose
-                                  ffc07e3e        54   func ,g         * 
+                                  ffc07e41        54   func ,g         * 
 FILE=printf
-                                  ffc07e92  ffc07ed0        3f
+                                  ffc07e95  ffc07ed3        3f
   _prout
-                                  ffc07e92        1d   func ,l         * 
+                                  ffc07e95        1d   func ,l         * 
   _printf
-                                  ffc07eaf        22   func ,g         * 
+                                  ffc07eb2        22   func ,g         * 
 FILE=abs
-                                  ffc07ed1  ffc07ed3         3
+                                  ffc07ed4  ffc07ed6         3
   _abs
-                                  ffc07ed1         3   func ,g         * 
+                                  ffc07ed4         3   func ,g         * 
 FILE=__COM_DIV64u
-                                  ffc07ed4  ffc07f6c        99
+                                  ffc07ed7  ffc07f6f        99
   __COM_DIV64u
-                                  ffc07ed4         0   none ,g         * 
+                                  ffc07ed7         0   none ,g         * 
   _Loop_Init
-                                  ffc07ede         0   none ,l         * 
+                                  ffc07ee1         0   none ,l         * 
   _Loop
-                                  ffc07ee6         0   none ,l         * 
+                                  ffc07ee9         0   none ,l         * 
   _DivStart
-                                  ffc07ef2         0   none ,l         * 
+                                  ffc07ef5         0   none ,l         * 
   _Success
-                                  ffc07f00         0   none ,l         * 
+                                  ffc07f03         0   none ,l         * 
   _DivEnd
-                                  ffc07f0c         0   none ,l         * 
+                                  ffc07f0f         0   none ,l         * 
   IXI6DIV
-                                  ffc07f11         0   none ,l         * 
+                                  ffc07f14         0   none ,l         * 
   IXI4DIV
-                                  ffc07f23         0   none ,l         * 
+                                  ffc07f26         0   none ,l         * 
   IXI2DIV
-                                  ffc07f33         0   none ,l         * 
+                                  ffc07f36         0   none ,l         * 
   I8I2DIV
-                                  ffc07f3b         0   none ,l         * 
+                                  ffc07f3e         0   none ,l         * 
   I4I2DIV
-                                  ffc07f69         0   none ,l         * 
-  _i8divU_End
                                   ffc07f6c         0   none ,l         * 
+  _i8divU_End
+                                  ffc07f6f         0   none ,l         * 
 FILE=__initsct
-                                  ffc07f6d  ffc07fb6        4a
+                                  ffc07f70  ffc07fb9        4a
   __INITSCT
-                                  ffc07f6d         0   none ,g         * 
+                                  ffc07f70         0   none ,g         * 
   loop1
-                                  ffc07f7f         0   none ,l         * 
+                                  ffc07f82         0   none ,l         * 
   next_loop1
-                                  ffc07f8d         0   none ,l         * 
+                                  ffc07f90         0   none ,l         * 
   loop3
-                                  ffc07f9f         0   none ,l         * 
+                                  ffc07fa2         0   none ,l         * 
   next_loop3
-                                  ffc07fb0         0   none ,l         * 
+                                  ffc07fb3         0   none ,l         * 
 FILE=tcp
-                                  ffc07fb7  ffc09e1b      1e65
+                                  ffc07fba  ffc09e1e      1e65
   _net2hl_yn_xn
-                                  ffc07fb7         f   func ,g         * 
+                                  ffc07fba         f   func ,g         * 
   __tcp_init_tcb
-                                  ffc07fc6        7b   func ,g         * 
+                                  ffc07fc9        7b   func ,g         * 
   __process_tcpip
-                                  ffc08041        87   func ,g         * 
+                                  ffc08044        87   func ,g         * 
   __proc_api
-                                  ffc080c8        9a   func ,g         * 
+                                  ffc080cb        9a   func ,g         * 
   __tcp_api_acpt
-                                  ffc08162        89   func ,g         * 
+                                  ffc08165        89   func ,g         * 
   __tcp_api_con
-                                  ffc081eb        ba   func ,g         * 
+                                  ffc081ee        ba   func ,g         * 
   __tcp_api_sht_cls
-                                  ffc082a5        eb   func ,g         * 
+                                  ffc082a8        eb   func ,g         * 
   __tcp_api_snddt
-                                  ffc08390        9f   func ,g         * 
+                                  ffc08393        9f   func ,g         * 
   __tcp_api_rcvdt
-                                  ffc0842f        ad   func ,g         * 
+                                  ffc08432        ad   func ,g         * 
   __tcp_cpy_rwdat
-                                  ffc084dc        bc   func ,g         * 
+                                  ffc084df        bc   func ,g         * 
   __proc_rcv
-                                  ffc08598       2bc   func ,g         * 
+                                  ffc0859b       2bc   func ,g         * 
   __tcp_stat
-                                  ffc08854        72   func ,g         * 
+                                  ffc08857        72   func ,g         * 
   __tcp_rcv_rst
-                                  ffc088c6       178   func ,g         * 
+                                  ffc088c9       178   func ,g         * 
   __tcp_rcv_syn
-                                  ffc08a3e       174   func ,g         * 
+                                  ffc08a41       174   func ,g         * 
   __tcp_rcv_ack
-                                  ffc08bb2       22b   func ,g         * 
+                                  ffc08bb5       22b   func ,g         * 
   __tcp_rcv_opt
-                                  ffc08ddd        a7   func ,g         * 
+                                  ffc08de0        a7   func ,g         * 
   __tcp_proc_data
-                                  ffc08e84        d0   func ,g         * 
+                                  ffc08e87        d0   func ,g         * 
   __tcp_rcv_fin
-                                  ffc08f54        fb   func ,g         * 
+                                  ffc08f57        fb   func ,g         * 
   __tcp_swin_updt
-                                  ffc0904f       11a   func ,g         * 
+                                  ffc09052       11a   func ,g         * 
   __proc_snd
-                                  ffc09169       467   func ,g         * 
+                                  ffc0916c       467   func ,g         * 
   __tcp_snd
-                                  ffc095d0       5be   func ,g         * 
+                                  ffc095d3       5be   func ,g         * 
   __tcp_cancel_api
-                                  ffc09b8e        93   func ,g         * 
+                                  ffc09b91        93   func ,g         * 
   __tcp_clr_rtq
-                                  ffc09c21        36   func ,g         * 
+                                  ffc09c24        36   func ,g         * 
   __tcp_return_listen
-                                  ffc09c57        1d   func ,g         * 
+                                  ffc09c5a        1d   func ,g         * 
   __tcp_api_wup
-                                  ffc09c74        18   func ,g         * 
+                                  ffc09c77        18   func ,g         * 
   __tcp_check_cepid_arg
-                                  ffc09c8c        1b   func ,g         * 
+                                  ffc09c8f        1b   func ,g         * 
   __tcp_check_len_arg
-                                  ffc09ca7         5   func ,g         * 
+                                  ffc09caa         5   func ,g         * 
   __tcp_check_tmout_arg
-                                  ffc09cac        3b   func ,g         * 
+                                  ffc09caf        3b   func ,g         * 
   __tcp_is_tcb_queue_over
-                                  ffc09ce7        1e   func ,g         * 
+                                  ffc09cea        1e   func ,g         * 
   __tcp_call_callback
-                                  ffc09d05        60   func ,g         * 
+                                  ffc09d08        60   func ,g         * 
   __tcp_api_type_to_fn
-                                  ffc09d65        42   func ,g         * 
+                                  ffc09d68        42   func ,g         * 
   __tcp_recv_polling
-                                  ffc09da7        6e   func ,g         * 
+                                  ffc09daa        6e   func ,g         * 
   __tcp_init_callback_info
-                                  ffc09e15         7   func ,g         * 
+                                  ffc09e18         7   func ,g         * 
 FILE=tcp_api
-                                  ffc09e1c  ffc0a7b3       998
+                                  ffc09e1f  ffc0a7b6       998
   _tcpudp_open
-                                  ffc09e1c       162   func ,g         * 
+                                  ffc09e1f       162   func ,g         * 
   _tcpudp_close
-                                  ffc09f7e         f   func ,g         * 
+                                  ffc09f81         f   func ,g         * 
   __getRAMsize_sub
-                                  ffc09f8d        10   func ,g         * 
+                                  ffc09f90        10   func ,g         * 
   __getTcpRAMsize
-                                  ffc09f9d        5a   func ,g         * 
+                                  ffc09fa0        5a   func ,g         * 
   __getUdpRAMsize
-                                  ffc09ff7         c   func ,g         * 
+                                  ffc09ffa         c   func ,g         * 
   __getIpRAMsize
-                                  ffc0a003         b   func ,g         * 
+                                  ffc0a006         b   func ,g         * 
   __getTblRAMsize
-                                  ffc0a00e        33   func ,g         * 
+                                  ffc0a011        33   func ,g         * 
   _tcpudp_get_ramsize
-                                  ffc0a041        1d   func ,g         * 
+                                  ffc0a044        1d   func ,g         * 
   _tcp_acp_cep
-                                  ffc0a05e        cd   func ,g         * 
+                                  ffc0a061        cd   func ,g         * 
   _tcp_con_cep
-                                  ffc0a12b        e0   func ,g         * 
+                                  ffc0a12e        e0   func ,g         * 
   _tcp_sht_cep
-                                  ffc0a20b        82   func ,g         * 
+                                  ffc0a20e        82   func ,g         * 
   _tcp_cls_cep
-                                  ffc0a28d        9c   func ,g         * 
+                                  ffc0a290        9c   func ,g         * 
   _tcp_snd_dat
-                                  ffc0a329        cf   func ,g         * 
+                                  ffc0a32c        cf   func ,g         * 
   _tcp_rcv_dat
-                                  ffc0a3f8       138   func ,g         * 
+                                  ffc0a3fb       138   func ,g         * 
   _tcp_can_cep
-                                  ffc0a530        90   func ,g         * 
+                                  ffc0a533        90   func ,g         * 
   __tcp_api_req
-                                  ffc0a5c0        65   func ,g         * 
+                                  ffc0a5c3        65   func ,g         * 
   __tcp_api_slp
-                                  ffc0a625        25   func ,g         * 
+                                  ffc0a628        25   func ,g         * 
   __tcp_clr_req
-                                  ffc0a64a        40   func ,g         * 
+                                  ffc0a64d        40   func ,g         * 
   _tcp_read_stat
-                                  ffc0a68a        7f   func ,g         * 
+                                  ffc0a68d        7f   func ,g         * 
   _tcp_force_clr
-                                  ffc0a709        3f   func ,g         * 
+                                  ffc0a70c        3f   func ,g         * 
   _udp_force_clr
-                                  ffc0a748        42   func ,g         * 
+                                  ffc0a74b        42   func ,g         * 
   _tcp_set_mss
-                                  ffc0a78a        2a   func ,g         * 
+                                  ffc0a78d        2a   func ,g         * 
 FILE=udp
-                                  ffc0a7b4  ffc0afbb       808
+                                  ffc0a7b7  ffc0afbe       808
   _udp_rcv_dat
-                                  ffc0a7b4       105   func ,g         * 
+                                  ffc0a7b7       105   func ,g         * 
   _udp_snd_dat
-                                  ffc0a8b9        bb   func ,g         * 
+                                  ffc0a8bc        bb   func ,g         * 
   _udp_can_cep
-                                  ffc0a974        97   func ,g         * 
+                                  ffc0a977        97   func ,g         * 
   __udp_rcv
-                                  ffc0aa0b        d4   func ,g         * 
+                                  ffc0aa0e        d4   func ,g         * 
   __udp_rcv_sub
-                                  ffc0aadf       135   func ,g         * 
+                                  ffc0aae2       135   func ,g         * 
   __udp_snd
-                                  ffc0ac14       1cf   func ,g         * 
+                                  ffc0ac17       1cf   func ,g         * 
   __udp_api_slp
-                                  ffc0ade3        18   func ,g         * 
+                                  ffc0ade6        18   func ,g         * 
   __udp_api_wup
-                                  ffc0adfb        10   func ,g         * 
+                                  ffc0adfe        10   func ,g         * 
   __proc_udp_api
-                                  ffc0ae0b        ae   func ,g         * 
+                                  ffc0ae0e        ae   func ,g         * 
   __udp_init
-                                  ffc0aeb9        23   func ,g         * 
+                                  ffc0aebc        23   func ,g         * 
   __udp_api_tmout
-                                  ffc0aedc        5c   func ,g         * 
+                                  ffc0aedf        5c   func ,g         * 
   __tcpudp_cksum
-                                  ffc0af38        50   func ,g         * 
+                                  ffc0af3b        50   func ,g         * 
   __udp_api_type_to_fn
-                                  ffc0af88        14   func ,g         * 
+                                  ffc0af8b        14   func ,g         * 
   __udp_check_cepid_arg
-                                  ffc0af9c        1b   func ,g         * 
+                                  ffc0af9f        1b   func ,g         * 
   __udp_check_len_arg
-                                  ffc0afb7         5   func ,g         * 
+                                  ffc0afba         5   func ,g         * 
 FILE=r_dsp_complex_vecCplxMag_ci32i32
-                                  ffc0afbc  ffc0b258       29d
+                                  ffc0afbf  ffc0b25b       29d
   _R_DSP_VecCplxMag_ci32i32
-                                  ffc0afbc       29d   func ,g         * 
+                                  ffc0afbf       29d   func ,g         * 
 FILE=r_dsp_FFTBufSize_f32cf32
-                                  ffc0b259  ffc0b31e        c6
+                                  ffc0b25c  ffc0b321        c6
   _R_DSP_FFT_BufSize_f32cf32
-                                  ffc0b259        c6   func ,g         * 
+                                  ffc0b25c        c6   func ,g         * 
 FILE=r_dsp_FFTInit_cf32f32
-                                  ffc0b31f  ffc0b5ea       2cc
+                                  ffc0b322  ffc0b5ed       2cc
   _R_DSP_FFT_Init_cf32f32
-                                  ffc0b31f       2cc   func ,g         * 
+                                  ffc0b322       2cc   func ,g         * 
 FILE=r_dsp_FFTInit_f32cf32
-                                  ffc0b5eb  ffc0b960       376
+                                  ffc0b5ee  ffc0b963       376
   _R_DSP_FFT_Init_f32cf32
-                                  ffc0b5eb       376   func ,g         * 
+                                  ffc0b5ee       376   func ,g         * 
 FILE=r_dsp_FFTInit_i16ci32
-                                  ffc0b961  ffc0bf08       5a8
+                                  ffc0b964  ffc0bf0b       5a8
   _R_DSP_FFT_Init_i16ci32
-                                  ffc0b961       5a8   func ,g         * 
+                                  ffc0b964       5a8   func ,g         * 
 FILE=r_dsp_FFT_cf32f32
-                                  ffc0bf09  ffc0bf63        5b
+                                  ffc0bf0c  ffc0bf66        5b
   _R_DSP_IFFT_CCS_cf32f32
-                                  ffc0bf09        5b   func ,g         * 
+                                  ffc0bf0c        5b   func ,g         * 
 FILE=r_dsp_FFT_f32cf32
-                                  ffc0bf64  ffc0bfbd        5a
+                                  ffc0bf67  ffc0bfc0        5a
   _R_DSP_FFT_f32cf32
-                                  ffc0bf64        5a   func ,g         * 
+                                  ffc0bf67        5a   func ,g         * 
 FILE=r_dsp_FFT_i16ci32
-                                  ffc0bfbe  ffc0c046        89
+                                  ffc0bfc1  ffc0c049        89
   _R_DSP_FFT_i16ci32
-                                  ffc0bfbe        89   func ,g         * 
+                                  ffc0bfc1        89   func ,g         * 
 FILE=cosf
-                                  ffc0c047  ffc0c07a        34
+                                  ffc0c04a  ffc0c07d        34
   _cosl
-                                  ffc0c047         2   func ,g         * 
+                                  ffc0c04a         2   func ,g         * 
   _cos
-                                  ffc0c049         2   func ,g         * 
+                                  ffc0c04c         2   func ,g         * 
   _cosf
-                                  ffc0c04b        30   func ,g         * 
+                                  ffc0c04e        30   func ,g         * 
 FILE=sinf
-                                  ffc0c07b  ffc0c0b9        3f
+                                  ffc0c07e  ffc0c0bc        3f
   _sinl
-                                  ffc0c07b         2   func ,g         * 
+                                  ffc0c07e         2   func ,g         * 
   _sin
-                                  ffc0c07d         2   func ,g         * 
+                                  ffc0c080         2   func ,g         * 
   _sinf
-                                  ffc0c07f        3b   func ,g         * 
+                                  ffc0c082        3b   func ,g         * 
 FILE=fwrite
-                                  ffc0c0ba  ffc0c18c        d3
+                                  ffc0c0bd  ffc0c18f        d3
   _fwrite
-                                  ffc0c0ba        d3   func ,g         * 
+                                  ffc0c0bd        d3   func ,g         * 
 FILE=fflush
-                                  ffc0c18d  ffc0c20f        83
+                                  ffc0c190  ffc0c212        83
   _fflush
-                                  ffc0c18d        83   func ,g         * 
+                                  ffc0c190        83   func ,g         * 
 FILE=xfoprep
-                                  ffc0c210  ffc0c2e5        d6
+                                  ffc0c213  ffc0c2e8        d6
   __Foprep
-                                  ffc0c210        d6   func ,g         * 
+                                  ffc0c213        d6   func ,g         * 
 FILE=xfofind
-                                  ffc0c2e6  ffc0c373        8e
+                                  ffc0c2e9  ffc0c376        8e
   __Fofind
-                                  ffc0c2e6        45   func ,g         * 
+                                  ffc0c2e9        45   func ,g         * 
   __Fofree
-                                  ffc0c32b        49   func ,g         * 
+                                  ffc0c32e        49   func ,g         * 
 FILE=xprintf
-                                  ffc0c374  ffc0c5e4       271
+                                  ffc0c377  ffc0c5e7       271
   __Printf
-                                  ffc0c374       271   func ,g         * 
+                                  ffc0c377       271   func ,g         * 
 FILE=memcmp
-                                  ffc0c5e5  ffc0c608        24
+                                  ffc0c5e8  ffc0c60b        24
   _memcmp
-                                  ffc0c5e5        24   func ,g         * 
+                                  ffc0c5e8        24   func ,g         * 
 FILE=free
-                                  ffc0c609  ffc0c68b        83
+                                  ffc0c60c  ffc0c68e        83
   _free
-                                  ffc0c609        83   func ,g         * 
+                                  ffc0c60c        83   func ,g         * 
 FILE=ether
-                                  ffc0c68c  ffc0cd11       686
+                                  ffc0c68f  ffc0cd14       686
   __ether_proc_rcv
-                                  ffc0c68c        c0   func ,g         * 
+                                  ffc0c68f        c0   func ,g         * 
   __ether_rcv_arp
-                                  ffc0c74c       101   func ,g         * 
+                                  ffc0c74f       101   func ,g         * 
   __ether_arp_resolve
-                                  ffc0c84d        19   func ,g         * 
+                                  ffc0c850        19   func ,g         * 
   __ether_snd_arp
-                                  ffc0c866        b5   func ,g         * 
+                                  ffc0c869        b5   func ,g         * 
   __ether_snd_ip
-                                  ffc0c91b       194   func ,g         * 
+                                  ffc0c91e       194   func ,g         * 
   __ether_snd
-                                  ffc0caaf       11d   func ,g         * 
+                                  ffc0cab2       11d   func ,g         * 
   __ether_arp_add
-                                  ffc0cbcc       10a   func ,g         * 
+                                  ffc0cbcf       10a   func ,g         * 
   __ether_arp_del
-                                  ffc0ccd6         b   func ,g         * 
+                                  ffc0ccd9         b   func ,g         * 
   __ether_arp_init
-                                  ffc0cce1        31   func ,g         * 
+                                  ffc0cce4        31   func ,g         * 
 FILE=ip
-                                  ffc0cd12  ffc0d00b       2fa
+                                  ffc0cd15  ffc0d00e       2fa
   __ip_rcv_hdr
-                                  ffc0cd12        ff   func ,g         * 
+                                  ffc0cd15        ff   func ,g         * 
   __ip_snd
-                                  ffc0ce11        a3   func ,g         * 
+                                  ffc0ce14        a3   func ,g         * 
   __ip_snd_icmp
-                                  ffc0ceb4         c   func ,g         * 
+                                  ffc0ceb7         c   func ,g         * 
   __ip_chk_srcip
-                                  ffc0cec0        3c   func ,l         * 
+                                  ffc0cec3        3c   func ,l         * 
   __ip_check_ipadd_proto
-                                  ffc0cefc        71   func ,g         * 
+                                  ffc0ceff        71   func ,g         * 
   __ip_check_multicast
-                                  ffc0cf6d        39   func ,g         * 
+                                  ffc0cf70        39   func ,g         * 
   __ip_check_broadcast
-                                  ffc0cfa6        66   func ,g         * 
+                                  ffc0cfa9        66   func ,g         * 
 FILE=cksum_rx_little
-                                  ffc0d00c  ffc0d0fa        ef
+                                  ffc0d00f  ffc0d0fd        ef
   __cksum
-                                  ffc0d00c         0   none ,g         * 
+                                  ffc0d00f         0   none ,g         * 
   ..tl0001
-                                  ffc0d032         0   none ,l         * 
+                                  ffc0d035         0   none ,l         * 
   CKSUM_ODD_NEXT4
-                                  ffc0d04a         0   none ,l         * 
+                                  ffc0d04d         0   none ,l         * 
   CKSUM_ODD_NEXT2
-                                  ffc0d058         0   none ,l         * 
+                                  ffc0d05b         0   none ,l         * 
   CKSUM_ODD_NEXT1
-                                  ffc0d060         0   none ,l         * 
+                                  ffc0d063         0   none ,l         * 
   CKSUM_ODD_NBYTES_NOT_ODD
-                                  ffc0d073         0   none ,l         * 
+                                  ffc0d076         0   none ,l         * 
   CKSUM_EVEN
-                                  ffc0d091         0   none ,l         * 
+                                  ffc0d094         0   none ,l         * 
   ..tl0002
-                                  ffc0d096         0   none ,l         * 
+                                  ffc0d099         0   none ,l         * 
   CKSUM_EVEN_NEXT4
-                                  ffc0d0ae         0   none ,l         * 
+                                  ffc0d0b1         0   none ,l         * 
   CKSUM_EVEN_NEXT2
-                                  ffc0d0bc         0   none ,l         * 
+                                  ffc0d0bf         0   none ,l         * 
   CKSUM_EVEN_NEXT1
-                                  ffc0d0c4         0   none ,l         * 
+                                  ffc0d0c7         0   none ,l         * 
   CKSUM_EVEN_NBYTES_NOT_ODD
-                                  ffc0d0d7         0   none ,l         * 
+                                  ffc0d0da         0   none ,l         * 
   CKSUM_EXIT
-                                  ffc0d0ea         0   none ,l         * 
+                                  ffc0d0ed         0   none ,l         * 
   CKSUM_ZERO_EXIT
-                                  ffc0d0f2         0   none ,l         * 
+                                  ffc0d0f5         0   none ,l         * 
 FILE=r_dsp_complexMagnitude_ci32i32
-                                  ffc0d0fb  ffc0d10e        14
+                                  ffc0d0fe  ffc0d111        14
   _R_DSP_CplxMag_ci32i32
-                                  ffc0d0fb         0   none ,g         * 
+                                  ffc0d0fe         0   none ,g         * 
 FILE=r_fix29cos_asm
-                                  ffc0d10f  ffc0d1cf        c1
+                                  ffc0d112  ffc0d1d2        c1
   _FIX29_cos
-                                  ffc0d10f         0   none ,g         * 
+                                  ffc0d112         0   none ,g         * 
   L13
-                                  ffc0d11b         0   none ,l         * 
+                                  ffc0d11e         0   none ,l         * 
   L15
-                                  ffc0d134         0   none ,l         * 
+                                  ffc0d137         0   none ,l         * 
   L20
-                                  ffc0d180         0   none ,l         * 
+                                  ffc0d183         0   none ,l         * 
   L18
-                                  ffc0d1cc         0   none ,l         * 
+                                  ffc0d1cf         0   none ,l         * 
 FILE=r_fix29sin_asm
-                                  ffc0d1d0  ffc0d25f        90
+                                  ffc0d1d3  ffc0d262        90
   _FIX29_sin
-                                  ffc0d1d0         0   none ,g         * 
+                                  ffc0d1d3         0   none ,g         * 
   L14
-                                  ffc0d1e2         0   none ,l         * 
+                                  ffc0d1e5         0   none ,l         * 
   L16
-                                  ffc0d1fd         0   none ,l         * 
+                                  ffc0d200         0   none ,l         * 
   L21
-                                  ffc0d214         0   none ,l         * 
+                                  ffc0d217         0   none ,l         * 
   L23
-                                  ffc0d258         0   none ,l         * 
-  LPI
                                   ffc0d25b         0   none ,l         * 
+  LPI
+                                  ffc0d25e         0   none ,l         * 
 FILE=r_rfft_f32cf32_rxv2
-                                  ffc0d260  ffc0d8c1       662
+                                  ffc0d263  ffc0d8c4       662
   _R_rfft_f32cf32
-                                  ffc0d260         0   none ,g         * 
+                                  ffc0d263         0   none ,g         * 
   ..tl0001
-                                  ffc0d273         0   none ,l         * 
+                                  ffc0d276         0   none ,l         * 
   NoWindow
-                                  ffc0d2a9         0   none ,l         * 
+                                  ffc0d2ac         0   none ,l         * 
   ..tl0002
-                                  ffc0d2ab         0   none ,l         * 
+                                  ffc0d2ae         0   none ,l         * 
   CALC_LOGN
-                                  ffc0d2c7         0   none ,l         * 
+                                  ffc0d2ca         0   none ,l         * 
   CALC_FFT
-                                  ffc0d321         0   none ,l         * 
+                                  ffc0d324         0   none ,l         * 
   ..tl0003
-                                  ffc0d34c         0   none ,l         * 
+                                  ffc0d34f         0   none ,l         * 
   ..tl0004
-                                  ffc0d359         0   none ,l         * 
+                                  ffc0d35c         0   none ,l         * 
   CHECK_FFT_LOOP
-                                  ffc0d368         0   none ,l         * 
+                                  ffc0d36b         0   none ,l         * 
   _fft1st2nd
-                                  ffc0d381         0   none ,l         * 
+                                  ffc0d384         0   none ,l         * 
   ..tl0005
-                                  ffc0d38e         0   none ,l         * 
+                                  ffc0d391         0   none ,l         * 
   _fftN_N1
-                                  ffc0d461         0   none ,l         * 
+                                  ffc0d464         0   none ,l         * 
   fftN_N1_LOOP
-                                  ffc0d473         0   none ,l         * 
+                                  ffc0d476         0   none ,l         * 
   ..tl0006
-                                  ffc0d481         0   none ,l         * 
+                                  ffc0d484         0   none ,l         * 
   _fftNth
-                                  ffc0d57b         0   none ,l         * 
+                                  ffc0d57e         0   none ,l         * 
   fftNth_LOOP
-                                  ffc0d581         0   none ,l         * 
+                                  ffc0d584         0   none ,l         * 
   ..tl0007
-                                  ffc0d589         0   none ,l         * 
+                                  ffc0d58c         0   none ,l         * 
   _fftLast2
-                                  ffc0d5c9         0   none ,l         * 
+                                  ffc0d5cc         0   none ,l         * 
   ..tl0008
-                                  ffc0d5d9         0   none ,l         * 
+                                  ffc0d5dc         0   none ,l         * 
   _wasaNew
-                                  ffc0d639         0   none ,l         * 
+                                  ffc0d63c         0   none ,l         * 
   ..tl0009
-                                  ffc0d660         0   none ,l         * 
+                                  ffc0d663         0   none ,l         * 
   _brev4
-                                  ffc0d6b8         0   none ,l         * 
+                                  ffc0d6bb         0   none ,l         * 
   ..tl000A
-                                  ffc0d6c5         0   none ,l         * 
+                                  ffc0d6c8         0   none ,l         * 
   _R_irfft_cf32f32
-                                  ffc0d6e9         0   none ,g         * 
+                                  ffc0d6ec         0   none ,g         * 
   ..tl000B
-                                  ffc0d6f5         0   none ,l         * 
+                                  ffc0d6f8         0   none ,l         * 
   CALC_IFFT
-                                  ffc0d776         0   none ,l         * 
+                                  ffc0d779         0   none ,l         * 
   ..tl000C
-                                  ffc0d7a1         0   none ,l         * 
+                                  ffc0d7a4         0   none ,l         * 
   ..tl000D
-                                  ffc0d7ae         0   none ,l         * 
+                                  ffc0d7b1         0   none ,l         * 
   CHECK_IFFT_LOOP
-                                  ffc0d7bd         0   none ,l         * 
+                                  ffc0d7c0         0   none ,l         * 
   ..tl000E
-                                  ffc0d7fd         0   none ,l         * 
+                                  ffc0d800         0   none ,l         * 
   _iwasaNew
-                                  ffc0d83e         0   none ,l         * 
+                                  ffc0d841         0   none ,l         * 
   ..tl000F
-                                  ffc0d86b         0   none ,l         * 
+                                  ffc0d86e         0   none ,l         * 
 FILE=r_dsp_rfft_i16ci32_rxv2
-                                  ffc0d8c2  ffc0ddc6       505
+                                  ffc0d8c5  ffc0ddc9       505
   _R_rfft_i16ci32
-                                  ffc0d8c2         0   none ,g         * 
+                                  ffc0d8c5         0   none ,g         * 
   ..tl0001
-                                  ffc0d8d5         0   none ,l         * 
+                                  ffc0d8d8         0   none ,l         * 
   NoWindow
-                                  ffc0d90b         0   none ,l         * 
+                                  ffc0d90e         0   none ,l         * 
   ..tl0002
-                                  ffc0d90d         0   none ,l         * 
+                                  ffc0d910         0   none ,l         * 
   CALC_LOGN
-                                  ffc0d931         0   none ,l         * 
+                                  ffc0d934         0   none ,l         * 
   CALC_FFT
-                                  ffc0d98b         0   none ,l         * 
+                                  ffc0d98e         0   none ,l         * 
   ..tl0003
-                                  ffc0d9b6         0   none ,l         * 
+                                  ffc0d9b9         0   none ,l         * 
   ..tl0004
-                                  ffc0d9c3         0   none ,l         * 
+                                  ffc0d9c6         0   none ,l         * 
   CHECK_FFT_LOOP
-                                  ffc0d9d2         0   none ,l         * 
+                                  ffc0d9d5         0   none ,l         * 
   _fft1st2nd
-                                  ffc0d9eb         0   none ,l         * 
+                                  ffc0d9ee         0   none ,l         * 
   ..tl0005
-                                  ffc0d9f6         0   none ,l         * 
+                                  ffc0d9f9         0   none ,l         * 
   _fftN_N1
-                                  ffc0daf8         0   none ,l         * 
+                                  ffc0dafb         0   none ,l         * 
   fftN_N1_LOOP
-                                  ffc0db0a         0   none ,l         * 
+                                  ffc0db0d         0   none ,l         * 
   ..tl0006
-                                  ffc0db14         0   none ,l         * 
+                                  ffc0db17         0   none ,l         * 
   _fftNth
-                                  ffc0dc25         0   none ,l         * 
+                                  ffc0dc28         0   none ,l         * 
   fftNth_LOOP
-                                  ffc0dc2b         0   none ,l         * 
+                                  ffc0dc2e         0   none ,l         * 
   ..tl0007
-                                  ffc0dc33         0   none ,l         * 
+                                  ffc0dc36         0   none ,l         * 
   _fftLast2
-                                  ffc0dc77         0   none ,l         * 
+                                  ffc0dc7a         0   none ,l         * 
   ..tl0008
-                                  ffc0dc87         0   none ,l         * 
+                                  ffc0dc8a         0   none ,l         * 
   _wasaNew
-                                  ffc0dcdf         0   none ,l         * 
+                                  ffc0dce2         0   none ,l         * 
   ..tl0009
-                                  ffc0dd0a         0   none ,l         * 
+                                  ffc0dd0d         0   none ,l         * 
   _brev4
-                                  ffc0dd96         0   none ,l         * 
+                                  ffc0dd99         0   none ,l         * 
   ..tl000A
-                                  ffc0dda3         0   none ,l         * 
+                                  ffc0dda6         0   none ,l         * 
 FILE=r_dsp_rfft_sc_i16ci32_rxv2
-                                  ffc0ddc7  ffc0e2db       515
+                                  ffc0ddca  ffc0e2de       515
   _R_rfft_sc_i16ci32
-                                  ffc0ddc7         0   none ,g         * 
+                                  ffc0ddca         0   none ,g         * 
   ..tl0001
-                                  ffc0ddda         0   none ,l         * 
+                                  ffc0dddd         0   none ,l         * 
   NoWindow
-                                  ffc0de10         0   none ,l         * 
+                                  ffc0de13         0   none ,l         * 
   ..tl0002
-                                  ffc0de12         0   none ,l         * 
+                                  ffc0de15         0   none ,l         * 
   CALC_LOGN
-                                  ffc0de36         0   none ,l         * 
+                                  ffc0de39         0   none ,l         * 
   CALC_FFT
-                                  ffc0de90         0   none ,l         * 
+                                  ffc0de93         0   none ,l         * 
   ..tl0003
-                                  ffc0debb         0   none ,l         * 
+                                  ffc0debe         0   none ,l         * 
   ..tl0004
-                                  ffc0dec8         0   none ,l         * 
+                                  ffc0decb         0   none ,l         * 
   CHECK_FFT_LOOP
-                                  ffc0ded7         0   none ,l         * 
+                                  ffc0deda         0   none ,l         * 
   _fft1st2nd
-                                  ffc0def0         0   none ,l         * 
+                                  ffc0def3         0   none ,l         * 
   ..tl0005
-                                  ffc0defb         0   none ,l         * 
+                                  ffc0defe         0   none ,l         * 
   _fftN_N1
-                                  ffc0dff9         0   none ,l         * 
+                                  ffc0dffc         0   none ,l         * 
   fftN_N1_LOOP
-                                  ffc0e00b         0   none ,l         * 
+                                  ffc0e00e         0   none ,l         * 
   ..tl0006
-                                  ffc0e015         0   none ,l         * 
+                                  ffc0e018         0   none ,l         * 
   _fftNth
-                                  ffc0e122         0   none ,l         * 
+                                  ffc0e125         0   none ,l         * 
   fftNth_LOOP
-                                  ffc0e128         0   none ,l         * 
+                                  ffc0e12b         0   none ,l         * 
   ..tl0007
-                                  ffc0e130         0   none ,l         * 
+                                  ffc0e133         0   none ,l         * 
   _fftLast2
-                                  ffc0e17c         0   none ,l         * 
+                                  ffc0e17f         0   none ,l         * 
   ..tl0008
-                                  ffc0e18c         0   none ,l         * 
+                                  ffc0e18f         0   none ,l         * 
   _wasaNew
-                                  ffc0e1f4         0   none ,l         * 
+                                  ffc0e1f7         0   none ,l         * 
   ..tl0009
-                                  ffc0e21f         0   none ,l         * 
+                                  ffc0e222         0   none ,l         * 
   _brev4
-                                  ffc0e2ab         0   none ,l         * 
+                                  ffc0e2ae         0   none ,l         * 
   ..tl000A
-                                  ffc0e2b8         0   none ,l         * 
+                                  ffc0e2bb         0   none ,l         * 
 FILE=r_dsp_rfft_sc_tw32_i16ci32_rxv2
-                                  ffc0e2dc  ffc0e7df       504
+                                  ffc0e2df  ffc0e7e2       504
   _R_rfft_sc_tw32_i16ci32
-                                  ffc0e2dc         0   none ,g         * 
+                                  ffc0e2df         0   none ,g         * 
   ..tl0001
-                                  ffc0e2ef         0   none ,l         * 
+                                  ffc0e2f2         0   none ,l         * 
   NoWindow
-                                  ffc0e325         0   none ,l         * 
+                                  ffc0e328         0   none ,l         * 
   ..tl0002
-                                  ffc0e327         0   none ,l         * 
+                                  ffc0e32a         0   none ,l         * 
   CALC_LOGN
-                                  ffc0e34b         0   none ,l         * 
+                                  ffc0e34e         0   none ,l         * 
   CALC_FFT
-                                  ffc0e3a5         0   none ,l         * 
+                                  ffc0e3a8         0   none ,l         * 
   ..tl0003
-                                  ffc0e3d0         0   none ,l         * 
+                                  ffc0e3d3         0   none ,l         * 
   ..tl0004
-                                  ffc0e3dd         0   none ,l         * 
+                                  ffc0e3e0         0   none ,l         * 
   CHECK_FFT_LOOP
-                                  ffc0e3ec         0   none ,l         * 
+                                  ffc0e3ef         0   none ,l         * 
   _fft1st2nd
-                                  ffc0e405         0   none ,l         * 
+                                  ffc0e408         0   none ,l         * 
   ..tl0005
-                                  ffc0e410         0   none ,l         * 
+                                  ffc0e413         0   none ,l         * 
   _fftN_N1
-                                  ffc0e50a         0   none ,l         * 
+                                  ffc0e50d         0   none ,l         * 
   fftN_N1_LOOP
-                                  ffc0e51c         0   none ,l         * 
+                                  ffc0e51f         0   none ,l         * 
   ..tl0006
-                                  ffc0e526         0   none ,l         * 
+                                  ffc0e529         0   none ,l         * 
   _fftNth
-                                  ffc0e630         0   none ,l         * 
+                                  ffc0e633         0   none ,l         * 
   fftNth_LOOP
-                                  ffc0e636         0   none ,l         * 
+                                  ffc0e639         0   none ,l         * 
   ..tl0007
-                                  ffc0e63e         0   none ,l         * 
+                                  ffc0e641         0   none ,l         * 
   _fftLast2
-                                  ffc0e68a         0   none ,l         * 
+                                  ffc0e68d         0   none ,l         * 
   ..tl0008
-                                  ffc0e69a         0   none ,l         * 
+                                  ffc0e69d         0   none ,l         * 
   _wasaNew
-                                  ffc0e702         0   none ,l         * 
+                                  ffc0e705         0   none ,l         * 
   ..tl0009
-                                  ffc0e728         0   none ,l         * 
+                                  ffc0e72b         0   none ,l         * 
   _brev4
-                                  ffc0e7af         0   none ,l         * 
+                                  ffc0e7b2         0   none ,l         * 
   ..tl000A
-                                  ffc0e7bc         0   none ,l         * 
+                                  ffc0e7bf         0   none ,l         * 
 FILE=r_dsp_rfft_tw32_i16ci32_rxv2
-                                  ffc0e7e0  ffc0ecd3       4f4
+                                  ffc0e7e3  ffc0ecd6       4f4
   _R_rfft_tw32_i16ci32
-                                  ffc0e7e0         0   none ,g         * 
+                                  ffc0e7e3         0   none ,g         * 
   ..tl0001
-                                  ffc0e7f3         0   none ,l         * 
+                                  ffc0e7f6         0   none ,l         * 
   NoWindow
-                                  ffc0e829         0   none ,l         * 
+                                  ffc0e82c         0   none ,l         * 
   ..tl0002
-                                  ffc0e82b         0   none ,l         * 
+                                  ffc0e82e         0   none ,l         * 
   CALC_LOGN
-                                  ffc0e84f         0   none ,l         * 
+                                  ffc0e852         0   none ,l         * 
   CALC_FFT
-                                  ffc0e8a9         0   none ,l         * 
+                                  ffc0e8ac         0   none ,l         * 
   ..tl0003
-                                  ffc0e8d4         0   none ,l         * 
+                                  ffc0e8d7         0   none ,l         * 
   ..tl0004
-                                  ffc0e8e1         0   none ,l         * 
+                                  ffc0e8e4         0   none ,l         * 
   CHECK_FFT_LOOP
-                                  ffc0e8f0         0   none ,l         * 
+                                  ffc0e8f3         0   none ,l         * 
   _fft1st2nd
-                                  ffc0e909         0   none ,l         * 
+                                  ffc0e90c         0   none ,l         * 
   ..tl0005
-                                  ffc0e914         0   none ,l         * 
+                                  ffc0e917         0   none ,l         * 
   _fftN_N1
-                                  ffc0ea12         0   none ,l         * 
+                                  ffc0ea15         0   none ,l         * 
   fftN_N1_LOOP
-                                  ffc0ea24         0   none ,l         * 
+                                  ffc0ea27         0   none ,l         * 
   ..tl0006
-                                  ffc0ea2e         0   none ,l         * 
+                                  ffc0ea31         0   none ,l         * 
   _fftNth
-                                  ffc0eb3c         0   none ,l         * 
+                                  ffc0eb3f         0   none ,l         * 
   fftNth_LOOP
-                                  ffc0eb42         0   none ,l         * 
+                                  ffc0eb45         0   none ,l         * 
   ..tl0007
-                                  ffc0eb4a         0   none ,l         * 
+                                  ffc0eb4d         0   none ,l         * 
   _fftLast2
-                                  ffc0eb8e         0   none ,l         * 
+                                  ffc0eb91         0   none ,l         * 
   ..tl0008
-                                  ffc0eb9e         0   none ,l         * 
+                                  ffc0eba1         0   none ,l         * 
   _wasaNew
-                                  ffc0ebf6         0   none ,l         * 
+                                  ffc0ebf9         0   none ,l         * 
   ..tl0009
-                                  ffc0ec1c         0   none ,l         * 
+                                  ffc0ec1f         0   none ,l         * 
   _brev4
-                                  ffc0eca3         0   none ,l         * 
+                                  ffc0eca6         0   none ,l         * 
   ..tl000A
-                                  ffc0ecb0         0   none ,l         * 
+                                  ffc0ecb3         0   none ,l         * 
 FILE=r_dsp_rfft_x2_i16ci32_rxv2
-                                  ffc0ecd4  ffc0f1c0       4ed
+                                  ffc0ecd7  ffc0f1c3       4ed
   _R_rfft_x2_i16ci32
-                                  ffc0ecd4         0   none ,g         * 
+                                  ffc0ecd7         0   none ,g         * 
   ..tl0001
-                                  ffc0ece7         0   none ,l         * 
+                                  ffc0ecea         0   none ,l         * 
   NoWindow
-                                  ffc0ed1d         0   none ,l         * 
+                                  ffc0ed20         0   none ,l         * 
   ..tl0002
-                                  ffc0ed1f         0   none ,l         * 
+                                  ffc0ed22         0   none ,l         * 
   CALC_LOGN
-                                  ffc0ed43         0   none ,l         * 
+                                  ffc0ed46         0   none ,l         * 
   CALC_FFT
-                                  ffc0ed9d         0   none ,l         * 
+                                  ffc0eda0         0   none ,l         * 
   ..tl0003
-                                  ffc0edc8         0   none ,l         * 
+                                  ffc0edcb         0   none ,l         * 
   ..tl0004
-                                  ffc0edd5         0   none ,l         * 
+                                  ffc0edd8         0   none ,l         * 
   CHECK_FFT_LOOP
-                                  ffc0ede4         0   none ,l         * 
+                                  ffc0ede7         0   none ,l         * 
   _fft1st2nd
-                                  ffc0edfd         0   none ,l         * 
+                                  ffc0ee00         0   none ,l         * 
   ..tl0005
-                                  ffc0ee08         0   none ,l         * 
+                                  ffc0ee0b         0   none ,l         * 
   _fftN_N1
-                                  ffc0eef6         0   none ,l         * 
+                                  ffc0eef9         0   none ,l         * 
   fftN_N1_LOOP
-                                  ffc0ef08         0   none ,l         * 
+                                  ffc0ef0b         0   none ,l         * 
   ..tl0006
-                                  ffc0ef12         0   none ,l         * 
+                                  ffc0ef15         0   none ,l         * 
   _fftNth
-                                  ffc0f00f         0   none ,l         * 
+                                  ffc0f012         0   none ,l         * 
   fftNth_LOOP
-                                  ffc0f015         0   none ,l         * 
+                                  ffc0f018         0   none ,l         * 
   ..tl0007
-                                  ffc0f01d         0   none ,l         * 
+                                  ffc0f020         0   none ,l         * 
   _fftLast2
-                                  ffc0f061         0   none ,l         * 
+                                  ffc0f064         0   none ,l         * 
   ..tl0008
-                                  ffc0f071         0   none ,l         * 
+                                  ffc0f074         0   none ,l         * 
   _wasaNew
-                                  ffc0f0d9         0   none ,l         * 
+                                  ffc0f0dc         0   none ,l         * 
   ..tl0009
-                                  ffc0f104         0   none ,l         * 
+                                  ffc0f107         0   none ,l         * 
   _brev4
-                                  ffc0f190         0   none ,l         * 
+                                  ffc0f193         0   none ,l         * 
   ..tl000A
-                                  ffc0f19d         0   none ,l         * 
+                                  ffc0f1a0         0   none ,l         * 
 FILE=r_dsp_rfft_x2_tw32_i16ci32_rxv2
-                                  ffc0f1c1  ffc0f69c       4dc
+                                  ffc0f1c4  ffc0f69f       4dc
   _R_rfft_x2_tw32_i16ci32
-                                  ffc0f1c1         0   none ,g         * 
+                                  ffc0f1c4         0   none ,g         * 
   ..tl0001
-                                  ffc0f1d4         0   none ,l         * 
+                                  ffc0f1d7         0   none ,l         * 
   NoWindow
-                                  ffc0f20a         0   none ,l         * 
+                                  ffc0f20d         0   none ,l         * 
   ..tl0002
-                                  ffc0f20c         0   none ,l         * 
+                                  ffc0f20f         0   none ,l         * 
   CALC_LOGN
-                                  ffc0f230         0   none ,l         * 
+                                  ffc0f233         0   none ,l         * 
   CALC_FFT
-                                  ffc0f28a         0   none ,l         * 
+                                  ffc0f28d         0   none ,l         * 
   ..tl0003
-                                  ffc0f2b5         0   none ,l         * 
+                                  ffc0f2b8         0   none ,l         * 
   ..tl0004
-                                  ffc0f2c2         0   none ,l         * 
+                                  ffc0f2c5         0   none ,l         * 
   CHECK_FFT_LOOP
-                                  ffc0f2d1         0   none ,l         * 
+                                  ffc0f2d4         0   none ,l         * 
   _fft1st2nd
-                                  ffc0f2ea         0   none ,l         * 
+                                  ffc0f2ed         0   none ,l         * 
   ..tl0005
-                                  ffc0f2f5         0   none ,l         * 
+                                  ffc0f2f8         0   none ,l         * 
   _fftN_N1
-                                  ffc0f3df         0   none ,l         * 
+                                  ffc0f3e2         0   none ,l         * 
   fftN_N1_LOOP
-                                  ffc0f3f1         0   none ,l         * 
+                                  ffc0f3f4         0   none ,l         * 
   ..tl0006
-                                  ffc0f3fb         0   none ,l         * 
+                                  ffc0f3fe         0   none ,l         * 
   _fftNth
-                                  ffc0f4f5         0   none ,l         * 
+                                  ffc0f4f8         0   none ,l         * 
   fftNth_LOOP
-                                  ffc0f4fb         0   none ,l         * 
+                                  ffc0f4fe         0   none ,l         * 
   ..tl0007
-                                  ffc0f503         0   none ,l         * 
+                                  ffc0f506         0   none ,l         * 
   _fftLast2
-                                  ffc0f547         0   none ,l         * 
+                                  ffc0f54a         0   none ,l         * 
   ..tl0008
-                                  ffc0f557         0   none ,l         * 
+                                  ffc0f55a         0   none ,l         * 
   _wasaNew
-                                  ffc0f5bf         0   none ,l         * 
+                                  ffc0f5c2         0   none ,l         * 
   ..tl0009
-                                  ffc0f5e5         0   none ,l         * 
+                                  ffc0f5e8         0   none ,l         * 
   _brev4
-                                  ffc0f66c         0   none ,l         * 
+                                  ffc0f66f         0   none ,l         * 
   ..tl000A
-                                  ffc0f679         0   none ,l         * 
+                                  ffc0f67c         0   none ,l         * 
 FILE=sincosfsub
-                                  ffc0f69d  ffc0f784        e8
+                                  ffc0f6a0  ffc0f787        e8
   ___poly_sinf
-                                  ffc0f69d        31   func ,g         * 
+                                  ffc0f6a0        31   func ,g         * 
   ___poly_cosf
-                                  ffc0f6ce        28   func ,g         * 
+                                  ffc0f6d1        28   func ,g         * 
   _poly_cosfn
-                                  ffc0f6f6         7   func ,l         * 
+                                  ffc0f6f9         7   func ,l         * 
   _poly_sinfn
-                                  ffc0f6fd         5   func ,l         * 
+                                  ffc0f700         5   func ,l         * 
   _sincosf_special
-                                  ffc0f702        33   func ,l         * 
+                                  ffc0f705        33   func ,l         * 
   ___internal_sincosf
-                                  ffc0f735        50   func ,g         * 
+                                  ffc0f738        50   func ,g         * 
 FILE=xfwprep
-                                  ffc0f785  ffc0f81d        99
+                                  ffc0f788  ffc0f820        99
   __Fwprep
-                                  ffc0f785        99   func ,g         * 
+                                  ffc0f788        99   func ,g         * 
 FILE=xputfld
-                                  ffc0f81e  ffc0fcb4       497
+                                  ffc0f821  ffc0fcb7       497
   __Putfld
-                                  ffc0f81e       497   func ,g         * 
+                                  ffc0f821       497   func ,g         * 
 FILE=xfopen
-                                  ffc0fcb5  ffc0fce4        30
+                                  ffc0fcb8  ffc0fce7        30
   __Fopen
-                                  ffc0fcb5        30   func ,g         * 
+                                  ffc0fcb8        30   func ,g         * 
 FILE=xvacopy
-                                  ffc0fce5  ffc0fcec         8
+                                  ffc0fce8  ffc0fcef         8
   __Vacopy
-                                  ffc0fce5         8   func ,g         * 
+                                  ffc0fce8         8   func ,g         * 
 FILE=xputtxt
-                                  ffc0fced  ffc0ffd1       2e5
+                                  ffc0fcf0  ffc0ffd4       2e5
   __Puttxt
-                                  ffc0fced       2e5   func ,g         * 
+                                  ffc0fcf0       2e5   func ,g         * 
 FILE=strchr
-                                  ffc0ffd2  ffc0ffe4        13
+                                  ffc0ffd5  ffc0ffe7        13
   _strchr
-                                  ffc0ffd2        13   func ,g         * 
+                                  ffc0ffd5        13   func ,g         * 
 FILE=xctype
-                                  ffc0ffe5  ffc0fffa        16
+                                  ffc0ffe8  ffc0fffd        16
   __Getpctype
-                                  ffc0ffe5        16   func ,g         * 
+                                  ffc0ffe8        16   func ,g         * 
 FILE=malloc
-                                  ffc0fffb  ffc100d8        de
+                                  ffc0fffe  ffc100db        de
   _findmem
-                                  ffc0fffb        7b   func ,l         * 
+                                  ffc0fffe        7b   func ,l         * 
   _malloc
-                                  ffc10076        63   func ,g         * 
+                                  ffc10079        63   func ,g         * 
 FILE=r_dsp_sqrt_int_rx
-                                  ffc100d9  ffc10255       17d
+                                  ffc100dc  ffc10258       17d
   _R_sqrt_int32
-                                  ffc100d9         0   none ,g         * 
+                                  ffc100dc         0   none ,g         * 
   _R_sqrtBody
-                                  ffc100dd         0   none ,l         * 
+                                  ffc100e0         0   none ,l         * 
   ..tl0001
-                                  ffc100ee         0   none ,l         * 
+                                  ffc100f1         0   none ,l         * 
   SQRT32LOOP
-                                  ffc100f6         0   none ,l         * 
+                                  ffc100f9         0   none ,l         * 
   SQRT32EXIT
-                                  ffc1010b         0   none ,l         * 
+                                  ffc1010e         0   none ,l         * 
   ..tl0002
-                                  ffc10110         0   none ,l         * 
+                                  ffc10113         0   none ,l         * 
   _R_sqrt_rem_int32
-                                  ffc10111         0   none ,l         * 
+                                  ffc10114         0   none ,l         * 
   SQRTREM32EXIT
-                                  ffc1015e         0   none ,l         * 
+                                  ffc10161         0   none ,l         * 
   ..tl0003
-                                  ffc10163         0   none ,l         * 
+                                  ffc10166         0   none ,l         * 
   SQRTREM32NONOR
-                                  ffc10168         0   none ,l         * 
+                                  ffc1016b         0   none ,l         * 
   _R_sqrtBody64
-                                  ffc10170         0   none ,l         * 
+                                  ffc10173         0   none ,l         * 
   ..tl0004
-                                  ffc10192         0   none ,l         * 
+                                  ffc10195         0   none ,l         * 
   SQRT64QPRE
-                                  ffc1019a         0   none ,l         * 
+                                  ffc1019d         0   none ,l         * 
   SQRT64QLOOP
-                                  ffc1019b         0   none ,l         * 
+                                  ffc1019e         0   none ,l         * 
   ..tl0005
-                                  ffc101a3         0   none ,l         * 
+                                  ffc101a6         0   none ,l         * 
   SQRTCMP1_NEXT
-                                  ffc101a8         0   none ,l         * 
+                                  ffc101ab         0   none ,l         * 
   SQRT64LOOP
-                                  ffc101aa         0   none ,l         * 
+                                  ffc101ad         0   none ,l         * 
   SQRTCMP2_NEXT
-                                  ffc101b1         0   none ,l         * 
+                                  ffc101b4         0   none ,l         * 
   SQRTCMP3_NEXT
-                                  ffc101ca         0   none ,l         * 
+                                  ffc101cd         0   none ,l         * 
   SQRT64EXIT
-                                  ffc101d8         0   none ,l         * 
+                                  ffc101db         0   none ,l         * 
   ..tl0006
-                                  ffc101dd         0   none ,l         * 
+                                  ffc101e0         0   none ,l         * 
   _R_sqrt_int64
-                                  ffc101e2         0   none ,g         * 
+                                  ffc101e5         0   none ,g         * 
   ..tl0007
-                                  ffc10241         0   none ,l         * 
+                                  ffc10244         0   none ,l         * 
   SQRT64SQRT32
-                                  ffc10246         0   none ,l         * 
+                                  ffc10249         0   none ,l         * 
   SQRT64BODY64
-                                  ffc1024e         0   none ,l         * 
+                                  ffc10251         0   none ,l         * 
 FILE=fmodf
-                                  ffc10256  ffc10287        32
+                                  ffc10259  ffc1028a        32
   _fmodl
-                                  ffc10256         2   func ,g         * 
+                                  ffc10259         2   func ,g         * 
   _fmod
-                                  ffc10258         2   func ,g         * 
+                                  ffc1025b         2   func ,g         * 
   _fmodf
-                                  ffc1025a        2e   func ,g         * 
+                                  ffc1025d        2e   func ,g         * 
 FILE=nanfval
-                                  ffc10288  ffc1028e         7
+                                  ffc1028b  ffc10291         7
   ___nanf_value
-                                  ffc10288         7   func ,g         * 
+                                  ffc1028b         7   func ,g         * 
 FILE=xldtob
-                                  ffc1028f  ffc1067e       3f0
+                                  ffc10292  ffc10681       3f0
   __Ldtob
-                                  ffc1028f       3f0   func ,g         * 
+                                  ffc10292       3f0   func ,g         * 
 FILE=xputstr
-                                  ffc1067f  ffc1075e        e0
+                                  ffc10682  ffc10761        e0
   __Putstr
-                                  ffc1067f        e0   func ,g         * 
+                                  ffc10682        e0   func ,g         * 
 FILE=xlitob
-                                  ffc1075f  ffc10874       116
+                                  ffc10762  ffc10877       116
   __Litob
-                                  ffc1075f       116   func ,g         * 
+                                  ffc10762       116   func ,g         * 
 FILE=xgetmem
-                                  ffc10875  ffc1088f        1b
+                                  ffc10878  ffc10892        1b
   __Getmem
-                                  ffc10875        1b   func ,g         * 
+                                  ffc10878        1b   func ,g         * 
 FILE=_i_fmds
-                                  ffc10890  ffc10967        d8
+                                  ffc10893  ffc1096a        d8
   __in_fmods
-                                  ffc10890        d8   func ,g         * 
+                                  ffc10893        d8   func ,g         * 
 FILE=xgenld
-                                  ffc10968  ffc10c2a       2c3
+                                  ffc1096b  ffc10c2d       2c3
   __Genld
-                                  ffc10968       2c3   func ,g         * 
+                                  ffc1096b       2c3   func ,g         * 
 FILE=xwctomb
-                                  ffc10c2b  ffc10d80       156
+                                  ffc10c2e  ffc10d83       156
   __Wctombx
-                                  ffc10c2b       110   func ,g         * 
+                                  ffc10c2e       110   func ,g         * 
   __Wctomb
-                                  ffc10d3b        46   func ,g         * 
+                                  ffc10d3e        46   func ,g         * 
 FILE=xstate
-                                  ffc10d81  ffc10db2        32
+                                  ffc10d84  ffc10db5        32
   __Getmbcurmax
-                                  ffc10d81        16   func ,g         * 
+                                  ffc10d84        16   func ,g         * 
   __Getpmbstate
-                                  ffc10d97        1c   func ,g         * 
+                                  ffc10d9a        1c   func ,g         * 
 FILE=xldscale
-                                  ffc10db3  ffc10db6         4
+                                  ffc10db6  ffc10db9         4
   __LDscale
-                                  ffc10db3         4   func ,g         * 
+                                  ffc10db6         4   func ,g         * 
 FILE=xldunsca
-                                  ffc10db7  ffc10dba         4
+                                  ffc10dba  ffc10dbd         4
   __LDunscale
-                                  ffc10db7         4   func ,g         * 
+                                  ffc10dba         4   func ,g         * 
 FILE=__COM_MOD64u
-                                  ffc10dbb  ffc10e41        87
+                                  ffc10dbe  ffc10e44        87
   __COM_MOD64u
-                                  ffc10dbb         0   none ,g         * 
+                                  ffc10dbe         0   none ,g         * 
   _Loop_Init
-                                  ffc10dc5         0   none ,l         * 
+                                  ffc10dc8         0   none ,l         * 
   _Loop
-                                  ffc10dc9         0   none ,l         * 
+                                  ffc10dcc         0   none ,l         * 
   _DivStart
-                                  ffc10dd5         0   none ,l         * 
+                                  ffc10dd8         0   none ,l         * 
   _Success
-                                  ffc10de3         0   none ,l         * 
+                                  ffc10de6         0   none ,l         * 
   _DivEnd
-                                  ffc10deb         0   none ,l         * 
+                                  ffc10dee         0   none ,l         * 
   IXI6DIV
-                                  ffc10dec         0   none ,l         * 
+                                  ffc10def         0   none ,l         * 
   IXI4DIV
-                                  ffc10dfe         0   none ,l         * 
+                                  ffc10e01         0   none ,l         * 
   IXI2DIV
-                                  ffc10e0e         0   none ,l         * 
+                                  ffc10e11         0   none ,l         * 
   I8I2DIV
-                                  ffc10e16         0   none ,l         * 
+                                  ffc10e19         0   none ,l         * 
   I4I2DIV
-                                  ffc10e36         0   none ,l         * 
+                                  ffc10e39         0   none ,l         * 
 FILE=_div
-                                  ffc10e42  ffc10e4d         c
+                                  ffc10e45  ffc10e50         c
   _ldiv
-                                  ffc10e42         0   none ,g         * 
+                                  ffc10e45         0   none ,g         * 
   _div
-                                  ffc10e42         0   none ,g         * 
+                                  ffc10e45         0   none ,g         * 
 FILE=localeco
-                                  ffc10e4e  ffc10e54         7
+                                  ffc10e51  ffc10e57         7
   _localeconv
-                                  ffc10e4e         7   func ,g         * 
+                                  ffc10e51         7   func ,g         * 
 FILE=xwcstate
-                                  ffc10e55  ffc10e70        1c
+                                  ffc10e58  ffc10e73        1c
   __Getpwcstate
-                                  ffc10e55        1c   func ,g         * 
+                                  ffc10e58        1c   func ,g         * 
 FILE=xfdscale
-                                  ffc10e71  ffc10f89       119
+                                  ffc10e74  ffc10f8c       119
   __FDscale
-                                  ffc10e71       119   func ,g         * 
+                                  ffc10e74       119   func ,g         * 
 FILE=xfdunsca
-                                  ffc10f8a  ffc10fe5        5c
+                                  ffc10f8d  ffc10fe8        5c
   __FDunscale
-                                  ffc10f8a        5c   func ,g         * 
+                                  ffc10f8d        5c   func ,g         * 
 FILE=xfdnorm
-                                  ffc10fe6  ffc11053        6e
+                                  ffc10fe9  ffc11056        6e
   __FDnorm
-                                  ffc10fe6        6e   func ,g         * 
+                                  ffc10fe9        6e   func ,g         * 
 
 SECTION=W_1
 FILE=DefaultBuild\r_bsp_cpu.obj
-                                  ffc11054  ffc11063        10
+                                  ffc11057  ffc11066        10
 FILE=DefaultBuild\r_bsp_software_interrupt.obj
-                                  ffc11064  ffc11070         d
+                                  ffc11067  ffc11073         d
 
 SECTION=W_2
 FILE=DefaultBuild\r_s12ad_rx64m.obj
-                                  ffc11072  ffc11091        20
+                                  ffc11074  ffc11093        20
 
 SECTION=L
 FILE=DefaultBuild\dbsct.obj
