@@ -26,42 +26,26 @@ ER TCP_Connect(uint32_t dstIP, uint16_t portno, uint8_t connID){
 	
 	decodeIPv4(dstIP, dstdeIP);
 	
-	printf(">>> Request TCP connection connID = %d\n",connID);
-	printf(">> Target ip=%d.%d.%d.%d:%d\n",dstdeIP[0],dstdeIP[1],dstdeIP[2],dstdeIP[3], tcpPacket->dst.portno);
+	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+		printf(">>> Request TCP connection connID = %d\n",connID);
+		printf(">> Target ip=%d.%d.%d.%d:%d\n",dstdeIP[0],dstdeIP[1],dstdeIP[2],dstdeIP[3], tcpPacket->dst.portno);
+	#endif
 	
-	rtn = tcp_con_cep(connID, (&tcpPacket->src), (&tcpPacket->dst), TMO_FEVR);
-	
-	switch(rtn){
-		case E_OK:
-			printf("TCP_Process>> connection established\n");
-			break;
-		case E_PAR:
-			printf("TCP_Process>> invalid \"tmout\" value\n");
-			break;
-		case E_QOVR:
-			printf("TCP_Process>> API does not end\n");
-			break;
-		case E_OBJ:
-			printf("TCP_Process>> Object status error\n");
-			break;
-		case E_TMOUT:
-			printf("TCP_Process>> Time out\n");
-			break;
-		case E_WBLK:
-			printf("TCP_Process>> non-blocking call is accepted\n");
-			break;
-	}
+	rtn = tcp_con_cep(connID, (&tcpPacket->src), (&tcpPacket->dst), TMO_NBLK);
 	
 	return rtn;
 }
 
 ER TCP_SendingData(uint8_t connID, uint8_t *dataPtr, uint16_t dataSize){
-	printf(">> TCP_SendingData\n");
+	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+		printf(">> TCP_SendingData\n");
+	#endif
 	uint16_t sRtn;
 	sRtn = tcp_snd_dat(connID, dataPtr, dataSize, TMO_FEVR);
 	R_BSP_SoftwareDelay (100, BSP_DELAY_MILLISECS);
-	printf("TCP_SendingData>>> rtn:%d\n",sRtn);
-	//TCP_Terminate(connID);
+	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+		printf("TCP_SendingData>>> rtn:%d\n",sRtn);
+	#endif
 }
 
 ER TCP_Terminate(uint8_t connID){
@@ -72,7 +56,9 @@ ER TCP_Terminate(uint8_t connID){
 }
 
 void EthernetDHCP(void){
-	printf(">> DHCP Initial\n");
+	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+		printf(">> DHCP Initial\n");
+	#endif
 	volatile DHCP       dhcp;
 	
 	OpenTimer();
@@ -87,13 +73,19 @@ void EthernetDHCP(void){
 		dhcpRtn = r_dhcp_open(&dhcp, (unsigned char*)tcpudp_work, &_myethaddr[0][0]);
 		if(!dhcpRtn){
 			set_tcpudp_env(&dhcp);
-			printf(">>> DHCP Process Succeed\n");
+			#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+				printf(">>> DHCP Process Succeed\n");
+			#endif
 			break;
 		}
 		else{
-			printf(">>> DHCP Process Failed\n");
+			#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+				printf(">>> DHCP Process Failed\n");
+			#endif
 		}
-		printf(">> r_dhcp_open retrying...\n");
+		#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+			printf(">> r_dhcp_open retrying...\n");
+		#endif
 		R_BSP_SoftwareDelay(2, BSP_DELAY_SECS);
 	}
 	CloseTimer();
@@ -118,11 +110,15 @@ void EthernetInit(bool usingDHCP){
 	}
 	
 	if(usingDHCP == 1){
-		printf("-- INIT: Using DHCP\n");
+		#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+			printf("-- INIT: Using DHCP\n");
+		#endif
 		EthernetDHCP();
 	}
 	else{
-		printf("-- INIT: Using Static IP\n");
+		#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+			printf("-- INIT: Using Static IP\n");
+		#endif
 	}
 	/* Get the size of the work area used by the T4 (RAM size). */
 	ramsize = tcpudp_get_ramsize();
@@ -150,25 +146,31 @@ Return value    : none
 void set_tcpudp_env(DHCP *dhcp){
     if (NULL != dhcp)
     {
-	printf("\n==========DHCP==========\n");
+	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+		printf("\n==========DHCP==========\n");
+	#endif
         memcpy(tcpudp_env[0].ipaddr, dhcp->ipaddr, 4);
         memcpy(tcpudp_env[0].maskaddr, dhcp->maskaddr, 4);
         memcpy(tcpudp_env[0].gwaddr, dhcp->gwaddr, 4);
-	printf("DHCP->IP: %d.%d.%d.%d\n",
-		tcpudp_env[0].ipaddr[0], tcpudp_env[0].ipaddr[1], tcpudp_env[0].ipaddr[2], tcpudp_env[0].ipaddr[3]);
-	printf("DHCP->MASK: %d.%d.%d.%d\n",
-		tcpudp_env[0].maskaddr[0], tcpudp_env[0].maskaddr[1], tcpudp_env[0].maskaddr[2], tcpudp_env[0].maskaddr[3]);
-	printf(dhcp->maskaddr);
-	printf("DHCP->Gateway: %d.%d.%d.%d\n",
-		tcpudp_env[0].gwaddr[0], tcpudp_env[0].gwaddr[1], tcpudp_env[0].gwaddr[2], tcpudp_env[0].gwaddr[3]);
-	printf(dhcp->gwaddr);
+	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+		printf("DHCP->IP: %d.%d.%d.%d\n",
+			tcpudp_env[0].ipaddr[0], tcpudp_env[0].ipaddr[1], tcpudp_env[0].ipaddr[2], tcpudp_env[0].ipaddr[3]);
+		printf("DHCP->MASK: %d.%d.%d.%d\n",
+			tcpudp_env[0].maskaddr[0], tcpudp_env[0].maskaddr[1], tcpudp_env[0].maskaddr[2], tcpudp_env[0].maskaddr[3]);
+		printf("DHCP->Gateway: %d.%d.%d.%d\n",
+			tcpudp_env[0].gwaddr[0], tcpudp_env[0].gwaddr[1], tcpudp_env[0].gwaddr[2], tcpudp_env[0].gwaddr[3]);
+	#endif
 
         memcpy((char *)dnsaddr1, (char *)dhcp->dnsaddr, 4);
         memcpy((char *)dnsaddr2, (char *)dhcp->dnsaddr2, 4);
-	printf("==========DHCP==========\n\n");
+	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+		printf("==========DHCP==========\n\n");
+	#endif
     }
     else{
-    	printf("DHCP no reply!\n");
+	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+    		printf("DHCP no reply!\n");
+	#endif
     }
 }
 
@@ -178,6 +180,7 @@ ER tcp_callback(ID cepid, FN fncd , VP p_parblk){
     ER   ercd;
     ID   cepid_oft;
     
+/*#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
 	switch (fncd){
 		case TFN_TCP_CRE_REP:
 			printf("tcp_callback>> TFN_TCP_CRE_REP\n");
@@ -269,5 +272,6 @@ ER tcp_callback(ID cepid, FN fncd , VP p_parblk){
 			printf("tcp_callback>> NOPE\n");
 			break;
 	}
+#endif*/
     return(0);
 }

@@ -10,6 +10,8 @@
 #include "r_t4_dns_client_rx_if.h"
 #include "timer.h"
 
+#include "MainSetting.h"
+
 #define SENDING_SIZE	2048
 
 extern uint8_t _myethaddr[][6];

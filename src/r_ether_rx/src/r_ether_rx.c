@@ -43,6 +43,7 @@ Includes   <System Includes> , "Project Includes"
 #include "r_t4_itcpip.h"		//PWBF ADDED
 #include "r_t4_dhcp_client_rx_if.h"	//PWBF ADDED
 #include "globalVar.h"			//PWBF ADDED
+#include "MainSetting.h"		//PWBF ADDED
 
 static UW tcpudp_work[ 21504 / sizeof(UW)]; // calculated by W tcpudp_get_ramsize( void ) //HUNTER ADDED
 extern uint8_t _myethaddr[][6];			//PWBF ADDED
@@ -819,7 +820,9 @@ void R_ETHER_LinkProcess(uint32_t channel)
     /* When the link is up */
     if (ETHER_FLAG_ON_LINK_ON == lchng_flag[channel])
     {  
-	printf(">> ETHER_FLAG_ON_LINK_ON << CH=%d\n",channel);
+	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+		printf(">> ETHER_FLAG_ON_LINK_ON << CH=%d\n",channel);
+	#endif
 	ETHERNET_RDY[channel] = STATE_TRUE;
         /* 
          * The Link Up/Down is confirmed by the Link Status bit of PHY register1, 
@@ -829,7 +832,9 @@ void R_ETHER_LinkProcess(uint32_t channel)
         ret = R_ETHER_CheckLink_ZC(channel);
         if (ETHER_SUCCESS == ret)
         {
+		#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
 			printf(">> ETHER_SUCCESS << CH=%d\n",channel);
+		#endif
 	   		ETHERNET_RDY[channel] = STATE_TRUE;
             /*
              * The status of the LINK signal became "link-up" even if PHY-LSI did not detect "link-up"
@@ -856,7 +861,9 @@ void R_ETHER_LinkProcess(uint32_t channel)
         }
         else
         {
-		printf(">> !!ETHER_SUCCESS << CH=%d\n",channel);
+		#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+			printf(">> !!ETHER_SUCCESS << CH=%d\n",channel);
+		#endif
             /* no process */
         }
     }
@@ -864,7 +871,9 @@ void R_ETHER_LinkProcess(uint32_t channel)
     /* When the link is down */
     else if (ETHER_FLAG_ON_LINK_OFF == lchng_flag[channel])
     {
-	printf(">> ETHER_FLAG_ON_LINK_OFF << CH=%d\n",channel);
+	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+		printf(">> ETHER_FLAG_ON_LINK_OFF << CH=%d\n",channel);
+	#endif
 	ETHERNET_RDY[channel] = STATE_FALSE;
         lchng_flag[channel] = ETHER_FLAG_OFF;
 
@@ -876,7 +885,9 @@ void R_ETHER_LinkProcess(uint32_t channel)
         ret = R_ETHER_CheckLink_ZC(channel);
         if (ETHER_ERR_OTHER == ret)
         {
+		#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
 			printf(">> ETHER_ERR_OTHER << CH=%d\n",channel);
+		#endif
             pether_ch  = g_eth_control_ch[channel].pether_control;
             phy_access = g_eth_control_ch[channel].phy_access;
             etherc_adr = pether_ch[phy_access].petherc;
@@ -896,7 +907,9 @@ void R_ETHER_LinkProcess(uint32_t channel)
         }
         else
         {
+		#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
 			printf(">> !!ETHER_ERR_OTHER << CH=%d\n",channel);
+		#endif
             ; /* no operation */
         }
     }

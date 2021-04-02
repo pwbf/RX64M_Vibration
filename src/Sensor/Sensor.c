@@ -14,7 +14,9 @@ int16_t *p_vibrateData = vibrateData;
 
 
 uint8_t vibrSensorSend(void){
-	printf(">> Send Command Vibr\n");
+	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+		printf(">> Send Command Vibr\n");
+	#endif
 	uint8_t cmd[HOST_SEND_LENGTH]={
 		SENS_ST, 
 		VIBR_SENS_ID, 
@@ -30,7 +32,9 @@ uint8_t vibrSensorSend(void){
 }
 
 uint8_t edsSensorSend(void){
-	printf(">> Send Command EDS\n");
+	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+		printf(">> Send Command EDS\n");
+	#endif
 	uint8_t cmd[HOST_SEND_LENGTH]={
 		SENS_ST, 
 		EDS_SENS_ID, 
@@ -58,13 +62,17 @@ void vibrSensorProcess(uint8_t status){
 	uint8_t rtnbyte;
 	uint16_t tmoutCounter = 0;
 	
-	printf(">> Recieve Vibration Data--->\n");
+	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+		printf(">> Recieve Vibration Data--->\n");
+	#endif
 	while(status == SCI_SUCCESS){
 		rtnRecieve = R_SCI_Receive(VIBR_UART_HANDLE,&rtnbyte,1);
 		if(rtnRecieve == SCI_SUCCESS){
 			*(p_vibrRtnRAWData + index++) = rtnbyte;
-			if((*(p_vibrRtnRAWData + (VIBR_SENS_RETURN_LENGTH - 1)) != 0)){
-				printf(">> Vibration buffer p+2054 = %d\n", *(p_vibrRtnRAWData + (VIBR_SENS_RETURN_LENGTH - 1)));
+			if((*(p_vibrRtnRAWData + (VIBR_SENS_RETURN_LENGTH - 1)) == 35)){
+				#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+					printf(">> Vibration buffer p+2054 = %d\n", *(p_vibrRtnRAWData + (VIBR_SENS_RETURN_LENGTH - 1)));
+				#endif
 				mergeHLbyte(p_vibrRtnRAWData, p_vibrateData, VIBR_DATA_LENGTH, 5, 0);
 				DATA_RDY[DATA_RDY_IND_VIBR] = STATE_TRUE;
 				break;
@@ -76,7 +84,9 @@ void vibrSensorProcess(uint8_t status){
 			DATA_RDY[DATA_RDY_IND_VIBR] = STATE_FALSE;
 			
 			if(tmoutCounter >= UART_TIMEOUT){
-				printf(">> [Timeout] Recieve Vibration Data\n");
+				#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+					printf(">> [Timeout] Recieve Vibration Data\n");
+				#endif
 				break;
 			}
 		}
@@ -90,14 +100,18 @@ void edsSensorProcess(uint8_t status){
 	uint8_t rtnbyte;
 	uint16_t tmoutCounter = 0;
 	
-	printf(">> Recieve EDS Data--->\n");
+	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+		printf(">> Recieve EDS Data--->\n");
+	#endif
 	while(status == SCI_SUCCESS){
 		rtnRecieve = R_SCI_Receive(EDS_UART_HANDLE,&rtnbyte,1);
 		if(rtnRecieve == SCI_SUCCESS){
 			*(p_EDSRtnRAWData + index++) = rtnbyte;
 			// printf(">> EDS = %d(0x%02X)\n", rtnbyte, rtnbyte);
 			if((*(p_EDSRtnRAWData + (EDS_SENS_RETURN_LENGTH - 1)) != 0)){
-				printf(">> EDS buffer p+8 = %d\n", *(p_EDSRtnRAWData + (EDS_SENS_RETURN_LENGTH - 1)));
+				#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+					printf(">> EDS buffer p+8 = %d\n", *(p_EDSRtnRAWData + (EDS_SENS_RETURN_LENGTH - 1)));
+				#endif
 				mergeHLbyte(p_EDSRtnRAWData, p_EDSData, EDS_DATA_LENGTH, 3, 1);
 				DATA_RDY[DATA_RDY_IND_EDS] = STATE_TRUE;
 				break;
@@ -109,7 +123,9 @@ void edsSensorProcess(uint8_t status){
 			DATA_RDY[DATA_RDY_IND_EDS] = STATE_FALSE;
 			
 			if(tmoutCounter >= UART_TIMEOUT){
-				printf(">> [Timeout] Recieve EDS Data\n");
+				#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+					printf(">> [Timeout] Recieve EDS Data\n");
+				#endif
 				break;
 			}
 		}
@@ -121,7 +137,9 @@ void mergeHLbyte(uint8_t * inputBuffer, int16_t * outputBuffer, uint16_t length,
 	/* inshift: [SKIP0][SKIP1] = 1*/
 	/* 5L-6H -> 2051L-2052H */
 	/*   0         >1024    */
-	printf(">> Merging High Low Data\n");
+	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+		printf(">> Merging High Low Data\n");
+	#endif
 	for(int idx = 0; idx < (length - outShift); idx++){
 		*(outputBuffer + idx + outShift) = *(inputBuffer + (2*idx) + inShift) | *(inputBuffer + (2*idx + 1) + inShift) *256;
 	}

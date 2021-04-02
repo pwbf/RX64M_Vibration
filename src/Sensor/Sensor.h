@@ -12,6 +12,7 @@
 #include "r_s12ad_rx_config.h"
 #include "r_s12ad_rx_if.h"
 
+#include "MainSetting.h"
 
 #define HOST_SEND_LENGTH		(9)
 
