@@ -10,19 +10,20 @@
 
 ## Current Function Information:  
 > ## leadwellVibr.master.current:  
->> Version: leadwellVibr.master.v1.1.5  
+>> Version: leadwellVibr.master.v1.1.6  
 - [x] Ethernet  
 - [x] 1ch Vibration(UART)  
 - [x] 1ch Temperature(ADC)  
-- [ ] 1ch Eddy Current Displacement(UART)  
+- [x] 1ch Eddy Current Displacement(UART)  
 - [x] DSP Library(FFT)  
 - [x] Data Hook  
 - [x] Web FrontEnd  
 - [x] SQL Database  
+- [ ] Long term Testing  
 > ## leadwellVibr.ECD.current:  
->> Version: leadwellVibr.ECD.NONEXISTENT  
+>> Version: leadwellVibr.ECD.v1.0.1  
 - [x] UART  
-- [ ] Displacment Sensing  
+- [x] Displacment Sensing  
 - [ ] Long term Testing  
 > ## leadwellVibr.VS.current:  
 >> Version: leadwellVibr.VS.v1.0.2  

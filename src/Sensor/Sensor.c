@@ -107,16 +107,14 @@ void edsSensorProcess(uint8_t status){
 		rtnRecieve = R_SCI_Receive(EDS_UART_HANDLE,&rtnbyte,1);
 		if(rtnRecieve == SCI_SUCCESS){
 			*(p_EDSRtnRAWData + index++) = rtnbyte;
-			// printf(">> EDS = %d(0x%02X)\n", rtnbyte, rtnbyte);
 			if((*(p_EDSRtnRAWData + (EDS_SENS_RETURN_LENGTH - 1)) != 0)){
 				#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
-					printf(">> EDS buffer p+8 = %d\n", *(p_EDSRtnRAWData + (EDS_SENS_RETURN_LENGTH - 1)));
+					printf(">> EDS buffer p+9 = %d\n", *(p_EDSRtnRAWData + (EDS_SENS_RETURN_LENGTH - 1)));
 				#endif
 				mergeHLbyte(p_EDSRtnRAWData, p_EDSData, EDS_DATA_LENGTH, 3, 1);
 				DATA_RDY[DATA_RDY_IND_EDS] = STATE_TRUE;
 				break;
 			}
-			 // printf(".");
 		}
 		else{
 			tmoutCounter++;
@@ -124,12 +122,14 @@ void edsSensorProcess(uint8_t status){
 			
 			if(tmoutCounter >= UART_TIMEOUT){
 				#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+					printf("\n");
 					printf(">> [Timeout] Recieve EDS Data\n");
 				#endif
 				break;
 			}
+			printf("X");
 		}
-		R_BSP_SoftwareDelay (10, BSP_DELAY_MILLISECS);
+		R_BSP_SoftwareDelay (1, BSP_DELAY_MILLISECS);
 	}	
 }
 

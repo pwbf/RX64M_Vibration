@@ -11,6 +11,7 @@ volatile int8_t HLvibrateData[HL_VIBR_DATA_LENGTH];
 volatile int8_t HLTempData[HL_TEMP_DATA_LENGTH];
 
 
+
 void main(void){	/*MAIN FUNCTION START POINT*/
 /* WIRESHARK
 dhcp && !ip.addr == 10.0.0.178 && dhcp.id == 0x12345678
@@ -152,6 +153,7 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 	
 /*MAIN WHILE LOOP START POINT*/	
     while(1){
+#if ENABLE_ETHERNET == MODE_ENABLE
 	/**Check Ethernet is connected!**/
 	while(!ETHERNET_RDY[0]){
 		#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
@@ -160,6 +162,8 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 		R_ETHER_LinkProcess(0);
 		R_BSP_SoftwareDelay (500, BSP_DELAY_MILLISECS);
 	}
+#endif
+
 #if ENABLE_VIBR == MODE_ENABLE
 	LED2 = LED_ON;
 	LED3 = LED_OFF;
