@@ -28,12 +28,63 @@
 	<script src="https://static.res.pwbf.pw/jquery/3/jquery-3.5.1.min.js"></script>
 	<script src="https://static.res.pwbf.pw/uikit3/js/uikit.min.js"></script>
 	<script src="https://static.res.pwbf.pw/uikit3/js/uikit-icons.min.js"></script>
+	<script src="https://static.res.pwbf.pw/mathJS/math.min.js"></script>
 <script>
-var uInterval = 20000;
+var uInterval = 5000;
 var timeleft = uInterval;
+var tempLow = -50;
+var tempHigh = 150;
 var TDScale = 100;
 var TPScale = 2;
 var TPDif = 2;
+
+var colorCode1P = new Object();
+	colorCode1P.R = new Object();
+	colorCode1P.G = new Object();
+	colorCode1P.B = new Object();
+	
+	colorCode1P.R.P1 = 148;
+	colorCode1P.R.P2 = 242;
+	colorCode1P.G.P1 = 240;
+	colorCode1P.G.P2 = 155;
+	colorCode1P.B.P1 = 164;
+	colorCode1P.B.P2 = 139;
+
+var colorCode2P = new Object();
+	colorCode2P.R = new Object();
+	colorCode2P.G = new Object();
+	colorCode2P.B = new Object();
+	
+	colorCode2P.R.P1 = 43;
+	colorCode2P.R.P2 = 253;
+	colorCode2P.G.P1 = 251;
+	colorCode2P.G.P2 = 70;
+	colorCode2P.B.P1 = 88;
+	colorCode2P.B.P2 = 50;
+
+var coef1P = new Object();
+	coef1P.R = new Object();
+	coef1P.G = new Object();
+	coef1P.B = new Object();
+	
+	coef1P.R.m = coefficientCal(tempHigh, colorCode1P.R.P1, tempLow, colorCode1P.R.P2)[0];
+	coef1P.R.b = coefficientCal(tempHigh, colorCode1P.R.P1, tempLow, colorCode1P.R.P2)[1];
+	coef1P.G.m = coefficientCal(tempHigh, colorCode1P.G.P1, tempLow, colorCode1P.G.P2)[0];
+	coef1P.G.b = coefficientCal(tempHigh, colorCode1P.G.P1, tempLow, colorCode1P.G.P2)[1];
+	coef1P.B.m = coefficientCal(tempHigh, colorCode1P.B.P1, tempLow, colorCode1P.B.P2)[0];
+	coef1P.B.b = coefficientCal(tempHigh, colorCode1P.B.P1, tempLow, colorCode1P.B.P2)[1];
+
+var coef2P = new Object();
+	coef2P.R = new Object();
+	coef2P.G = new Object();
+	coef2P.B = new Object();
+	
+	coef2P.R.m = coefficientCal(uInterval, colorCode2P.R.P1, 0, colorCode2P.R.P2)[0];
+	coef2P.R.b = coefficientCal(uInterval, colorCode2P.R.P1, 0, colorCode2P.R.P2)[1];
+	coef2P.G.m = coefficientCal(uInterval, colorCode2P.G.P1, 0, colorCode2P.G.P2)[0];
+	coef2P.G.b = coefficientCal(uInterval, colorCode2P.G.P1, 0, colorCode2P.G.P2)[1];
+	coef2P.B.m = coefficientCal(uInterval, colorCode2P.B.P1, 0, colorCode2P.B.P2)[0];
+	coef2P.B.b = coefficientCal(uInterval, colorCode2P.B.P1, 0, colorCode2P.B.P2)[1];
 
 $(document).ready(function() {
 	renderChart();
@@ -127,9 +178,8 @@ Chart.pluginService.register({
     });
 
 function countDownTimer(){
-	var timeleftSec = (timeleft/1000).toFixed(1);
-	var colorCode = 'rgb('+colorR(timeleftSec)+','+ colorG(timeleftSec)+','+ colorB(timeleftSec)+')';
-	configcountdown.options.elements.center.text = timeleftSec;
+	var colorCode = clacColor(timeleft, coef2P);
+	configcountdown.options.elements.center.text = (timeleft/1000).toFixed(1);
 	configcountdown.options.elements.center.color = colorCode;
 	configcountdown.data.datasets[0].data = [timeleft, uInterval - timeleft];
 	configcountdown.data.datasets[0].backgroundColor = [colorCode, '#d4d4d4'];
@@ -137,14 +187,25 @@ function countDownTimer(){
 	window.TM.update();
 }
 
-function colorR(tm){
-	return 4.9*tm + 144;
+
+function coefficientCal(x1,y1,x2,y2){
+	var m = (y2-y1)/(x2-x1);
+	var b = y2 - m*x2;
+	return [m,b];
 }
-function colorG(tm){
-	return -6.2*tm + 246;
+
+function clacColor(val, coef){
+	return 'rgb('+colorR(val,coef)+','+ colorG(val,coef)+','+ colorB(val,coef)+')';
 }
-function colorB(tm){
-	return 0.1*tm + 121;
+
+function colorR(tm, coef){
+	return coef.R.m * tm + coef.R.b;
+}
+function colorG(tm, coef){
+	return coef.G.m * tm + coef.G.b;
+}
+function colorB(tm, coef){
+	return coef.B.m * tm + coef.B.b;
 }
 
 var configtimedomain = {
@@ -177,7 +238,11 @@ var configtimedomain = {
 				display: true,
 				scaleLabel: {
 					display: true,
-					labelString: 'Time Domain'
+					labelString: 'Time(ms)'
+				},
+				ticks: {
+					autoSkip: true,
+					maxTicksLimit: 33
 				}
 			}],
 			yAxes: [{
@@ -226,14 +291,18 @@ var configfreqdomain = {
 				display: true,
 				scaleLabel: {
 					display: true,
-					labelString: 'Frequency Domain(HZ)'
+					labelString: 'Frequency(Hz)'
+				},
+				ticks: {
+					autoSkip: true,
+					maxTicksLimit: 33,
 				}
 			}],
 			yAxes: [{
 				display: true,
 				scaleLabel: {
 					display: true,
-					labelString: 'Amplitude( )'
+					labelString: 'Amplitude'
 				}
 			}]
 		}
@@ -264,6 +333,8 @@ var configcountdown = {
 			text: 'Refresh'
 		},
 		animation: {
+			easing: 'easeOutQuart',
+			numSteps: uInterval,
 			animateScale: true,
 			animateRotate: true
 		},
@@ -347,6 +418,9 @@ var configtempch0L = {
 				scaleLabel: {
 					display: true,
 					labelString: 'Time'
+				},
+				ticks: {
+					autoSkip: false
 				}
 			}],
 			yAxes: [{
@@ -441,7 +515,7 @@ function loadDataPage(){
 			var graphLabel = [];
 			$.each(jsonDecoded, function( k, v ) {
 				int32Data.push(v);
-				graphLabel.push(k);
+				graphLabel.push(k+1);
 			});
 			configfreqdomain.data.labels = graphLabel;
 			configfreqdomain.data.datasets[0].data = int32Data;
@@ -454,26 +528,14 @@ function loadDataPage(){
 			var miscConfig = new Object();
 				miscConfig.threshold1 = 70;
 				miscConfig.threshold2 = 150;
-				miscConfig.range1Hex = '#94f0a4';
-				miscConfig.range2Hex = '#f4ca63';
-				miscConfig.range3Hex = '#f29b8b';
 				miscConfig.maxRange = 200;
 				miscConfig.minRange = -50;
 				
 			var jsonDecoded = JSON.parse(data);
 			
-			var color0 = '';
-			var color1 = '';
-			if(jsonDecoded[0] < miscConfig.threshold1)
-				color0 = miscConfig.range1Hex;
-			else if(jsonDecoded[0] >= miscConfig.threshold1 && jsonDecoded[0] < miscConfig.threshold2)
-				color0 = miscConfig.range2Hex;
-			else
-				color0 = miscConfig.range3Hex;
-				
 			configtempch0.data.datasets[0].data = [jsonDecoded[0].toFixed(1), (miscConfig.maxRange-jsonDecoded[0]).toFixed(2)];
-			configtempch0.data.datasets[0].backgroundColor = [color0, '#d4d4d4'];
-			configtempch0.options.elements.center.color = color0;
+			configtempch0.data.datasets[0].backgroundColor = [clacColor(jsonDecoded[0], coef1P), '#d4d4d4'];
+			configtempch0.options.elements.center.color = clacColor(jsonDecoded[0], coef1P);
 			configtempch0.options.elements.center.text = jsonDecoded[0].toFixed(1) + ' °C';
 			
 			window.TE0.update();
@@ -492,16 +554,12 @@ function loadDataPage(){
 			configtempch0L.data.labels = graphLabel;
 			configtempch0L.data.datasets[0].data = floatData;
 			
-			if(Math.max.apply(null, floatData) > TPScale)
-				configtempch0L.options.scales.yAxes[0].ticks.max = Math.max.apply(null, floatData) + TPScale;
-			else
-				configtempch0L.options.scales.yAxes[0].ticks.max = Math.max.apply(null, floatData) + 0.5;
-				
-			if(Math.min.apply(null, floatData) < -TPScale)
-				configtempch0L.options.scales.yAxes[0].ticks.min = Math.min.apply(null, floatData) - TPScale;
-			else
-				configtempch0L.options.scales.yAxes[0].ticks.min = Math.min.apply(null, floatData) - 0.5;
-				
+			var TP0Lavg = math.mean(floatData);
+			var TP0Lstd = math.std(floatData);
+			
+			configtempch0L.options.scales.yAxes[0].ticks.max = TP0Lavg + TP0Lstd + 1.5;
+			configtempch0L.options.scales.yAxes[0].ticks.min = TP0Lavg - TP0Lstd - 1.5;
+			
 			if((Math.max.apply(null, floatData) - Math.min.apply(null, floatData)) > TPDif)
 				configtempch0L.options.scales.yAxes[0].ticks.stepSize = TPDif;
 			else
@@ -526,7 +584,36 @@ function loadDataPage(){
 			window.EDS.update();
 		}
 	);
+	$.get("http://vibr.astarc.tk/getData.php?r=VIBR", "json", 
+		function(data){
+			var jsonDecoded = JSON.parse(data);
+			$.each(jsonDecoded, function( k, v ) {
+				document.getElementById('vibr'+k).innerHTML = k+': '+v;
+			});
+		}
+	);
+	$.get("http://vibr.astarc.tk/getData.php?r=META", "json", 
+		function(data){
+			var jsonDecoded = JSON.parse(data);
+			$.each(jsonDecoded, function( k, v ) {
+				document.getElementById(k+'Src').innerHTML = v.Src;
+				document.getElementById(k+'Last').innerHTML = v.Last;
+			});
+		}
+	);
+	$.get("http://vibr.astarc.tk/getData.php?r=CurrStat", "json", 
+		function(data){
+			var jsonDecoded = JSON.parse(data);
+			$.each(jsonDecoded, function( k, v ) {
+				if(v == 1)
+					document.getElementById(k+'Current').innerHTML = '<span class="uk-label uk-label-success">Online</span>';
+				else
+					document.getElementById(k+'Current').innerHTML = '<span class="uk-label uk-label-danger">Timeout</span>';
+			});
+		}
+	);
 }
+
 
 function renderChart(){
 	window.TM = new Chart(countdown, configcountdown);
@@ -557,6 +644,55 @@ function renderChart(){
 										<canvas id="tempch0"></canvas>
 									</div>
 								</div>
+								<div class="uk-width-1-6@m">
+									<div class="uk-card uk-card-default uk-card-small uk-card-body uk-text-center">
+										<h3 class="uk-card-title" id="vibrPEAK">123</h3>
+									</div>
+									<div class="uk-card uk-card-default uk-card-small uk-card-body uk-text-center">
+										<h3 class="uk-card-title" id="vibrRMS">123</h3>
+									</div>
+									<div class="uk-card uk-card-default uk-card-small uk-card-body uk-text-center">
+										<h3 class="uk-card-title" id="vibrAVG">123</h3>
+									</div>
+								</div>
+								<div class="uk-width-expand@m">
+									<div class="uk-card uk-card-default uk-card-body uk-card-hover uk-card-small">
+										<table class="uk-table uk-table-small uk-table-divider">
+											<thead>
+												<tr>
+													<th>Sensor</th>
+													<th>Source</th>
+													<th>Last Update</th>
+													<th>Current</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td>Temperature</td>
+													<td id="tempSrc"></td>
+													<td id="tempLast"></td>
+													<td id="tempCurrent"></td>
+												</tr>
+												<tr>
+													<td>EDS</td>
+													<td id="edsSrc"></td>
+													<td id="edsLast"></td>
+													<td id="edsCurrent"></td>
+												</tr>
+												<tr>
+													<td>Vibration</td>
+													<td id="vibrSrc"></td>
+													<td id="vibrLast"></td>
+													<td id="vibrCurrent"></td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="uk-width-1-1 uk-margin-small">
+							<div class="uk-child-width-1-2@s uk-grid-column-small uk-grid-small uk-grid-match" uk-grid>
 								<div>
 									<div class="uk-card uk-card-default uk-card-body uk-card-hover uk-card-small">
 										<canvas id="tempch0L"></canvas>
@@ -587,7 +723,7 @@ function renderChart(){
 					<div class="uk-width-1-1 uk-margin-small uk-text-center">
 							<div class="uk-background-muted uk-padding">
 								<p class="uk-text-large ">
-									LeadWell Vibration Monitor System
+									LeadWell Vibration Monitoring System
 								</p>
 							</div>
 					</div>
