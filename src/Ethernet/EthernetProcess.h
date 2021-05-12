@@ -10,6 +10,9 @@
 #include "r_t4_dns_client_rx_if.h"
 #include "timer.h"
 
+/*For LED*/
+#include "LEDprocess.h"
+
 #include "MainSetting.h"
 
 #define SENDING_SIZE	2048

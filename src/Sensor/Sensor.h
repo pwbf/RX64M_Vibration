@@ -12,6 +12,9 @@
 #include "r_s12ad_rx_config.h"
 #include "r_s12ad_rx_if.h"
 
+/*For LED*/
+#include "LEDprocess.h"
+
 #include "MainSetting.h"
 
 #define HOST_SEND_LENGTH		(9)
@@ -38,10 +41,10 @@
 
 #define VIBR_UART_HANDLE		g_my_sci_handle_ch1	//Vibration UART handle function
 #define EDS_UART_HANDLE			g_my_sci_handle_ch2	//EDS UART handle function
-#define TEMP_ADC_CH0			ADC_REG_CH0		//Temperature channel 0 ADC reg (AN00x or AN10x) ADC_REG_CHx
-#define TEMP_ADC_CH1			ADC_REG_CH1		//Temperature channel 1 ADC reg (AN00x or AN10x) ADC_REG_CHx
-#define MASK_ADC_CH0			ADC_MASK_CH0		//Temperature channel 0 ADC reg (AN00x or AN10x) ADC_REG_CHx
-#define MASK_ADC_CH1			ADC_MASK_CH1		//Temperature channel 1 ADC reg (AN00x or AN10x) ADC_REG_CHx
+#define TEMP_ADC_CH0			ADC_REG_CH7		//Temperature channel 0 ADC reg (AN00x or AN10x) ADC_REG_CHx
+#define TEMP_ADC_CH1			ADC_REG_CH6		//Temperature channel 1 ADC reg (AN00x or AN10x) ADC_REG_CHx
+#define MASK_ADC_CH0			ADC_MASK_CH7		//Temperature channel 0 ADC reg (AN00x or AN10x) ADC_REG_CHx
+#define MASK_ADC_CH1			ADC_MASK_CH6		//Temperature channel 1 ADC reg (AN00x or AN10x) ADC_REG_CHx
 
 #define UART_TIMEOUT			(1500)
 

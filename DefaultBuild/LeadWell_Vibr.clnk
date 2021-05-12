@@ -49,6 +49,7 @@
 -input=DefaultBuild\r_s12ad_rx63x.obj
 -input=DefaultBuild\r_s12ad_rx64m.obj
 -input=DefaultBuild\r_s12ad_rx65x.obj
+-input=DefaultBuild\LEDprocess.obj
 -library=src\r_t4_rx\lib\T4_Library_rxv1_ether_big.lib
 -library=src\r_t4_rx\lib\T4_Library_rxv1_ether_little.lib
 -library=src\r_t4_rx\lib\T4_Library_rxv2_ether_big.lib

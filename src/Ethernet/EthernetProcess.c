@@ -61,6 +61,7 @@ void EthernetDHCP(void){
 	#endif
 	volatile DHCP       dhcp;
 	
+	
 	OpenTimer();
 	while (ETHER_FLAG_ON_LINK_ON != link_detect[0] && ETHER_FLAG_ON_LINK_ON != link_detect[1])
 	{
@@ -146,6 +147,7 @@ Return value    : none
 void set_tcpudp_env(DHCP *dhcp){
     if (NULL != dhcp)
     {
+	LED_IP_ST	= LED_ON;
 	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
 		printf("\n==========DHCP==========\n");
 	#endif

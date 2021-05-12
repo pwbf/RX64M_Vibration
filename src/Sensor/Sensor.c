@@ -77,7 +77,6 @@ void vibrSensorProcess(uint8_t status){
 				DATA_RDY[DATA_RDY_IND_VIBR] = STATE_TRUE;
 				break;
 			}
-			// printf(".");
 		}
 		else{
 			tmoutCounter++;
@@ -127,7 +126,7 @@ void edsSensorProcess(uint8_t status){
 				#endif
 				break;
 			}
-			printf("X");
+			// printf("X");
 		}
 		R_BSP_SoftwareDelay (1, BSP_DELAY_MILLISECS);
 	}	
@@ -312,8 +311,6 @@ void ADCInit(void){
 
         /* Enable channel */                 
 	ch_cfg.chan_mask = MASK_ADC_CH0|MASK_ADC_CH1; 
-	//ch_cfg.chan_mask = ADC_MASK_CH1|ADC_MASK_CH0;
-	//ch_cfg.chan_mask = ADC_MASK_CH8|ADC_MASK_CH9|ADC_MASK_CH10|ADC_MASK_CH11;
         ch_cfg.priority_groupa = ADC_GRPA_PRIORITY_OFF;      // group mode not used
         ch_cfg.chan_mask_groupb = ADC_MASK_GROUPB_OFF;       // group mode not used
         ch_cfg.add_mask = ADC_MASK_ADD_OFF;                  // no channels using addition
@@ -354,11 +351,15 @@ void ADC_READ(void *pArgs){
 
     if ((0 == args->unit) && (ADC_EVT_SCAN_COMPLETE == args->event)){
         /* Read conversion value and store in global variable */
+		LED_TEMP_1	= LED_ON;
 		adc_err0 = R_ADC_Read(USING_ADC_UNIT, TEMP_ADC_CH0, &TempData[1]);
 		adc_err1 = R_ADC_Read(USING_ADC_UNIT, TEMP_ADC_CH1, &TempData[2]);
+		LED_TEMP_1	= LED_OFF;
+    }
+	    if(TempData[1] < 10 || TempData[1] > 3500){
+	    	DATA_RDY[DATA_RDY_IND_TEMP] = STATE_FALSE;
+	    }
+	    else{
 		DATA_RDY[DATA_RDY_IND_TEMP] = STATE_TRUE;
-    }
-    else{
-		DATA_RDY[DATA_RDY_IND_TEMP] = STATE_FALSE;
-    }
+	    }
 }
