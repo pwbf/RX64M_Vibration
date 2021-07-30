@@ -1,8 +1,8 @@
 #ifndef MAIN_SETTING_H
 #define MAIN_SETTING_H
 
-#define		TCP_CONNID		1
-#define		MQTT_CONNID		2
+#define		TCP_CONNID		2
+#define		MQTT_CONNID		1
 #define		TCP_SERVER_IP		172,31,37,246
 //#define		TCP_SERVER_IP		10,0,0,178
 #define		TCP_SERVER_PT		8120

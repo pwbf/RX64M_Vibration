@@ -15,7 +15,6 @@ MQTT_QOS_TYPE mqos;
 	MQTT_CONN_PACKET mcp;
 	MQTT_PACKET_SIZE smcp = sizeof(mcp) - 1;
 	MQTT_PUB_PACKET mpp;
-	MQTT_PACKET_SIZE smpp = sizeof(mpp) - 1;
 	MQTT_TERM_PACKET mtp;
 	MQTT_PACKET_SIZE smtp = sizeof(mtp) - 0;
 	MQTT_SUB_PACKET msp;
@@ -54,6 +53,8 @@ void MQTT_subscribe(uint8_t tcp_id){
 }
 
 void MQTT_publish(uint8_t tcp_id, uint8_t *topic, uint8_t *payload, uint8_t payloadLength){
+	MQTT_PACKET_SIZE smpp = sizeof(mpp) - 1;
+	smpp = smpp - 25 + payloadLength;
 	mpp.mqtt_header = PUBLISH_AT_MOST_ONCE;
 	mpp.msg_length = smpp - 2;
 	mpp.topic_length = swapHLbyte(MQTT_TOPIC_LENGTH);
@@ -73,16 +74,4 @@ void MQTT_terminate(uint8_t tcp_id){
 	
 	TCP_SendingData(tcp_id, &mtp, smtp);
 	R_BSP_SoftwareDelay (100, BSP_DELAY_MILLISECS);
-}
-
-uint16_t swapHLbyte(uint16_t n){
-    uint8_t hibyte = (n & 0xff00) >> 8;
-    uint8_t lobyte = (n & 0xff);
-    
-    return lobyte << 8 | hibyte;
-}
-
-void write2array(uint8_t *target, uint8_t *source, uint8_t length, uint8_t offset){
-    for(uint8_t index = 0; index < length; index++)
-    	*(target + offset + index) = *(source + index);
 }

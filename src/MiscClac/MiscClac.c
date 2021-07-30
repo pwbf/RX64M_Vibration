@@ -12,7 +12,21 @@ void arrayAverage(int16_t * ary, uint16_t len){
     vm.avg = avg;
 }
 
-void arrayMaximum(int32_t * ary, uint16_t len){
+void arrayMaximumTD(int16_t * ary, uint16_t len){
+	float ary_max = ary[1];
+	uint16_t index = 1;
+
+	for (uint16_t i = 1; i < len; i++) {
+		if (ary[i] > ary_max) {
+			index = i;
+			ary_max = ary[i];
+		}
+	}
+	
+    vm.pkval = abs((int) ary[index]);
+}
+
+void arrayMaximumFD(int32_t * ary, uint16_t len){
 	int32_t ary_max = ary[1];
 	uint16_t index = 1;
 

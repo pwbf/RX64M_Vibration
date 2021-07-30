@@ -48,6 +48,8 @@
 void conv_int16_int8(int16_t * inputBuffer, int8_t * outputBuffer, uint16_t length);
 void conv_int32_int8(int32_t * inputBuffer, int8_t * outputBuffer, uint16_t length);
 void Rx64MInitPorts(void);
-
+void MQTT_Packet_Init(void);
+uint16_t swapHLbyte(uint16_t n);
+void write2array(uint8_t *target, uint8_t *source, uint8_t length, uint8_t offset);
 
 #endif

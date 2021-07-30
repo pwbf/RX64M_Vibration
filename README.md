@@ -3,7 +3,7 @@
 
 ## Current Function Information:  
 > ## leadwellVibr.master.current:  
->> Version: leadwellVibr.master.v1.2.0  
+>> Version: leadwellVibr.master.v1.2.1  
 - [x] Ethernet  
 - [x] TCP  
 - [x] MQTT  
@@ -15,6 +15,12 @@
 - [x] Web FrontEnd  
 - [x] SQL Database  
 - [x] Long term Testing  
+
+## Highlight: 
+#### Embedded MQTT Client    
+Update 1.2.1  
+Added: Peak value in mg  
+Added: Prefix for add Topic  
 
 ## Highlight: 
 #### Embedded MQTT Client    

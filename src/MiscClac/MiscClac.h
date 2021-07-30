@@ -10,7 +10,8 @@
 #include "MainSetting.h"
 
 void arrayAverage(uint8_t * ary, uint16_t len);
-void arrayMaximum(uint8_t * ary, uint16_t len);
+void arrayMaximumFD(uint8_t * ary, uint16_t len);
+void arrayMaximumTD(int16_t  * virb_feed, uint16_t len);
 void arrayRMS(int16_t  * virb_feed, uint16_t len);
 
 #endif

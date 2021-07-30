@@ -12,10 +12,15 @@ extern volatile int8_t HLTempData[HL_TEMP_DATA_LENGTH];
 
 extern bool ProgramStatusIndicator;
 
-extern const uint8_t iu_avg[MQTT_STRUCT_UNIT_LENGHT];
-extern const uint8_t iu_pk[MQTT_STRUCT_UNIT_LENGHT];
-extern const uint8_t iu_rms[MQTT_STRUCT_UNIT_LENGHT];
-extern const uint8_t iu_temp[MQTT_STRUCT_UNIT_LENGHT];
+extern const uint8_t pfx_avg[MQTT_VAVG_PREFIX_LENGTH];
+extern const uint8_t pfx_pk[MQTT_PEAK_PREFIX_LENGTH];
+extern const uint8_t pfx_rms[MQTT_VRMS_PREFIX_LENGTH];
+extern const uint8_t pfx_temp[MQTT_TEMP_PREFIX_LENGTH];
+extern const uint8_t iu_avg[MQTT_STRUCT_UNIT_LENGTH];
+extern const uint8_t iu_pk[MQTT_STRUCT_UNIT_LENGTH];
+extern const uint8_t iu_pkval[MQTT_STRUCT_UNIT_LENGTH];
+extern const uint8_t iu_rms[MQTT_STRUCT_UNIT_LENGTH];
+extern const uint8_t iu_temp[MQTT_STRUCT_UNIT_LENGTH];
 extern const uint8_t Topic_LW0_TEMP[MQTT_TOPIC_LENGTH];
 extern const uint8_t Topic_LW0_VRMS[MQTT_TOPIC_LENGTH];
 extern const uint8_t Topic_LW0_VAVG[MQTT_TOPIC_LENGTH];
@@ -24,6 +29,7 @@ extern const uint8_t Topic_THU_TEST[MQTT_TOPIC_LENGTH];
 
 extern volatile VIBR_MISC vm;
 extern volatile MQTT_VIBR mv;
+extern volatile MQTT_PAYLOAD mp;
 
 void main(void){	/*MAIN FUNCTION START POINT*/
 /* WIRESHARK
@@ -34,6 +40,11 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 		printf("Bootup Process\n");
 		printf("==========INIT==========\n");
 	#endif
+	
+	flushBuffer(&vm, sizeof(vm));
+	flushBuffer(&mv, sizeof(mv));
+	flushBuffer(&mp, sizeof(mp));
+	
 	Rx64MInitPorts();
 	LEDinit();
 	
@@ -196,6 +207,11 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 		#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
 			printf("        MQTT server Connection Established!!\n");
 		#endif
+		
+		MQTT_Packet_Init();
+		#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+			printf("        MQTT Payload initialized!!\n");
+		#endif
 	#endif
 #endif
 	
@@ -237,6 +253,7 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 		conv_int16_int8(vibrateData, HLvibrateData, VIBR_DATA_LENGTH);
 		arrayAverage(vibrateData, VIBR_DATA_LENGTH);
 		arrayRMS(vibrateData, VIBR_DATA_LENGTH);
+		arrayMaximumTD(vibrateData, VIBR_DATA_LENGTH);
 #endif
 
 #if ENABLE_DSP == MODE_ENABLE
@@ -247,7 +264,8 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 			R_DSP_REAL_FFT_Operation(vibrateData, frequencyData);
 			DATA_RDY[DATA_RDY_IND_FREQ] = STATE_TRUE;
 			R_BSP_SoftwareDelay (SENSOR_DELAY_TIME, BSP_DELAY_MILLISECS);
-			arrayMaximum(frequencyData, VIBR_DATA_LENGTH / 2);
+			arrayMaximumFD(frequencyData, VIBR_DATA_LENGTH / 2);
+			
 		}
 #endif
 
@@ -283,6 +301,7 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 	printf("[%d] EDS Data\n", DATA_RDY[DATA_RDY_IND_EDS]);
 	printf("[%d] Temperature Data\n", DATA_RDY[DATA_RDY_IND_TEMP]);
 	printf("Peak Freq:%d\n", vm.pk);
+	printf("Peak Value:%f\n", vm.pkval);
 	printf("RMS Value:%f\n", vm.rms);
 	printf("AVG Value:%f\n", vm.avg);
 	printf("Temp Value:%f\n", vm.temp);
@@ -386,16 +405,24 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 #if ENABLE_MQTT == MODE_ENABLE
 	sprintf(mv.avg, "%5.1f", vm.avg);
 	sprintf(mv.pk, "%5d", vm.pk);
+	sprintf(mv.pkval, " %4.1f", vm.pkval);
 	sprintf(mv.rms, "%5.1f", vm.rms);
 	sprintf(mv.temp, "%5.1f", vm.temp);
-	write2array(&(mv.avg), &iu_avg, MQTT_STRUCT_UNIT_LENGHT, MQTT_STRUCT_VALUE_LENGTH);
-	write2array(&(mv.pk), &iu_pk, MQTT_STRUCT_UNIT_LENGHT, MQTT_STRUCT_VALUE_LENGTH);
-	write2array(&(mv.rms), &iu_rms, MQTT_STRUCT_UNIT_LENGHT, MQTT_STRUCT_VALUE_LENGTH);
-	write2array(&(mv.temp), &iu_temp, MQTT_STRUCT_UNIT_LENGHT, MQTT_STRUCT_VALUE_LENGTH);
-	MQTT_publish(MQTT_CONNID, &Topic_LW0_VAVG, &(mv.avg), MQTT_STRUCT_VALUE_LENGTH + MQTT_STRUCT_UNIT_LENGHT);
-	MQTT_publish(MQTT_CONNID, &Topic_LW0_PEAK, &(mv.pk), MQTT_STRUCT_VALUE_LENGTH + MQTT_STRUCT_UNIT_LENGHT);
-	MQTT_publish(MQTT_CONNID, &Topic_LW0_VRMS, &(mv.rms), MQTT_STRUCT_VALUE_LENGTH + MQTT_STRUCT_UNIT_LENGHT);
-	MQTT_publish(MQTT_CONNID, &Topic_LW0_TEMP, &(mv.temp), MQTT_STRUCT_VALUE_LENGTH + MQTT_STRUCT_UNIT_LENGHT);
+	
+	write2array(&(mp.avg), &mv.avg, MQTT_STRUCT_VALUE_LENGTH, MQTT_VAVG_PREFIX_LENGTH);
+	write2array(&(mp.rms), &mv.rms, MQTT_STRUCT_VALUE_LENGTH, MQTT_VRMS_PREFIX_LENGTH);
+	write2array(&(mp.temp), &mv.temp, MQTT_STRUCT_VALUE_LENGTH, MQTT_TEMP_PREFIX_LENGTH);
+	
+	write2array(&(mp.pk), &pfx_pk, MQTT_PEAK_PREFIX_LENGTH, 0);											//Add prefix
+	write2array(&(mp.pk), &mv.pk, MQTT_STRUCT_VALUE_LENGTH, MQTT_PEAK_PREFIX_LENGTH);								//Add frequency value
+	write2array(&(mp.pk), &iu_pk, MQTT_STRUCT_UNIT_LENGTH, MQTT_PEAK_PREFIX_LENGTH + MQTT_STRUCT_VALUE_LENGTH);					//Add frequency unit
+	write2array(&(mp.pk), &mv.pkval, MQTT_STRUCT_VALUE_LENGTH, MQTT_PEAK_PREFIX_LENGTH + MQTT_STRUCT_VALUE_LENGTH + MQTT_STRUCT_UNIT_LENGTH);	//Add peak value
+	write2array(&(mp.pk), &iu_pkval, MQTT_STRUCT_UNIT_LENGTH ,MQTT_PEAK_PREFIX_LENGTH + MQTT_STRUCT_VALUE_LENGTH + MQTT_STRUCT_UNIT_LENGTH + MQTT_STRUCT_VALUE_LENGTH);	//Add peak unit
+	
+	MQTT_publish(MQTT_CONNID, &Topic_LW0_VAVG, &(mp.avg), MQTT_VAVG_PAYLOAD_LENGTH);
+	MQTT_publish(MQTT_CONNID, &Topic_LW0_PEAK, &(mp.pk), MQTT_VPEAK_PAYLOAD_LENGTH);
+	MQTT_publish(MQTT_CONNID, &Topic_LW0_VRMS, &(mp.rms), MQTT_VRMS_PAYLOAD_LENGTH);
+	MQTT_publish(MQTT_CONNID, &Topic_LW0_TEMP, &(mp.temp), MQTT_TEMP_PAYLOAD_LENGTH);
 #endif
 
 
@@ -476,8 +503,28 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
     printf("Ended!\n");
     
     /*Intercept the ended program here*/
+LED_ETH_ST	= LED_ON;
+LED_IP_ST	= LED_OFF;
+LED_TEMP_1	= LED_ON;
+LED_TEMP_2	= LED_OFF;
+LED_VB_TX	= LED_ON;
+LED_VB_RX	= LED_OFF;
+LED_EDS_TX	= LED_ON;
+LED_EDS_RX	= LED_OFF;
     while(1); /*DO NOT ADD ANYTHING BELOW THIS LINE*/
 }/*MAIN FUNCTION END POINT*/
+
+void MQTT_Packet_Init(void){
+	write2array(&(mp.avg), &pfx_avg, MQTT_VAVG_PREFIX_LENGTH, 0);
+	write2array(&(mp.pk), &pfx_pk, MQTT_PEAK_PREFIX_LENGTH, 0);
+	write2array(&(mp.rms), &pfx_rms, MQTT_VRMS_PREFIX_LENGTH, 0);
+	write2array(&(mp.temp), &pfx_temp, MQTT_TEMP_PREFIX_LENGTH, 0);
+	
+	write2array(&(mp.avg), &iu_avg, MQTT_STRUCT_UNIT_LENGTH, MQTT_VAVG_PREFIX_LENGTH + MQTT_STRUCT_VALUE_LENGTH);
+	write2array(&(mp.rms), &iu_rms, MQTT_STRUCT_UNIT_LENGTH, MQTT_VRMS_PREFIX_LENGTH + MQTT_STRUCT_VALUE_LENGTH);
+	write2array(&(mp.temp), &iu_temp, MQTT_STRUCT_UNIT_LENGTH, MQTT_TEMP_PREFIX_LENGTH + MQTT_STRUCT_VALUE_LENGTH);
+	
+}
 
 void Rx64MInitPorts(void){
         R_BSP_RegisterProtectDisable(BSP_REG_PROTECT_MPC); // Use BSP function to unlock the MPC register.
@@ -513,6 +560,20 @@ void Rx64MInitPorts(void){
         PORT1.PDR.BIT.B3 = 0x01;
 	
         return;
+}
+
+uint16_t swapHLbyte(uint16_t n){
+    uint8_t hibyte = (n & 0xff00) >> 8;
+    uint8_t lobyte = (n & 0xff);
+    
+    return lobyte << 8 | hibyte;
+}
+
+void write2array(uint8_t *target, uint8_t *source, uint8_t length, uint8_t offset){
+    for(uint8_t index = 0; index < length; index++){
+    	*(target + offset + index) = *(source + index);
+	//printf("Target Address: 0x%X, Old: 0x%X, New: 0x%X\n",target + offset + index, *(target + offset + index), *(source + index));
+    }
 }
 
 void conv_int16_int8(int16_t * inputBuffer, int8_t * outputBuffer, uint16_t length){
