@@ -25,6 +25,10 @@
 
 #define DATA_RDY_IND_LENGTH			(5)
 
+#define MQTT_STRUCT_VALUE_LENGTH		(5)
+#define MQTT_STRUCT_UNIT_LENGHT			(4)
+#define MQTT_TOPIC_LENGTH			8
+
 //Globe Statement Definition
 #define		MODE_ENABLE		(1)
 #define		MODE_DISABLE		(0)
@@ -40,6 +44,9 @@
 #define DATA_RDY_IND_EDS		(3)
 #define DATA_RDY_IND_TEMP		(4)
 
+
+#define 	RECEIVE_SIZE		700
+
 extern volatile uint8_t vibrRtnRAWData[VIBR_SENS_RETURN_LENGTH];
 extern volatile uint8_t EDSRtnRAWData[EDS_SENS_RETURN_LENGTH];
 
@@ -51,5 +58,20 @@ extern volatile uint16_t TempData[TEMP_DATA_LENGTH];
 
 extern bool ETHERNET_RDY[2];
 extern uint8_t DATA_RDY[DATA_RDY_IND_LENGTH];
+
+
+typedef struct vibrmisc{
+	float avg;		//Average(mg)
+	uint16_t pk;		//Peak Frequency(Hz)
+	float rms;		//RMS(mg)
+	float temp;		//Temperature(*C)
+}VIBR_MISC;
+
+typedef struct mqttvibr{
+	uint8_t	 avg[MQTT_STRUCT_VALUE_LENGTH + MQTT_STRUCT_UNIT_LENGHT];	//Average(mg)	
+	uint8_t  pk[MQTT_STRUCT_VALUE_LENGTH + MQTT_STRUCT_UNIT_LENGHT];	//Peak Frequency(Hz)	
+	uint8_t  rms[MQTT_STRUCT_VALUE_LENGTH + MQTT_STRUCT_UNIT_LENGHT];	//RMS(mg)	
+	uint8_t  temp[MQTT_STRUCT_VALUE_LENGTH + MQTT_STRUCT_UNIT_LENGHT];	//Temperature(*C)
+}MQTT_VIBR;
 
 #endif

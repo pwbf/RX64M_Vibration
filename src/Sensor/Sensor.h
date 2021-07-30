@@ -15,6 +15,9 @@
 /*For LED*/
 #include "LEDprocess.h"
 
+/*For LED*/
+#include "MiscClac.h"
+
 #include "MainSetting.h"
 
 #define HOST_SEND_LENGTH		(9)

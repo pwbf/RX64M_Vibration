@@ -159,6 +159,8 @@ typedef struct
     UB ipaddr[4];       /* Local IP address        */
     UB maskaddr[4];     /* Subnet mask             */
     UB gwaddr[4];       /* Gateway address X       */
+    UB dnsaddr[4];      /* Primary DNS 		   */
+    UB dnsaddr2[4];     /* Secondary DNS 	   */
 #if defined(__M32R__)
     UW dummy;           /* for alignment           */
 #endif

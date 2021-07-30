@@ -1,11 +1,7 @@
 #include "EthernetProcess.h"
 
 TCP_PACKET *tcpPacket;
-
-extern volatile int16_t EDSData[EDS_DATA_LENGTH];
-extern volatile int16_t vibrateData[VIBR_DATA_LENGTH];
-extern volatile int32_t frequencyData[VIBR_DATA_LENGTH / 2];
-extern volatile uint8_t rtnRAWData[VIBR_SENS_RETURN_LENGTH];
+extern char* testingHostname;
 
 uint32_t encodeIPv4(uint8_t B1, uint8_t B2, uint8_t B3, uint8_t B4){
 	return B1<<24 | B2<<16 | B3<<8 | B4<<0; 
@@ -16,6 +12,39 @@ void decodeIPv4(uint32_t encIP, uint8_t *decIP){
 	*(decIP+1) = encIP >> 16;
 	*(decIP+2) = encIP >> 8;
 	*(decIP+3) = encIP >> 0;
+}
+
+void showRDATA(uint8_t *rdataPtr){
+	printf("RDATA: \n");
+	int loop = 0;
+	char ch = rdataPtr[loop];
+	while(ch){
+		ch = rdataPtr[loop++];
+		// printf("%c(0x%X) ", ch, ch);
+		printf("%c", ch);
+	}
+	printf("Total Length: %d\n", loop - 1);
+}
+void flushRDATA(uint8_t *rdataPtr){
+	//printf("Flushing RDATA: \n");
+	for(int loop = 0; loop < RECEIVE_SIZE ; loop++){
+		rdataPtr[loop] = 0x00;
+	}
+}
+
+ER TCP_Disconnect(uint8_t connID){
+	int32_t rtn = 0x00;
+	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+		printf(">>> Request TCP disconnection connID = %d\n",connID);
+	#endif
+	
+	rtn = tcp_sht_cep(connID);
+	rtn = tcp_cls_cep(connID, TMO_FEVR);
+	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+		printf(">>> Disconnected\n");
+	#endif
+	
+	return rtn;
 }
 
 ER TCP_Connect(uint32_t dstIP, uint16_t portno, uint8_t connID){
@@ -36,19 +65,51 @@ ER TCP_Connect(uint32_t dstIP, uint16_t portno, uint8_t connID){
 	return rtn;
 }
 
+ER TCP_ReceivingData(uint8_t connID, uint8_t *rdataPtr){
+	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+		//printf(">> TCP_ReceivingData\n");
+	#endif
+	ER sRtn;
+	sRtn = tcp_rcv_dat(connID, rdataPtr, RECEIVE_SIZE, TMO_FEVR);
+	R_BSP_SoftwareDelay (100, BSP_DELAY_MILLISECS);
+	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+		//printf("TCP_ReceivingData>>> rtn:0x%X\n",sRtn);
+		//TCP_ShowError(sRtn);
+	#endif
+	//TCP_SendingACK(connID);
+}
+
 ER TCP_SendingData(uint8_t connID, uint8_t *dataPtr, uint16_t dataSize){
 	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
-		printf(">> TCP_SendingData\n");
+		//printf(">> TCP_SendingData\n");
 	#endif
-	uint16_t sRtn;
+	ER sRtn;
 	sRtn = tcp_snd_dat(connID, dataPtr, dataSize, TMO_FEVR);
 	R_BSP_SoftwareDelay (100, BSP_DELAY_MILLISECS);
 	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
-		printf("TCP_SendingData>>> rtn:%d\n",sRtn);
+		//printf("TCP_SendingData>>> rtn:0x%X\n",sRtn);
+		//TCP_ShowError(sRtn);
+	#endif
+}
+
+ER TCP_SendingACK(uint8_t connID){
+	uint8_t dataPtr = "";
+	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+		//printf(">> TCP_SendingACK\n");
+	#endif
+	ER sRtn;
+	sRtn = tcp_snd_dat(connID, &dataPtr, 1, TMO_FEVR);
+	R_BSP_SoftwareDelay (100, BSP_DELAY_MILLISECS);
+	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+		//printf("TCP_SendingACK>>> rtn:0x%X\n",sRtn);
+		//TCP_ShowError(sRtn);
 	#endif
 }
 
 ER TCP_Terminate(uint8_t connID){
+	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+		printf(">> Terminate TCP connection\n");
+	#endif
 	tcp_sht_cep(connID);
 	R_BSP_SoftwareDelay (100, BSP_DELAY_MILLISECS);
 	tcp_cls_cep(connID, TMO_FEVR);
@@ -66,7 +127,6 @@ void EthernetDHCP(void){
 	while (ETHER_FLAG_ON_LINK_ON != link_detect[0] && ETHER_FLAG_ON_LINK_ON != link_detect[1])
 	{
 		R_ETHER_LinkProcess(0);
-		//R_ETHER_LinkProcess(1);
 	}
 	
 	int32_t dhcpRtn = 1;
@@ -134,8 +194,26 @@ void EthernetInit(bool usingDHCP){
 	if (ercd != E_OK){
 		for( ;; );
 	}
+	
 	/* Init DNS clienr */
-	// R_dns_init();
+	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+		printf("-- INIT: DNS Client\n");
+	#endif
+	
+	R_dns_init();
+	/*
+	if(R_dns_resolve_name(testingHostname,&R_dns_process) != E_OK){
+		printf(">>>>DNS query test FAILED\n");
+		while(1);
+	}
+	else{
+		printf(">>>>DNS query test SUCCEED\n");
+		printf(">>>>Query: ");
+		printf(testingHostname);
+	}
+	*/
+	/*Check TCPIP is on*/
+	//EthernetCheckTCPIP();
 }
 
 /******************************************************************************
@@ -154,6 +232,10 @@ void set_tcpudp_env(DHCP *dhcp){
         memcpy(tcpudp_env[0].ipaddr, dhcp->ipaddr, 4);
         memcpy(tcpudp_env[0].maskaddr, dhcp->maskaddr, 4);
         memcpy(tcpudp_env[0].gwaddr, dhcp->gwaddr, 4);
+        memcpy(tcpudp_env[0].dnsaddr, dhcp->dnsaddr, 4);
+        memcpy(tcpudp_env[0].dnsaddr2, dhcp->dnsaddr2, 4);
+        memcpy((char *)dnsaddr1, (char *)dhcp->dnsaddr, 4);
+        memcpy((char *)dnsaddr2, (char *)dhcp->dnsaddr2, 4);
 	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
 		printf("DHCP->IP: %d.%d.%d.%d\n",
 			tcpudp_env[0].ipaddr[0], tcpudp_env[0].ipaddr[1], tcpudp_env[0].ipaddr[2], tcpudp_env[0].ipaddr[3]);
@@ -161,10 +243,12 @@ void set_tcpudp_env(DHCP *dhcp){
 			tcpudp_env[0].maskaddr[0], tcpudp_env[0].maskaddr[1], tcpudp_env[0].maskaddr[2], tcpudp_env[0].maskaddr[3]);
 		printf("DHCP->Gateway: %d.%d.%d.%d\n",
 			tcpudp_env[0].gwaddr[0], tcpudp_env[0].gwaddr[1], tcpudp_env[0].gwaddr[2], tcpudp_env[0].gwaddr[3]);
+		printf("DHCP->DNS1: %d.%d.%d.%d\n",
+			tcpudp_env[0].dnsaddr[0], tcpudp_env[0].dnsaddr[1], tcpudp_env[0].dnsaddr[2], tcpudp_env[0].dnsaddr[3]);
+		printf("DHCP->DNS2: %d.%d.%d.%d\n",
+			tcpudp_env[0].dnsaddr2[0], tcpudp_env[0].dnsaddr2[1], tcpudp_env[0].dnsaddr2[2], tcpudp_env[0].dnsaddr2[3]);
 	#endif
 
-        memcpy((char *)dnsaddr1, (char *)dhcp->dnsaddr, 4);
-        memcpy((char *)dnsaddr2, (char *)dhcp->dnsaddr2, 4);
 	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
 		printf("==========DHCP==========\n\n");
 	#endif
@@ -176,104 +260,45 @@ void set_tcpudp_env(DHCP *dhcp){
     }
 }
 
+void TCP_ShowError(ER errorcode){
+	switch (errorcode){
+		case E_PAR:
+			printf("TCP_DebugError>> E_PAR\n");
+			break;
+		case E_QOVR:
+			printf("TCP_DebugError>> E_QOVR\n");
+			break;
+		case E_OBJ:
+			printf("TCP_DebugError>> E_OBJ\n");
+			break;
+		case E_TMOUT:
+			printf("TCP_DebugError>> E_TMOUT\n");
+			break;
+		default:
+			printf("TCP_DebugError>> E_OK\n");
+			break;
+	}
+}
+
 ER tcp_callback(ID cepid, FN fncd , VP p_parblk){
 	
     ER   parblk = *(ER *)p_parblk;
     ER   ercd;
     ID   cepid_oft;
     
-/*#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
-	switch (fncd){
-		case TFN_TCP_CRE_REP:
-			printf("tcp_callback>> TFN_TCP_CRE_REP\n");
-			break;
-		case TFN_TCP_DEL_REP:
-			printf("tcp_callback>> TFN_TCP_DEL_REP\n");
-			break;
-		case TFN_TCP_CRE_CEP:
-			printf("tcp_callback>> TFN_TCP_CRE_CEP\n");
-			break;
-		case TFN_TCP_DEL_CEP:
-			printf("tcp_callback>> TFN_TCP_DEL_CEP\n");
-			break;
-		case TFN_TCP_ACP_CEP:
-			printf("tcp_callback>> TFN_TCP_ACP_CEP\n");
-			break;
-		case TFN_TCP_CON_CEP:
-			printf("tcp_callback>> TFN_TCP_CON_CEP\n");
-			printf("TCP [ACK] or [PSH, ACK]\n");
-			break;
-		case TFN_TCP_SHT_CEP:
-			printf("tcp_callback>> TFN_TCP_SHT_CEP\n");
-			printf(">> TCP data transmission end\n");
-			break;
-		case TFN_TCP_CLS_CEP:
-			printf("tcp_callback>> TFN_TCP_CLS_CEP\n");
-			
-			break;
-		case TFN_TCP_SND_DAT:
-			printf("tcp_callback>> TFN_TCP_SND_DAT\n");
-			printf("Transmission of TCP data\n");
-			break;
-		case TFN_TCP_RCV_DAT:
-			printf("tcp_callback>> TFN_TCP_RCV_DAT\n");
-			printf("Reception of TCP data\n");
-			break;
-		case TFN_TCP_GET_BUF:
-			printf("tcp_callback>> TFN_TCP_GET_BUF\n");
-			break;
-		case TFN_TCP_SND_BUF:
-			printf("tcp_callback>> TFN_TCP_SND_BUF\n");
-			break;
-		case TFN_TCP_RCV_BUF:
-			printf("tcp_callback>> TFN_TCP_RCV_BUF\n");
-			break;
-		case TFN_TCP_REL_BUF:
-			printf("tcp_callback>> TFN_TCP_REL_BUF\n");
-			break;
-		case TFN_TCP_SND_OOB:
-			printf("tcp_callback>> TFN_TCP_SND_OOB\n");
-			break;
-		case TFN_TCP_RCV_OOB:
-			printf("tcp_callback>> TFN_TCP_RCV_OOB\n");
-			break;
-		case TFN_TCP_CAN_CEP:
-			printf("tcp_callback>> TFN_TCP_CAN_CEP\n");
-			break;
-		case TFN_TCP_SET_OPT:
-			printf("tcp_callback>> TFN_TCP_SET_OPT\n");
-			break;
-		case TFN_TCP_GET_OPT:
-			printf("tcp_callback>> TFN_TCP_GET_OPT\n");
-			break;
-		case TFN_TCP_ALL:
-			printf("tcp_callback>> 0\n");
-			break;
-		case TFN_UDP_CRE_CEP:
-			printf("tcp_callback>> TFN_UDP_CRE_CEP\n");
-			break;
-		case TFN_UDP_DEL_CEP:
-			printf("tcp_callback>> TFN_UDP_DEL_CEP\n");
-			break;
-		case TFN_UDP_SND_DAT:
-			printf("tcp_callback>> TFN_UDP_SND_DAT\n");
-			break;
-		case TFN_UDP_RCV_DAT:
-			printf("tcp_callback>> TFN_UDP_RCV_DAT\n");
-			break;
-		case TFN_UDP_CAN_CEP:
-			printf("tcp_callback>> TFN_UDP_CAN_CEP\n");
-			break;
-		case TFN_UDP_SET_OPT:
-			printf("tcp_callback>> TFN_UDP_SET_OPT\n");
-			break;
-		case TFN_UDP_GET_OPT:
-			printf("tcp_callback>> TFN_UDP_GET_OPT\n");
-			break;
-		default:
-			printf("tcp_callback>> NOPE\n");
-			break;
-	}
-#endif*/
+#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+
+#endif
     return(0);
+}
+
+ER ether_dns_callback(ID cepid, FN fncd , VP p_parblk)
+{
+    ER parblk;
+    ER ercd;
+
+    parblk = *(ER *)p_parblk;
+    ercd   = E_OK;
+
+    return (0);
 }

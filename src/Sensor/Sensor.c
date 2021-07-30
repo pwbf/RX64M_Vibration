@@ -1,5 +1,7 @@
 #include "Sensor.h"
 
+extern volatile VIBR_MISC vm;
+
 extern volatile uint8_t vibrRtnRAWData[VIBR_SENS_RETURN_LENGTH];
 extern volatile int16_t vibrateData[VIBR_DATA_LENGTH];
 
@@ -361,5 +363,6 @@ void ADC_READ(void *pArgs){
 	    }
 	    else{
 		DATA_RDY[DATA_RDY_IND_TEMP] = STATE_TRUE;
+    		vm.temp = TempData[1] * 0.061 - 55;
 	    }
 }

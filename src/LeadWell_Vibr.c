@@ -7,10 +7,23 @@ extern volatile int32_t frequencyData[FREQ_DATA_LENGTH];
 extern volatile int16_t EDSData[EDS_DATA_LENGTH];
 extern volatile uint16_t TempData[TEMP_DATA_LENGTH];
 
-volatile int8_t HLvibrateData[HL_VIBR_DATA_LENGTH];
-volatile int8_t HLTempData[HL_TEMP_DATA_LENGTH];
+extern volatile int8_t HLvibrateData[HL_VIBR_DATA_LENGTH];
+extern volatile int8_t HLTempData[HL_TEMP_DATA_LENGTH];
 
+extern bool ProgramStatusIndicator;
 
+extern const uint8_t iu_avg[MQTT_STRUCT_UNIT_LENGHT];
+extern const uint8_t iu_pk[MQTT_STRUCT_UNIT_LENGHT];
+extern const uint8_t iu_rms[MQTT_STRUCT_UNIT_LENGHT];
+extern const uint8_t iu_temp[MQTT_STRUCT_UNIT_LENGHT];
+extern const uint8_t Topic_LW0_TEMP[MQTT_TOPIC_LENGTH];
+extern const uint8_t Topic_LW0_VRMS[MQTT_TOPIC_LENGTH];
+extern const uint8_t Topic_LW0_VAVG[MQTT_TOPIC_LENGTH];
+extern const uint8_t Topic_LW0_PEAK[MQTT_TOPIC_LENGTH];
+extern const uint8_t Topic_THU_TEST[MQTT_TOPIC_LENGTH];
+
+extern volatile VIBR_MISC vm;
+extern volatile MQTT_VIBR mv;
 
 void main(void){	/*MAIN FUNCTION START POINT*/
 /* WIRESHARK
@@ -21,13 +34,30 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 		printf("Bootup Process\n");
 		printf("==========INIT==========\n");
 	#endif
-	
 	Rx64MInitPorts();
 	LEDinit();
 	
 #if (ENABLE_UART == MODE_DISABLE) && ((ENABLE_VIBR == MODE_ENABLE) || (ENABLE_EDS == MODE_ENABLE))
 	#error "-- INIT Configuration Check Failed!";
-	#error "-- You need to enable UART before enable vibration oe EDS";
+	#error "-- You need to enable UART before enable vibration or EDS";
+#endif
+
+#if (ENABLE_ETHERNET == MODE_DISABLE) && ((ENABLE_MQTT == MODE_ENABLE) || (ENABLE_TCP == MODE_ENABLE))
+	#error "-- INIT Configuration Check Failed!";
+	#error "-- You need to enable Ethernet before enable MQTT or TCP";
+#endif
+
+
+#if ENABLE_IRQ == MODE_ENABLE
+	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+		printf("-- INIT: [Enabled] TCP Terminate Button\n");
+	#endif
+	R_r_irq_rx_Create();
+	R_r_irq_rx_IRQ10_Start();
+#else
+	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+		printf("-- INIT: [Disabled] TCP Terminate Button\n");
+	#endif
 #endif
 
 
@@ -111,21 +141,62 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 #endif
 
 
-#if ENABLE_ETHERNET == MODE_ENABLE
-	int8_t tcp_connection_status = TCP_Connect(encodeIPv4(TAR_SERVER_IP), TAR_SERVER_PT, TCP_CONNID_TD);
-	while(tcp_connection_status != 0 && tcp_connection_status != -57){
-		#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
-			printf("        Waiting for Server Respond...\n");
-		#endif
-		R_BSP_SoftwareDelay (500, BSP_DELAY_MILLISECS);
-		tcp_connection_status = TCP_Connect(encodeIPv4(TAR_SERVER_IP), TAR_SERVER_PT, TCP_CONNID_TD);
-	}
-	LED_ETH_ST	= LED_ON;
+#if ENABLE_TCP == MODE_ENABLE
 	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
-		printf("        Connection Established!!\n");
+		printf("-- INIT: [Enabled] TCP Client\n");
 	#endif
-	//TCP_Connect(encodeIPv4(TAR_SERVER_IP), TAR_SERVER_PT, TCP_CONNID_FD);
-	//R_BSP_SoftwareDelay (100, BSP_DELAY_MILLISECS);
+#else
+	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+		printf("-- INIT: [Disabled] TCP Client\n");
+	#endif
+#endif
+
+#if ENABLE_MQTT == MODE_ENABLE
+	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+		printf("-- INIT: [Enabled] MQTT Client\n");
+	#endif
+#else
+	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+		printf("-- INIT: [Disabled] MQTT Client\n");
+	#endif
+#endif
+
+
+#if ENABLE_ETHERNET == MODE_ENABLE
+	#if ENABLE_TCP == MODE_ENABLE
+		int8_t tcp_connection_status = TCP_Connect(encodeIPv4(TCP_SERVER_IP), TCP_SERVER_PT, TCP_CONNID);
+		while(tcp_connection_status != 0 && tcp_connection_status != -57){
+			#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+				printf("        Waiting for TCP Server Respond...\n");
+			#endif
+			R_BSP_SoftwareDelay (500, BSP_DELAY_MILLISECS);
+			tcp_connection_status = TCP_Connect(encodeIPv4(TCP_SERVER_IP), TCP_SERVER_PT, TCP_CONNID);
+		}
+		LED_ETH_ST	= LED_ON;
+		#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+			printf("        TCP server Connection Established!!\n");
+		#endif
+	#endif
+	
+	#if ENABLE_MQTT == MODE_ENABLE
+		int8_t mqtt_connection_status = TCP_Connect(encodeIPv4(MQTT_SERVER_IP), MQTT_SERVER_PT, MQTT_CONNID);
+		while(mqtt_connection_status != 0 && mqtt_connection_status != -57){
+			#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+				printf("        Waiting for MQTT Server Respond...\n");
+			#endif
+			R_BSP_SoftwareDelay (500, BSP_DELAY_MILLISECS);
+			mqtt_connection_status = TCP_Connect(encodeIPv4(MQTT_SERVER_IP), MQTT_SERVER_PT, MQTT_CONNID);
+		}
+		LED_ETH_ST	= LED_ON;
+		#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+			printf("        MQTT server TCP Connection Established!!\n");
+		#endif
+		
+		MQTT_connect(MQTT_CONNID);
+		#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+			printf("        MQTT server Connection Established!!\n");
+		#endif
+	#endif
 #endif
 	
 	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
@@ -134,9 +205,14 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 	#endif
 	
 /*MAIN WHILE LOOP START POINT*/	
-    while(1){
+	ProgramStatusIndicator = 1;
+    while(ProgramStatusIndicator){
 	LED_ETH_ST	= LED_ON;
 	LED_IP_ST	= LED_ON;
+	
+	if(ProgramStatusIndicator == 0)
+		break;
+	
 #if ENABLE_ETHERNET == MODE_ENABLE
 	/**Check Ethernet is connected!**/
 	while(!ETHERNET_RDY[0]){
@@ -159,6 +235,8 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 		LED_VB_RX	= LED_OFF;
 		R_BSP_SoftwareDelay (SENSOR_DELAY_TIME, BSP_DELAY_MILLISECS);
 		conv_int16_int8(vibrateData, HLvibrateData, VIBR_DATA_LENGTH);
+		arrayAverage(vibrateData, VIBR_DATA_LENGTH);
+		arrayRMS(vibrateData, VIBR_DATA_LENGTH);
 #endif
 
 #if ENABLE_DSP == MODE_ENABLE
@@ -169,6 +247,7 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 			R_DSP_REAL_FFT_Operation(vibrateData, frequencyData);
 			DATA_RDY[DATA_RDY_IND_FREQ] = STATE_TRUE;
 			R_BSP_SoftwareDelay (SENSOR_DELAY_TIME, BSP_DELAY_MILLISECS);
+			arrayMaximum(frequencyData, VIBR_DATA_LENGTH / 2);
 		}
 #endif
 
@@ -203,10 +282,14 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 	printf("[%d] Frequency Data\n", DATA_RDY[DATA_RDY_IND_FREQ]);
 	printf("[%d] EDS Data\n", DATA_RDY[DATA_RDY_IND_EDS]);
 	printf("[%d] Temperature Data\n", DATA_RDY[DATA_RDY_IND_TEMP]);
+	printf("Peak Freq:%d\n", vm.pk);
+	printf("RMS Value:%f\n", vm.rms);
+	printf("AVG Value:%f\n", vm.avg);
+	printf("Temp Value:%f\n", vm.temp);
 	printf("-----------------------\n\n");
 #endif
 
-#if ENABLE_ETHERNET == MODE_ENABLE
+#if ENABLE_TCP == MODE_ENABLE
 
 	#if ENABLE_VIBR == MODE_ENABLE
 		if(DATA_RDY[DATA_RDY_IND_VIBR]){
@@ -215,7 +298,7 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 				printf(">> TCP Sending: HLvibrateData\n");
 			#endif
 			HLvibrateData[0] = 0xAA;
-			TCP_SendingData(TCP_CONNID_TD, HLvibrateData, HL_VIBR_DATA_LENGTH);
+			TCP_SendingData(TCP_CONNID, HLvibrateData, HL_VIBR_DATA_LENGTH);
 			R_BSP_SoftwareDelay (TCP_SEND_DELAY_TIME, BSP_DELAY_MILLISECS);
 			#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
 				printf(">> TCP Sending Completed\n\n");
@@ -232,7 +315,7 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 				printf(">> TCP Sending: frequencyData\n");
 			#endif
 			frequencyData[0] = 0xBBBBBBBB;
-			TCP_SendingData(TCP_CONNID_TD, frequencyData, HL_FREQ_DATA_LENGTH);
+			TCP_SendingData(TCP_CONNID, frequencyData, HL_FREQ_DATA_LENGTH);
 			R_BSP_SoftwareDelay (TCP_SEND_DELAY_TIME, BSP_DELAY_MILLISECS);
 			#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
 				printf(">> TCP Sending Completed\n\n");
@@ -247,7 +330,7 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 				printf(">> TCP Sending: EDSData\n");
 			#endif
 			EDSData[0] = 0xCCCC;
-			TCP_SendingData(TCP_CONNID_TD, EDSData, (EDS_DATA_LENGTH) * 2);
+			TCP_SendingData(TCP_CONNID, EDSData, (EDS_DATA_LENGTH) * 2);
 			R_BSP_SoftwareDelay (TCP_SEND_DELAY_TIME, BSP_DELAY_MILLISECS);
 			#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
 				printf(">> TCP Sending Completed\n\n");
@@ -266,7 +349,7 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 				printf(">> TCP Sending: HLTempData\n");
 			#endif
 			HLTempData[0] = 0xDD;
-			TCP_SendingData(TCP_CONNID_TD, HLTempData, (TEMP_DATA_LENGTH) * 2);
+			TCP_SendingData(TCP_CONNID, HLTempData, (TEMP_DATA_LENGTH) * 2);
 			R_BSP_SoftwareDelay (TCP_SEND_DELAY_TIME, BSP_DELAY_MILLISECS);
 			#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
 				printf(">> TCP Sending Completed\n\n");
@@ -290,13 +373,29 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 			printf(">> TCP Sending: Error Logging\n");
 		#endif
 		DATA_RDY[0] = 0xEE;
-		TCP_SendingData(TCP_CONNID_TD, DATA_RDY, DATA_RDY_IND_LENGTH);
+		TCP_SendingData(TCP_CONNID, DATA_RDY, DATA_RDY_IND_LENGTH);
 		R_BSP_SoftwareDelay (TCP_SEND_DELAY_TIME, BSP_DELAY_MILLISECS);
 		#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
 			printf(">> TCP Sending Completed\n\n");
 		#endif
 	}
 	
+#endif
+
+
+#if ENABLE_MQTT == MODE_ENABLE
+	sprintf(mv.avg, "%5.1f", vm.avg);
+	sprintf(mv.pk, "%5d", vm.pk);
+	sprintf(mv.rms, "%5.1f", vm.rms);
+	sprintf(mv.temp, "%5.1f", vm.temp);
+	write2array(&(mv.avg), &iu_avg, MQTT_STRUCT_UNIT_LENGHT, MQTT_STRUCT_VALUE_LENGTH);
+	write2array(&(mv.pk), &iu_pk, MQTT_STRUCT_UNIT_LENGHT, MQTT_STRUCT_VALUE_LENGTH);
+	write2array(&(mv.rms), &iu_rms, MQTT_STRUCT_UNIT_LENGHT, MQTT_STRUCT_VALUE_LENGTH);
+	write2array(&(mv.temp), &iu_temp, MQTT_STRUCT_UNIT_LENGHT, MQTT_STRUCT_VALUE_LENGTH);
+	MQTT_publish(MQTT_CONNID, &Topic_LW0_VAVG, &(mv.avg), MQTT_STRUCT_VALUE_LENGTH + MQTT_STRUCT_UNIT_LENGHT);
+	MQTT_publish(MQTT_CONNID, &Topic_LW0_PEAK, &(mv.pk), MQTT_STRUCT_VALUE_LENGTH + MQTT_STRUCT_UNIT_LENGHT);
+	MQTT_publish(MQTT_CONNID, &Topic_LW0_VRMS, &(mv.rms), MQTT_STRUCT_VALUE_LENGTH + MQTT_STRUCT_UNIT_LENGHT);
+	MQTT_publish(MQTT_CONNID, &Topic_LW0_TEMP, &(mv.temp), MQTT_STRUCT_VALUE_LENGTH + MQTT_STRUCT_UNIT_LENGHT);
 #endif
 
 
@@ -344,6 +443,7 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 			printf(">> Flushing Data Indicator\n");
 		#endif
 		flushBuffer(DATA_RDY, DATA_RDY_IND_LENGTH);
+		
 	LED_StepDN();
 #endif
 		#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
@@ -360,6 +460,23 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 		R_BSP_SoftwareDelay(LOOPIN_DELAY_TIME, BSP_DELAY_MILLISECS);
 		
     }/*MAIN WHILE LOOP END POINT*/
+    
+#if ENABLE_MQTT == MODE_ENABLE
+	printf("Terminating MQTT Connection...\n");
+	MQTT_terminate(MQTT_CONNID);
+	TCP_Terminate(MQTT_CONNID);
+	printf("OK\n");
+#endif
+
+#if ENABLE_TCP == MODE_ENABLE
+	printf("Terminating TCP Connection...\n");
+	TCP_Terminate(TCP_CONNID);
+	printf("OK\n");
+#endif
+    printf("Ended!\n");
+    
+    /*Intercept the ended program here*/
+    while(1); /*DO NOT ADD ANYTHING BELOW THIS LINE*/
 }/*MAIN FUNCTION END POINT*/
 
 void Rx64MInitPorts(void){

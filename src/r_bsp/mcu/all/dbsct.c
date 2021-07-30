@@ -75,7 +75,13 @@ extern st_dtbl_t const _DTBL[] = {
 #endif
     { __sectop("D"), __secend("D"), __sectop("R") },
     { __sectop("D_2"), __secend("D_2"), __sectop("R_2") },
-    { __sectop("D_1"), __secend("D_1"), __sectop("R_1") }
+    { __sectop("D_1"), __secend("D_1"), __sectop("R_1") }      
+   ,{ __sectop("D_VIBR_SEC"), __secend("D_VIBR_SEC"), __sectop("R_VIBR_SEC") }
+   ,{ __sectop("D_VIBR_SEC_1"), __secend("D_VIBR_SEC_1"), __sectop("R_VIBR_SEC_1") }
+   ,{ __sectop("D_VIBR_SEC_2"), __secend("D_VIBR_SEC_2"), __sectop("R_VIBR_SEC_2") }
+   ,{ __sectop("D_MQTT_SEC"), __secend("D_MQTT_SEC"), __sectop("R_MQTT_SEC") }
+   ,{ __sectop("D_MQTT_SEC_1"), __secend("D_MQTT_SEC_1"), __sectop("R_MQTT_SEC_1") }
+   ,{ __sectop("D_MQTT_SEC_2"), __secend("D_MQTT_SEC_2"), __sectop("R_MQTT_SEC_2") }
 #if (BSP_CFG_RTOS_USED == 4) && (BSP_CFG_RENESAS_RTOS_USED == RENESAS_RI600PX)
    ,{ __sectop("DRI_ROM"), __secend("DRI_ROM"), __sectop("RRI_RAM") }
 #endif /* Renesas RI600PX */
