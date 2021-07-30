@@ -27,11 +27,11 @@ volatile uint16_t TempData[TEMP_DATA_LENGTH];
 
 volatile int8_t HLvibrateData[HL_VIBR_DATA_LENGTH];
 volatile int8_t HLTempData[HL_TEMP_DATA_LENGTH];
-#pragma section 
 
 volatile VIBR_MISC vm;
 volatile MQTT_VIBR mv;
 
+#pragma section 
 bool ETHERNET_RDY[2] = {STATE_FALSE, STATE_FALSE};
 uint8_t DATA_RDY[DATA_RDY_IND_LENGTH] = {0xEE, STATE_FALSE, STATE_FALSE, STATE_FALSE, STATE_FALSE};
 bool MQTT_RDY = STATE_FALSE;
