@@ -156,8 +156,8 @@ const UH _ip_tblcnt[] = { 3, 3 };
 
 #else
 
-#define MY_IP_ADDR0     10,0,0,220 
-#define GATEWAY_ADDR0   10,0,0,1
+#define MY_IP_ADDR0     210,66,195,94 
+#define GATEWAY_ADDR0   210,66,195,254
 #define SUBNET_MASK0    255,255,255,0 
 
 #endif
@@ -180,7 +180,8 @@ TCPUDP_ENV tcpudp_env[] =
 /*    Set of Ethernet-related                                               */
 /*--------------------------------------------------------------------------*/
 /* Local MAC address (Set all 0s when unspecified) */
-#define MY_MAC_ADDR0    0x48,0x0C,0xA7,0xFF,0xAA,0xA0
+//#define MY_MAC_ADDR0    0x48,0xBA,0x4E,0x48,0xE9,0x91
+#define MY_MAC_ADDR0    0x48,0x0C,0xA7,0xFF,0xAA,0xB7
 #define MY_MAC_ADDR1    0xFE,0x98,0x76,0x54,0x32,0x10
 
 UB _myethaddr[][6] =

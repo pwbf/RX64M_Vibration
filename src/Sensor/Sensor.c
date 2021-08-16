@@ -6,7 +6,7 @@ extern volatile uint8_t vibrRtnRAWData[VIBR_SENS_RETURN_LENGTH];
 extern volatile int16_t vibrateData[VIBR_DATA_LENGTH];
 
 extern volatile uint8_t EDSRtnRAWData[EDS_SENS_RETURN_LENGTH];
-extern volatile int16_t EDSData[EDS_DATA_LENGTH];
+extern volatile uint16_t EDSData[EDS_DATA_LENGTH];
 
 uint8_t *p_EDSRtnRAWData = EDSRtnRAWData;
 int16_t *p_EDSData = EDSData;
@@ -27,7 +27,8 @@ uint8_t vibrSensorSend(void){
 		SENS_TB1, 
 		SENS_TB2, 
 		SENS_TB3, 
-		VIBR_SENS_CHK, 
+		(SENS_ST + VIBR_SENS_ID + VIBR_SENS_CMD + SENS_TB0 + SENS_TB1 + SENS_TB2 + SENS_TB3), 
+		//Check Byte (checksum, the sum of [START][ID][STS][BYTE0][BYTE1][BYTE2][BYTE3])
 		SENS_END
 	};
 	return R_SCI_Send(VIBR_UART_HANDLE, cmd, HOST_SEND_LENGTH);
@@ -45,7 +46,27 @@ uint8_t edsSensorSend(void){
 		SENS_TB1, 
 		SENS_TB2, 
 		SENS_TB3, 
-		EDS_SENS_CHK, 
+		(SENS_ST + EDS_SENS_ID + EDS_SENS_CMD + SENS_TB0 + SENS_TB1 + SENS_TB2 + SENS_TB3), 
+		//Check Byte (checksum, the sum of [START][ID][STS][BYTE0][BYTE1][BYTE2][BYTE3])
+		SENS_END
+	};
+	return R_SCI_Send(EDS_UART_HANDLE, cmd, HOST_SEND_LENGTH);
+}
+
+uint8_t edsSensorReset(void){
+	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+		printf(">> Send Reset Command EDS\n");
+	#endif
+	uint8_t cmd[HOST_SEND_LENGTH]={
+		SENS_ST, 
+		EDS_SENS_ID, 
+		1, 
+		SENS_TB0, 
+		SENS_TB1, 
+		SENS_TB2, 
+		SENS_TB3, 
+		(SENS_ST + EDS_SENS_ID + 1 + SENS_TB0 + SENS_TB1 + SENS_TB2 + SENS_TB3), 
+		//Check Byte (checksum, the sum of [START][ID][STS][BYTE0][BYTE1][BYTE2][BYTE3])
 		SENS_END
 	};
 	return R_SCI_Send(EDS_UART_HANDLE, cmd, HOST_SEND_LENGTH);
@@ -112,9 +133,26 @@ void edsSensorProcess(uint8_t status){
 				#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
 					printf(">> EDS buffer p+9 = %d\n", *(p_EDSRtnRAWData + (EDS_SENS_RETURN_LENGTH - 1)));
 				#endif
-				mergeHLbyte(p_EDSRtnRAWData, p_EDSData, EDS_DATA_LENGTH, 3, 1);
-				DATA_RDY[DATA_RDY_IND_EDS] = STATE_TRUE;
-				break;
+				
+				if(*(p_EDSRtnRAWData + (EDS_SENS_RETURN_LENGTH - 7)) == 16){
+					//printf(">> EDS Return System_Error_16_Eddy_Current_Sensor(0x10)\n");
+					DATA_RDY[DATA_RDY_IND_EDS] = STATE_FALSE;
+					edsSensorReset();
+					break;
+				}
+				else{
+					mergeHLbyte(p_EDSRtnRAWData, p_EDSData, EDS_DATA_LENGTH, 3, 1);
+					//printf("EDS: 0x%X 0x%X\n", EDSRtnRAWData[3], EDSRtnRAWData[4]);
+					if(EDSData[1] == 0){
+						DATA_RDY[DATA_RDY_IND_EDS] = STATE_FALSE;
+						break;
+					}
+					else{
+						vm.eds = EDSData[1];
+						DATA_RDY[DATA_RDY_IND_EDS] = STATE_TRUE;
+						break;
+					}
+				}
 			}
 		}
 		else{
