@@ -108,9 +108,9 @@ if($_GET['r'] == 'VIBR'){
 	}
 	
 	$peakFreq = array_keys($FreqDomain, max($FreqDomain))[0];
-	$rtnData['PEAK'] = $peakFreq;
-	$rtnData['RMS'] = number_format((float)rmsValue($TimeDomain), 1, '.', '');
-	$rtnData['AVG'] = number_format((float)avgValue($TimeDomain), 1, '.', '');
+	$rtnData['RMS'] = number_format((float)rmsValue($TimeDomain), 1, '.', '').' (mg)';
+	$rtnData['Average'] = number_format((float)avgValue($TimeDomain), 1, '.', '').' (mg)';
+	$rtnData['Stdev'] = number_format((float)Stand_Deviation($TimeDomain), 1, '.', '');
 	// echo '<pre>'.print_r($TimeDomain, true).'</pre>';
 	echo json_encode($rtnData);
 	$conn->close();
@@ -139,17 +139,15 @@ if($_GET['r'] == 'TP0L'){
 	if ($conn->connect_error) {
 		die("Connection failed: " . $conn->connect_error);
 	}
-	$sql = 'SELECT TIMEMARK,VDATA FROM temperature WHERE STATUS = 1 ORDER BY TIMEMARK DESC LIMIT 1200';
+	$sql = 'SELECT TIMEMARK,VDATA FROM temperature WHERE STATUS = 1 ORDER BY TIMEMARK DESC LIMIT 30';
 	$result = $conn->query($sql);
 	$index = 0;
 	
 	$TempJson = array();
 	while($row = $result->fetch_assoc()){
-		if($index++ % TP0L_MOD == 0){
-			$TempData = adc2temp(str_split($row['VDATA'],4)[0]);
-			$TimeData = explode(' ', $row['TIMEMARK'])[1];
-			$TempJson[$TimeData] = $TempData;
-		}
+		$TempData = adc2temp(str_split($row['VDATA'],4)[0]);
+		$TimeData = explode(' ', $row['TIMEMARK'])[1];
+		$TempJson[$TimeData] = $TempData;
 	}
 	
 	//echo '<pre>'.print_r($TempData, true).'</pre>';
@@ -167,7 +165,8 @@ if($_GET['r'] == 'EDS'){
 
 	$EDSJson = array();
 	while($row = $result->fetch_assoc()){
-		$EDSData = adc2temp(str_split($row['VDATA'],4)[0]);
+		// $EDSData = hexdec('0x'.str_split($row['VDATA'],4)[0]);
+		$EDSData = hexdec('0x'.str_split($row['VDATA'],2)[1].str_split($row['VDATA'],2)[0]);
 		$TimeData = explode(' ', $row['TIMEMARK'])[1];
 		$EDSJson[$TimeData] = $EDSData;
 	}
@@ -187,7 +186,7 @@ if($_GET['r'] == 'EDSsingle'){
 
 	$EDSJson = array();
 	while($row = $result->fetch_assoc()){
-		$EDSData = adc2temp(str_split($row['VDATA'],4)[0]);
+		$EDSData = hexdec('0x'.str_split($row['VDATA'],2)[1].str_split($row['VDATA'],2)[0]);
 		array_push($EDSJson, $EDSData);
 	}
 	
@@ -196,16 +195,18 @@ if($_GET['r'] == 'EDSsingle'){
 	$conn->close();
 }
 
-if($_GET['r'] == 'META'){
+if($_GET['r'] == 'SENSORMETA'){
 	$conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 	if ($conn->connect_error) {
 		die("Connection failed: " . $conn->connect_error);
 	}
-	$sqlTD = 'SELECT TIMEMARK,SOURCEIP,SOURCEPORT FROM vibrationTD WHERE STATUS = 1 ORDER BY TIMEMARK DESC LIMIT 1';
-	$sqlTemp = 'SELECT TIMEMARK,SOURCEIP,SOURCEPORT FROM temperature WHERE STATUS = 1 ORDER BY TIMEMARK DESC LIMIT 1';
-	$sqlEDS = 'SELECT TIMEMARK,SOURCEIP,SOURCEPORT FROM EDS WHERE STATUS = 1 ORDER BY TIMEMARK DESC LIMIT 1';
+	$sqlTD = 'SELECT TIMEMARK FROM vibrationTD WHERE STATUS = 1 ORDER BY TIMEMARK DESC LIMIT 1';
+	$sqlFD = 'SELECT TIMEMARK FROM vibrationFD WHERE STATUS = 1 ORDER BY TIMEMARK DESC LIMIT 1';
+	$sqlTemp = 'SELECT TIMEMARK FROM temperature WHERE STATUS = 1 ORDER BY TIMEMARK DESC LIMIT 1';
+	$sqlEDS = 'SELECT TIMEMARK FROM EDS WHERE STATUS = 1 ORDER BY TIMEMARK DESC LIMIT 1';
 	
 	$rTD = $conn->query($sqlTD);
+	$rFD = $conn->query($sqlFD);
 	$rTemp = $conn->query($sqlTemp);
 	$rEDS = $conn->query($sqlEDS);
 
@@ -213,19 +214,21 @@ if($_GET['r'] == 'META'){
 
 	while($row = $rTD->fetch_assoc()){
 		$metaReturn['vibr'] = array(
-			'Src' => $row['SOURCEIP'].':'.$row['SOURCEPORT'],
+			'Last' => $row['TIMEMARK'],
+		);
+	}
+	while($row = $rFD->fetch_assoc()){
+		$metaReturn['DSP'] = array(
 			'Last' => $row['TIMEMARK'],
 		);
 	}
 	while($row = $rTemp->fetch_assoc()){
 		$metaReturn['temp'] = array(
-			'Src' => $row['SOURCEIP'].':'.$row['SOURCEPORT'],
 			'Last' => $row['TIMEMARK'],
 		);
 	}
 	while($row = $rEDS->fetch_assoc()){
 		$metaReturn['eds'] = array(
-			'Src' => $row['SOURCEIP'].':'.$row['SOURCEPORT'],
 			'Last' => $row['TIMEMARK'],
 		);
 	}
@@ -240,10 +243,12 @@ if($_GET['r'] == 'CurrStat'){
 		die("Connection failed: " . $conn->connect_error);
 	}
 	$sqlTD = 'SELECT STATUS FROM vibrationTD ORDER BY TIMEMARK DESC LIMIT 1';
+	$sqlFD = 'SELECT STATUS FROM vibrationFD ORDER BY TIMEMARK DESC LIMIT 1';
 	$sqlTemp = 'SELECT STATUS FROM temperature ORDER BY TIMEMARK DESC LIMIT 1';
 	$sqlEDS = 'SELECT STATUS FROM EDS ORDER BY TIMEMARK DESC LIMIT 1';
 	
 	$rTD = $conn->query($sqlTD);
+	$rFD = $conn->query($sqlFD);
 	$rTemp = $conn->query($sqlTemp);
 	$rEDS = $conn->query($sqlEDS);
 
@@ -251,6 +256,9 @@ if($_GET['r'] == 'CurrStat'){
 
 	while($row = $rTD->fetch_assoc()){
 		$metaReturn['vibr'] = $row['STATUS'];
+	}
+	while($row = $rFD->fetch_assoc()){
+		$metaReturn['DSP'] = $row['STATUS'];
 	}
 	while($row = $rTemp->fetch_assoc()){
 		$metaReturn['temp'] = $row['STATUS'];
@@ -275,6 +283,19 @@ function covint($bits, $input){
     } else {
         return -(($input ^ ((1 << $bits)-1)) + 1);
     }
+}
+
+function Stand_Deviation($arr){
+	$num_of_elements = count($arr);
+	  
+	$variance = 0.0;
+	$average = array_sum($arr)/$num_of_elements;
+	  
+	foreach($arr as $i){
+		$variance += pow(($i - $average), 2);
+	}
+	  
+	return (float)sqrt($variance/$num_of_elements);
 }
 
 function rmsValue($arr) { 
@@ -304,7 +325,7 @@ function avgValue($arr) {
 	
 	$n = sizeof($arr);
 	for ($i = 0; $i < $n; $i++){ 
-		$sum += $arr[$i]; 
+		$sum += abs($arr[$i]); 
 	} 
 
 	$mean = ($sum / (float)($n)); 

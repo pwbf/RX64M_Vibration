@@ -34,7 +34,7 @@ var uInterval = 5000;
 var timeleft = uInterval;
 var tempLow = -50;
 var tempHigh = 150;
-var TDScale = 100;
+var TDScale = 200;
 var TPScale = 2;
 var TPDif = 2;
 
@@ -179,12 +179,7 @@ Chart.pluginService.register({
 
 function countDownTimer(){
 	var colorCode = clacColor(timeleft, coef2P);
-	configcountdown.options.elements.center.text = (timeleft/1000).toFixed(1);
-	configcountdown.options.elements.center.color = colorCode;
-	configcountdown.data.datasets[0].data = [timeleft, uInterval - timeleft];
-	configcountdown.data.datasets[0].backgroundColor = [colorCode, '#d4d4d4'];
 	timeleft -= 100;
-	window.TM.update();
 }
 
 
@@ -213,6 +208,12 @@ var configtimedomain = {
 	data: {
 		labels: [],
 		datasets: [{
+			borderColor: '#ff7777',
+			label: 'Average(mg)',
+			data: [],
+			fill: false,
+		},
+		{
 			borderColor: '#ffb75d',
 			label: 'Time Domain',
 			data: [],
@@ -266,6 +267,12 @@ var configfreqdomain = {
 	data: {
 		labels: [],
 		datasets: [{
+			borderColor: '#ff7777',
+			label: 'Peak',
+			data: [],
+			fill: false,
+		},
+		{
 			borderColor: '#ffb75d',
 			label: 'Frequency Domain',
 			data: [],
@@ -309,39 +316,52 @@ var configfreqdomain = {
 	}
 };
 
-var configcountdown = {
-	type: 'doughnut',
+var configvibrmeta = {
+	type: 'horizontalBar',
 	data: {
+		labels: [],
 		datasets: [{
+			backgroundColor: ['#ff8989','#ffab88','#feffb5','#baffbd','#c7ebff'],
+			label: 'Peak',
 			data: [],
-			backgroundColor: []
+			fill: false,
 		}]
 	},
 	options: {
-		elements: {
-			center: {
-				text: '00.0',
-				color: '#FF6384', // Default is #000000
-				sidePadding: 50, // Default is 20 (as a percentage)
-				minFontSize: 10, // Default is 20 (in px), set to false and text will not wrap.
-				lineHeight: 500 // Default is 25 (in px), used for when text wraps
-			}
-		},
 		responsive: true,
 		title: {
 			display: true,
-			text: 'Refresh'
-		},
-		animation: {
-			easing: 'easeOutQuart',
-			numSteps: uInterval,
-			animateScale: true,
-			animateRotate: true
+			text: 'Top 5 Peaks of Frequency'
 		},
 		tooltips: {
-			enabled: false
+			mode: 'index',
+			intersect: false,
 		},
-		cutoutPercentage: 80,
+		hover: {
+			mode: 'nearest',
+			intersect: true
+		},
+		scales: {
+			xAxes: [{
+				display: true,
+				scaleLabel: {
+					display: true,
+					labelString: 'Amplitude'
+				},
+				ticks: {
+					autoSkip: true,
+					maxTicksLimit: 6,
+					min: 0,
+				}
+			}],
+			yAxes: [{
+				display: true,
+				scaleLabel: {
+					display: true,
+					labelString: 'Frequency(Hz)'
+				}
+			}]
+		}
 	}
 };
 
@@ -394,6 +414,12 @@ var configtempch0L = {
 		datasets: [{
 			borderColor: '#ffb75d',
 			label: 'Temperature(C)',
+			data: [],
+			fill: false,
+		},
+		{
+			borderColor: '#ff7777',
+			label: 'Average(C)',
 			data: [],
 			fill: false,
 		}]
@@ -488,22 +514,31 @@ function loadDataPage(){
 		function(data){
 			var jsonDecoded = JSON.parse(data);
 			var int16Data = [];
+			var avgData = [];
 			var graphLabel = [];
 			$.each(jsonDecoded, function( k, v ) {
 				int16Data.push(v);
 				graphLabel.push(k);
 			});
+			var TDavg = math.mean(int16Data);
+			
+			$.each(jsonDecoded, function( k, v ) {
+				avgData.push(TDavg);
+			});
+			
 			configtimedomain.data.labels = graphLabel;
-			configtimedomain.data.datasets[0].data = int16Data;
-			if(Math.max.apply(null, int16Data) > TDScale)
+			configtimedomain.data.datasets[0].data = avgData;
+			configtimedomain.data.datasets[1].data = int16Data;
+			
+			
+			if(Math.max.apply(null, int16Data) > TDScale){
 				configtimedomain.options.scales.yAxes[0].ticks.max = Math.max.apply(null, int16Data) + TDScale;
-			else
-				configtimedomain.options.scales.yAxes[0].ticks.max = Math.max.apply(null, int16Data) + 10;
-				
-			if(Math.min.apply(null, int16Data) < -TDScale)
-				configtimedomain.options.scales.yAxes[0].ticks.min = Math.min.apply(null, int16Data) - TDScale;
-			else
-				configtimedomain.options.scales.yAxes[0].ticks.min = Math.min.apply(null, int16Data) - 10;
+				configtimedomain.options.scales.yAxes[0].ticks.min = -Math.max.apply(null, int16Data) - TDScale;
+			}
+			else{
+				configtimedomain.options.scales.yAxes[0].ticks.max = Math.max.apply(null, int16Data) + 20;
+				configtimedomain.options.scales.yAxes[0].ticks.min = -Math.max.apply(null, int16Data) - 20;
+			}
 				
 			window.TD.update();
 		}
@@ -512,15 +547,49 @@ function loadDataPage(){
 		function(data){
 			var jsonDecoded = JSON.parse(data);
 			var int32Data = [];
+			var tmp32Data = [];
+			var peakDataCurve = [];
+			var peakFreq = [];
+			var peakData = [];
 			var graphLabel = [];
+			var maxNow = 0;
+			
 			$.each(jsonDecoded, function( k, v ) {
 				int32Data.push(v);
+				tmp32Data.push(v);
+				peakDataCurve.push(0);
 				graphLabel.push(k+1);
 			});
+			
+			for(idx=0; idx < 5; idx++){
+				maxNow = Math.max.apply(null, tmp32Data);
+				$.each(tmp32Data, function( k, v ) {
+					if(v == maxNow){
+						tmp32Data[k] = 0;
+						peakDataCurve[k] = maxNow;
+						peakFreq.push(k+1);
+						peakData.push(v);
+					}
+				});
+			}
+			
 			configfreqdomain.data.labels = graphLabel;
-			configfreqdomain.data.datasets[0].data = int32Data;
+			configfreqdomain.data.datasets[0].data = peakDataCurve;
+			configfreqdomain.data.datasets[1].data = int32Data;
+			
+			configvibrmeta.data.datasets[0].data = peakData;
+			configvibrmeta.data.labels = peakFreq;
+
+			document.getElementById('vibrPeaks').innerHTML = peakFreq[0]+', '+peakFreq[1]+', '+peakFreq[2]+', '+peakFreq[3]+', '+peakFreq[4]+' (Hz)';
+
+			if(Math.max.apply(null, int32Data) > 10000)
+				configfreqdomain.options.scales.yAxes[0].ticks.max = Math.max.apply(null, int32Data) + 10000;
+			else
+				configfreqdomain.options.scales.yAxes[0].ticks.max = Math.max.apply(null, int32Data) + 1000;
 			
 			window.FD.update();
+			window.VM.update();
+			
 		}
 	);
 	$.get("http://vibr.astarc.tk/getData.php?r=TP", "json", 
@@ -545,20 +614,26 @@ function loadDataPage(){
 		function(data){
 			var jsonDecoded = JSON.parse(data);
 			var floatData = [];
+			var avgData = [];
 			var graphLabel = [];
 			$.each(jsonDecoded, function( k, v ) {
 				floatData.push(v.toFixed(1));
 				graphLabel.push(k);
 			});
 			
-			configtempch0L.data.labels = graphLabel;
-			configtempch0L.data.datasets[0].data = floatData;
-			
 			var TP0Lavg = math.mean(floatData);
 			var TP0Lstd = math.std(floatData);
 			
-			configtempch0L.options.scales.yAxes[0].ticks.max = TP0Lavg + TP0Lstd + 1.5;
-			configtempch0L.options.scales.yAxes[0].ticks.min = TP0Lavg - TP0Lstd - 1.5;
+			$.each(jsonDecoded, function( k, v ) {
+				avgData.push(TP0Lavg.toFixed(3));
+			});
+			
+			configtempch0L.data.labels = graphLabel;
+			configtempch0L.data.datasets[0].data = floatData;
+			configtempch0L.data.datasets[1].data = avgData;
+			
+			configtempch0L.options.scales.yAxes[0].ticks.max = Math.max.apply(null, floatData) + TP0Lstd + 0.5;
+			configtempch0L.options.scales.yAxes[0].ticks.min = Math.min.apply(null, floatData) - TP0Lstd - 0.5;
 			
 			if((Math.max.apply(null, floatData) - Math.min.apply(null, floatData)) > TPDif)
 				configtempch0L.options.scales.yAxes[0].ticks.stepSize = TPDif;
@@ -584,20 +659,19 @@ function loadDataPage(){
 			window.EDS.update();
 		}
 	);
+	$.get("http://vibr.astarc.tk/getData.php?r=SENSORMETA", "json", 
+		function(data){
+			var jsonDecoded = JSON.parse(data);
+			$.each(jsonDecoded, function( k, v ) {
+				document.getElementById(k+'Last').innerHTML = v.Last;
+			});
+		}
+	);
 	$.get("http://vibr.astarc.tk/getData.php?r=VIBR", "json", 
 		function(data){
 			var jsonDecoded = JSON.parse(data);
 			$.each(jsonDecoded, function( k, v ) {
-				document.getElementById('vibr'+k).innerHTML = k+': '+v;
-			});
-		}
-	);
-	$.get("http://vibr.astarc.tk/getData.php?r=META", "json", 
-		function(data){
-			var jsonDecoded = JSON.parse(data);
-			$.each(jsonDecoded, function( k, v ) {
-				document.getElementById(k+'Src').innerHTML = v.Src;
-				document.getElementById(k+'Last').innerHTML = v.Last;
+				document.getElementById('vibr'+k).innerHTML = v;
 			});
 		}
 	);
@@ -616,8 +690,8 @@ function loadDataPage(){
 
 
 function renderChart(){
-	window.TM = new Chart(countdown, configcountdown);
 	window.TD = new Chart(timedomain, configtimedomain);
+	window.VM = new Chart(vibrMeta, configvibrmeta);
 	window.FD = new Chart(freqdomain, configfreqdomain);
 	window.EDS = new Chart(edsData, configedsData);
 	window.TE0 = new Chart(tempch0, configtempch0);
@@ -634,34 +708,51 @@ function renderChart(){
 					<div class="uk-grid-margin uk-grid uk-grid-stack" uk-grid >
 						<div class="uk-width-1-1 uk-margin-small">
 							<div class="uk-child-width-1-4@s uk-grid-column-small uk-grid-small uk-grid-match" uk-grid>
-								<div>
-									<div class="uk-card uk-card-default uk-card-body uk-card-hover uk-card-small">
-										<canvas id="countdown"></canvas>
-									</div>
-								</div>
-								<div>
+								<div class="uk-width-1-5@m">
 									<div class="uk-card uk-card-default uk-card-body uk-card-hover uk-card-small">
 										<canvas id="tempch0"></canvas>
 									</div>
 								</div>
-								<div class="uk-width-1-6@m">
-									<div class="uk-card uk-card-default uk-card-small uk-card-body uk-text-center">
-										<h3 class="uk-card-title" id="vibrPEAK">123</h3>
-									</div>
-									<div class="uk-card uk-card-default uk-card-small uk-card-body uk-text-center">
-										<h3 class="uk-card-title" id="vibrRMS">123</h3>
-									</div>
-									<div class="uk-card uk-card-default uk-card-small uk-card-body uk-text-center">
-										<h3 class="uk-card-title" id="vibrAVG">123</h3>
+								<div class="uk-width-1-4@m">
+									<div class="uk-card uk-card-default uk-card-body uk-card-hover uk-card-small">
+										<canvas id="vibrMeta"></canvas>
 									</div>
 								</div>
 								<div class="uk-width-expand@m">
 									<div class="uk-card uk-card-default uk-card-body uk-card-hover uk-card-small">
 										<table class="uk-table uk-table-small uk-table-divider">
+											<thead class="uk-text-center">
+												<tr>
+													<td colspan="2">Vibration Meta</td>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td>RMS:</td>
+													<td id="vibrRMS"></td>
+												</tr>
+												<tr>
+													<td>Average:</td>
+													<td id="vibrAverage"></td>
+												</tr>
+												<tr>
+													<td>STDEV:</td>
+													<td id="vibrStdev"></td>
+												</tr>
+												<tr>
+													<td>Peak:</td>
+													<td id="vibrPeaks"></td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+								<div class="uk-width-1-4@m">
+									<div class="uk-card uk-card-default uk-card-body uk-card-hover uk-card-small">
+										<table class="uk-table uk-table-small uk-table-divider">
 											<thead>
 												<tr>
 													<th>Sensor</th>
-													<th>Source</th>
 													<th>Last Update</th>
 													<th>Current</th>
 												</tr>
@@ -669,38 +760,26 @@ function renderChart(){
 											<tbody>
 												<tr>
 													<td>Temperature</td>
-													<td id="tempSrc"></td>
 													<td id="tempLast"></td>
 													<td id="tempCurrent"></td>
 												</tr>
 												<tr>
 													<td>EDS</td>
-													<td id="edsSrc"></td>
 													<td id="edsLast"></td>
 													<td id="edsCurrent"></td>
 												</tr>
 												<tr>
 													<td>Vibration</td>
-													<td id="vibrSrc"></td>
 													<td id="vibrLast"></td>
 													<td id="vibrCurrent"></td>
 												</tr>
+												<tr>
+													<td>DSP</td>
+													<td id="DSPLast"></td>
+													<td id="DSPCurrent"></td>
+												</tr>
 											</tbody>
 										</table>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="uk-width-1-1 uk-margin-small">
-							<div class="uk-child-width-1-2@s uk-grid-column-small uk-grid-small uk-grid-match" uk-grid>
-								<div>
-									<div class="uk-card uk-card-default uk-card-body uk-card-hover uk-card-small">
-										<canvas id="tempch0L"></canvas>
-									</div>
-								</div>
-								<div>
-									<div class="uk-card uk-card-default uk-card-body uk-card-hover uk-card-small">
-										<canvas id="edsData"></canvas>
 									</div>
 								</div>
 							</div>
@@ -715,6 +794,20 @@ function renderChart(){
 								<div>
 									<div class="uk-card uk-card-default uk-card-body uk-card-hover uk-card-small">
 										<canvas id="freqdomain"></canvas>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="uk-width-1-1 uk-margin-small">
+							<div class="uk-child-width-1-2@s uk-grid-column-small uk-grid-small uk-grid-match" uk-grid>
+								<div>
+									<div class="uk-card uk-card-default uk-card-body uk-card-hover uk-card-small">
+										<canvas id="tempch0L"></canvas>
+									</div>
+								</div>
+								<div>
+									<div class="uk-card uk-card-default uk-card-body uk-card-hover uk-card-small">
+										<canvas id="edsData"></canvas>
 									</div>
 								</div>
 							</div>

@@ -4,7 +4,7 @@
 extern volatile uint8_t vibrRtnRAWData[VIBR_SENS_RETURN_LENGTH];
 extern volatile int16_t vibrateData[VIBR_DATA_LENGTH];
 extern volatile int32_t frequencyData[FREQ_DATA_LENGTH];
-extern volatile int16_t EDSData[EDS_DATA_LENGTH];
+extern volatile uint16_t EDSData[EDS_DATA_LENGTH];
 extern volatile uint16_t TempData[TEMP_DATA_LENGTH];
 
 extern volatile int8_t HLvibrateData[HL_VIBR_DATA_LENGTH];
@@ -25,6 +25,7 @@ extern const uint8_t Topic_LW0_TEMP[MQTT_TOPIC_LENGTH];
 extern const uint8_t Topic_LW0_VRMS[MQTT_TOPIC_LENGTH];
 extern const uint8_t Topic_LW0_VAVG[MQTT_TOPIC_LENGTH];
 extern const uint8_t Topic_LW0_PEAK[MQTT_TOPIC_LENGTH];
+extern const uint8_t Topic_LW0_SEDS[MQTT_TOPIC_LENGTH];
 extern const uint8_t Topic_THU_TEST[MQTT_TOPIC_LENGTH];
 
 extern volatile VIBR_MISC vm;
@@ -280,6 +281,8 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 		edsSensorProcess(0);
 		LED_EDS_RX	= LED_OFF;
 		R_BSP_SoftwareDelay (SENSOR_DELAY_TIME, BSP_DELAY_MILLISECS);
+		
+		vm.eds = EDSData[1];
 #endif
 
 
@@ -293,7 +296,7 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 	R_BSP_SoftwareDelay (SENSOR_DELAY_TIME, BSP_DELAY_MILLISECS);
 #endif
 
-#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+//#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
 	printf("\n-----------------------\n");
 	printf("Pre-Sending Data Check:\n");
 	printf("[%d] Vibration Data\n", DATA_RDY[DATA_RDY_IND_VIBR]);
@@ -305,8 +308,9 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 	printf("RMS Value:%f\n", vm.rms);
 	printf("AVG Value:%f\n", vm.avg);
 	printf("Temp Value:%f\n", vm.temp);
+	printf("EDS Value:%d vm:0x%04X EDS:0x%04X\n", vm.eds,vm.eds,EDSData[1]);
 	printf("-----------------------\n\n");
-#endif
+//#endif
 
 #if ENABLE_TCP == MODE_ENABLE
 
@@ -406,23 +410,29 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 	sprintf(mv.avg, "%5.1f", vm.avg);
 	sprintf(mv.pk, "%5d", vm.pk);
 	sprintf(mv.pkval, " %4.1f", vm.pkval);
+	sprintf(mv.eds, "%5d", vm.eds);
 	sprintf(mv.rms, "%5.1f", vm.rms);
 	sprintf(mv.temp, "%5.1f", vm.temp);
 	
-	write2array(&(mp.avg), &mv.avg, MQTT_STRUCT_VALUE_LENGTH, MQTT_VAVG_PREFIX_LENGTH);
-	write2array(&(mp.rms), &mv.rms, MQTT_STRUCT_VALUE_LENGTH, MQTT_VRMS_PREFIX_LENGTH);
-	write2array(&(mp.temp), &mv.temp, MQTT_STRUCT_VALUE_LENGTH, MQTT_TEMP_PREFIX_LENGTH);
+	if(DATA_RDY[DATA_RDY_IND_VIBR]){
+		MQTT_publish(MQTT_CONNID, &Topic_LW0_VAVG, &(mv.avg), MQTT_STRUCT_VALUE_LENGTH);
+	}
+		
+	if(DATA_RDY[DATA_RDY_IND_VIBR]){
+		MQTT_publish(MQTT_CONNID, &Topic_LW0_PEAK, &(mv.pkval), MQTT_STRUCT_VALUE_LENGTH);
+	}
 	
-	write2array(&(mp.pk), &pfx_pk, MQTT_PEAK_PREFIX_LENGTH, 0);											//Add prefix
-	write2array(&(mp.pk), &mv.pk, MQTT_STRUCT_VALUE_LENGTH, MQTT_PEAK_PREFIX_LENGTH);								//Add frequency value
-	write2array(&(mp.pk), &iu_pk, MQTT_STRUCT_UNIT_LENGTH, MQTT_PEAK_PREFIX_LENGTH + MQTT_STRUCT_VALUE_LENGTH);					//Add frequency unit
-	write2array(&(mp.pk), &mv.pkval, MQTT_STRUCT_VALUE_LENGTH, MQTT_PEAK_PREFIX_LENGTH + MQTT_STRUCT_VALUE_LENGTH + MQTT_STRUCT_UNIT_LENGTH);	//Add peak value
-	write2array(&(mp.pk), &iu_pkval, MQTT_STRUCT_UNIT_LENGTH ,MQTT_PEAK_PREFIX_LENGTH + MQTT_STRUCT_VALUE_LENGTH + MQTT_STRUCT_UNIT_LENGTH + MQTT_STRUCT_VALUE_LENGTH);	//Add peak unit
+	if(DATA_RDY[DATA_RDY_IND_VIBR]){
+		MQTT_publish(MQTT_CONNID, &Topic_LW0_VRMS, &(mv.rms), MQTT_STRUCT_VALUE_LENGTH);
+	}
 	
-	MQTT_publish(MQTT_CONNID, &Topic_LW0_VAVG, &(mp.avg), MQTT_VAVG_PAYLOAD_LENGTH);
-	MQTT_publish(MQTT_CONNID, &Topic_LW0_PEAK, &(mp.pk), MQTT_VPEAK_PAYLOAD_LENGTH);
-	MQTT_publish(MQTT_CONNID, &Topic_LW0_VRMS, &(mp.rms), MQTT_VRMS_PAYLOAD_LENGTH);
-	MQTT_publish(MQTT_CONNID, &Topic_LW0_TEMP, &(mp.temp), MQTT_TEMP_PAYLOAD_LENGTH);
+	if(DATA_RDY[DATA_RDY_IND_EDS]){
+		MQTT_publish(MQTT_CONNID, &Topic_LW0_SEDS, &(mv.eds), MQTT_STRUCT_VALUE_LENGTH);
+	}
+	
+	if(DATA_RDY[DATA_RDY_IND_TEMP]){
+		MQTT_publish(MQTT_CONNID, &Topic_LW0_TEMP, &(mv.temp), MQTT_STRUCT_VALUE_LENGTH);
+	}
 #endif
 
 
