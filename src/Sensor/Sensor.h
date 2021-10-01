@@ -30,9 +30,7 @@
 #define SENS_TB2			(0)		//Sensor TX bytes 2
 #define SENS_TB3			(0)		//Sensor TX bytes 3
 #define VIBR_SENS_CMD			(64)		//Vibration Command
-#define VIBR_SENS_CHK			(100)		//Vibration Check Sum
-#define EDS_SENS_CMD			(23)		//EDS Command
-#define EDS_SENS_CHK			(61)		//EDS Check Sum
+#define EDS_SENS_CMD			(21)		//EDS Command
 #define SENS_END			(35)		//End code
 
 #define EDS_RTN_B0			(0)		//EDS return byte 0
@@ -57,6 +55,7 @@ static sci_hdl_t   g_my_sci_handle_ch2;
 
 uint8_t vibrSensorSend(void);
 uint8_t edsSensorSend(void);
+uint8_t edsSensorReset(void);
 void vibrSensorProcess(uint8_t status);
 void edsSensorProcess(uint8_t status);
 void flushBuffer(uint8_t * aryBuffer, uint16_t length);
