@@ -23,7 +23,7 @@
 #define	HL_EDS_DATA_LENGTH			EDS_DATA_LENGTH * 2	//EDS Data Length (HL Byte)
 #define HL_TEMP_DATA_LENGTH			TEMP_DATA_LENGTH * 2	//Temperature Data Length (HL Byte)
 
-#define DATA_RDY_IND_LENGTH			(5)
+#define DATA_RDY_IND_LENGTH			(6)
 
 #define MQTT_VAVG_PREFIX_LENGTH			(9)
 #define MQTT_PEAK_PREFIX_LENGTH			(6)
@@ -53,17 +53,20 @@
 #define DATA_RDY_IND_VIBR		(1)
 #define DATA_RDY_IND_FREQ		(2)
 #define DATA_RDY_IND_EDS		(3)
-#define DATA_RDY_IND_TEMP		(4)
+#define DATA_RDY_IND_EDS2		(4)
+#define DATA_RDY_IND_TEMP		(5)
 
 
 #define 	RECEIVE_SIZE		700
 
 extern volatile uint8_t vibrRtnRAWData[VIBR_SENS_RETURN_LENGTH];
 extern volatile uint8_t EDSRtnRAWData[EDS_SENS_RETURN_LENGTH];
+extern volatile uint8_t EDS2RtnRAWData[EDS_SENS_RETURN_LENGTH];
 
 extern volatile int16_t vibrateData[VIBR_DATA_LENGTH];
 extern volatile int32_t frequencyData[VIBR_DATA_LENGTH / 2];
 extern volatile uint16_t EDSData[EDS_DATA_LENGTH];
+extern volatile uint16_t EDS2Data[EDS_DATA_LENGTH];
 
 extern volatile uint16_t TempData[TEMP_DATA_LENGTH];
 
@@ -75,6 +78,7 @@ typedef struct vibrmisc{
 	float avg;		//Average(mg)
 	uint16_t pk;		//Peak Frequency(Hz)
 	uint16_t eds;		//EDS
+	uint16_t eds2;		//EDS
 	float pkval;		//Peak Value(mg)
 	float rms;		//RMS(mg)
 	float temp;		//Temperature(*C)
@@ -85,6 +89,7 @@ typedef struct mqttvibr{
 	uint8_t  pk[MQTT_STRUCT_VALUE_LENGTH];		//Peak Frequency(Hz)
 	uint8_t  pkval[MQTT_STRUCT_VALUE_LENGTH];	//Peak Value(mg)
 	uint8_t  eds[MQTT_STRUCT_VALUE_LENGTH];		//EDS	
+	uint8_t  eds2[MQTT_STRUCT_VALUE_LENGTH];	//EDS2	
 	uint8_t  rms[MQTT_STRUCT_VALUE_LENGTH];		//RMS(mg)	
 	uint8_t  temp[MQTT_STRUCT_VALUE_LENGTH];	//Temperature(*C)
 }MQTT_VIBR;
@@ -93,6 +98,7 @@ typedef struct mqttpayload{
 	uint8_t	 avg[MQTT_VAVG_PAYLOAD_LENGTH];		//Average(mg)	
 	uint8_t  pk[MQTT_VPEAK_PAYLOAD_LENGTH];		//Peak Frequency(Hz)Value(mg)	
 	uint8_t  eds[MQTT_SEDS_PAYLOAD_LENGTH];		//EDS	
+	uint8_t  eds2[MQTT_SEDS_PAYLOAD_LENGTH];	//EDS2	
 	uint8_t  rms[MQTT_VRMS_PAYLOAD_LENGTH];		//RMS(mg)	
 	uint8_t  temp[MQTT_TEMP_PAYLOAD_LENGTH];	//Temperature(*C)
 }MQTT_PAYLOAD;

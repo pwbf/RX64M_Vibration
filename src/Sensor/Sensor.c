@@ -8,8 +8,14 @@ extern volatile int16_t vibrateData[VIBR_DATA_LENGTH];
 extern volatile uint8_t EDSRtnRAWData[EDS_SENS_RETURN_LENGTH];
 extern volatile uint16_t EDSData[EDS_DATA_LENGTH];
 
+extern volatile uint8_t EDS2RtnRAWData[EDS_SENS_RETURN_LENGTH];
+extern volatile uint16_t EDS2Data[EDS_DATA_LENGTH];
+
 uint8_t *p_EDSRtnRAWData = EDSRtnRAWData;
 int16_t *p_EDSData = EDSData;
+
+uint8_t *p_EDS2RtnRAWData = EDS2RtnRAWData;
+int16_t *p_EDS2Data = EDS2Data;
 
 uint8_t *p_vibrRtnRAWData = vibrRtnRAWData;
 int16_t *p_vibrateData = vibrateData;
@@ -53,6 +59,25 @@ uint8_t edsSensorSend(void){
 	return R_SCI_Send(EDS_UART_HANDLE, cmd, HOST_SEND_LENGTH);
 }
 
+uint8_t edsSensorSend2(void){
+	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+		printf(">> Send Command EDS2\n");
+	#endif
+	uint8_t cmd[HOST_SEND_LENGTH]={
+		SENS_ST, 
+		EDS_SENS_ID, 
+		EDS_SENS_CMD, 
+		SENS_TB0, 
+		SENS_TB1, 
+		SENS_TB2, 
+		SENS_TB3, 
+		(SENS_ST + EDS_SENS_ID + EDS_SENS_CMD + SENS_TB0 + SENS_TB1 + SENS_TB2 + SENS_TB3), 
+		//Check Byte (checksum, the sum of [START][ID][STS][BYTE0][BYTE1][BYTE2][BYTE3])
+		SENS_END
+	};
+	return R_SCI_Send(EDS2_UART_HANDLE, cmd, HOST_SEND_LENGTH);
+}
+
 uint8_t edsSensorReset(void){
 	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
 		printf(">> Send Reset Command EDS\n");
@@ -70,6 +95,25 @@ uint8_t edsSensorReset(void){
 		SENS_END
 	};
 	return R_SCI_Send(EDS_UART_HANDLE, cmd, HOST_SEND_LENGTH);
+}
+
+uint8_t eds2SensorReset(void){
+	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+		printf(">> Send Reset Command EDS2\n");
+	#endif
+	uint8_t cmd[HOST_SEND_LENGTH]={
+		SENS_ST, 
+		EDS_SENS_ID, 
+		1, 
+		SENS_TB0, 
+		SENS_TB1, 
+		SENS_TB2, 
+		SENS_TB3, 
+		(SENS_ST + EDS_SENS_ID + 1 + SENS_TB0 + SENS_TB1 + SENS_TB2 + SENS_TB3), 
+		//Check Byte (checksum, the sum of [START][ID][STS][BYTE0][BYTE1][BYTE2][BYTE3])
+		SENS_END
+	};
+	return R_SCI_Send(EDS2_UART_HANDLE, cmd, HOST_SEND_LENGTH);
 }
 
 void flushBuffer(uint8_t * aryBuffer, uint16_t length){
@@ -163,6 +207,62 @@ void edsSensorProcess(uint8_t status){
 				#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
 					printf("\n");
 					printf(">> [Timeout] Recieve EDS Data\n");
+				#endif
+				break;
+			}
+			// printf("X");
+		}
+		R_BSP_SoftwareDelay (1, BSP_DELAY_MILLISECS);
+	}	
+}
+
+void eds2SensorProcess(uint8_t status){
+	uint16_t index = 0;
+	int8_t rtnRecieve;
+	uint8_t rtnbyte;
+	uint16_t tmoutCounter = 0;
+	
+	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+		printf(">> Recieve EDS2 Data--->\n");
+	#endif
+	while(status == SCI_SUCCESS){
+		rtnRecieve = R_SCI_Receive(EDS2_UART_HANDLE,&rtnbyte,1);
+		if(rtnRecieve == SCI_SUCCESS){
+			*(p_EDS2RtnRAWData + index++) = rtnbyte;
+			if((*(p_EDS2RtnRAWData + (EDS_SENS_RETURN_LENGTH - 1)) != 0)){
+				#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+					printf(">> EDS2 buffer p+9 = %d\n", *(p_EDS2RtnRAWData + (EDS_SENS_RETURN_LENGTH - 1)));
+				#endif
+				
+				if(*(p_EDSRtnRAWData + (EDS_SENS_RETURN_LENGTH - 7)) == 16){
+					//printf(">> EDS Return System_Error_16_Eddy_Current_Sensor(0x10)\n");
+					DATA_RDY[DATA_RDY_IND_EDS2] = STATE_FALSE;
+					eds2SensorReset();
+					break;
+				}
+				else{
+					mergeHLbyte(p_EDS2RtnRAWData, p_EDS2Data, EDS_DATA_LENGTH, 3, 1);
+					//printf("EDS: 0x%X 0x%X\n", EDSRtnRAWData[3], EDSRtnRAWData[4]);
+					if(EDS2Data[1] == 0){
+						DATA_RDY[DATA_RDY_IND_EDS2] = STATE_FALSE;
+						break;
+					}
+					else{
+						vm.eds2 = EDS2Data[1];
+						DATA_RDY[DATA_RDY_IND_EDS2] = STATE_TRUE;
+						break;
+					}
+				}
+			}
+		}
+		else{
+			tmoutCounter++;
+			DATA_RDY[DATA_RDY_IND_EDS] = STATE_FALSE;
+			
+			if(tmoutCounter >= UART_TIMEOUT){
+				#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+					printf("\n");
+					printf(">> [Timeout] Recieve EDS2 Data\n");
 				#endif
 				break;
 			}

@@ -5,6 +5,7 @@ extern volatile uint8_t vibrRtnRAWData[VIBR_SENS_RETURN_LENGTH];
 extern volatile int16_t vibrateData[VIBR_DATA_LENGTH];
 extern volatile int32_t frequencyData[FREQ_DATA_LENGTH];
 extern volatile uint16_t EDSData[EDS_DATA_LENGTH];
+extern volatile uint16_t EDS2Data[EDS_DATA_LENGTH];
 extern volatile uint16_t TempData[TEMP_DATA_LENGTH];
 
 extern volatile int8_t HLvibrateData[HL_VIBR_DATA_LENGTH];
@@ -26,6 +27,7 @@ extern const uint8_t Topic_LW0_VRMS[MQTT_TOPIC_LENGTH];
 extern const uint8_t Topic_LW0_VAVG[MQTT_TOPIC_LENGTH];
 extern const uint8_t Topic_LW0_PEAK[MQTT_TOPIC_LENGTH];
 extern const uint8_t Topic_LW0_SEDS[MQTT_TOPIC_LENGTH];
+extern const uint8_t Topic_LW0_2EDS[MQTT_TOPIC_LENGTH];
 extern const uint8_t Topic_THU_TEST[MQTT_TOPIC_LENGTH];
 
 extern volatile VIBR_MISC vm;
@@ -274,11 +276,13 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 #if ENABLE_EDS == MODE_ENABLE
 		LED_EDS_TX	= LED_ON;
 		edsSensorSend();
+		edsSensorSend2();
 		LED_EDS_TX	= LED_OFF;
 		R_BSP_SoftwareDelay (SENSOR_DELAY_TIME, BSP_DELAY_MILLISECS);
 		
 		LED_EDS_RX	= LED_ON;
 		edsSensorProcess(0);
+		eds2SensorProcess(0);
 		LED_EDS_RX	= LED_OFF;
 		R_BSP_SoftwareDelay (SENSOR_DELAY_TIME, BSP_DELAY_MILLISECS);
 		
@@ -302,6 +306,7 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 	printf("[%d] Vibration Data\n", DATA_RDY[DATA_RDY_IND_VIBR]);
 	printf("[%d] Frequency Data\n", DATA_RDY[DATA_RDY_IND_FREQ]);
 	printf("[%d] EDS Data\n", DATA_RDY[DATA_RDY_IND_EDS]);
+	printf("[%d] EDS2 Data\n", DATA_RDY[DATA_RDY_IND_EDS2]);
 	printf("[%d] Temperature Data\n", DATA_RDY[DATA_RDY_IND_TEMP]);
 	printf("Peak Freq:%d\n", vm.pk);
 	printf("Peak Value:%f\n", vm.pkval);
@@ -309,6 +314,7 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 	printf("AVG Value:%f\n", vm.avg);
 	printf("Temp Value:%f\n", vm.temp);
 	printf("EDS Value:%d vm:0x%04X EDS:0x%04X\n", vm.eds,vm.eds,EDSData[1]);
+	printf("EDS2 Value:%d vm:0x%04X EDS:0x%04X\n", vm.eds2,vm.eds2,EDS2Data[1]);
 	printf("-----------------------\n\n");
 //#endif
 
@@ -321,7 +327,9 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 				printf(">> TCP Sending: HLvibrateData\n");
 			#endif
 			HLvibrateData[0] = 0xAA;
-			TCP_SendingData(TCP_CONNID, HLvibrateData, HL_VIBR_DATA_LENGTH);
+			#if ENABLE_TCP == MODE_ENABLE
+				TCP_SendingData(TCP_CONNID, HLvibrateData, HL_VIBR_DATA_LENGTH);
+			#endif
 			R_BSP_SoftwareDelay (TCP_SEND_DELAY_TIME, BSP_DELAY_MILLISECS);
 			#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
 				printf(">> TCP Sending Completed\n\n");
@@ -338,7 +346,9 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 				printf(">> TCP Sending: frequencyData\n");
 			#endif
 			frequencyData[0] = 0xBBBBBBBB;
-			TCP_SendingData(TCP_CONNID, frequencyData, HL_FREQ_DATA_LENGTH);
+			#if ENABLE_TCP == MODE_ENABLE
+				TCP_SendingData(TCP_CONNID, frequencyData, HL_FREQ_DATA_LENGTH);
+			#endif
 			R_BSP_SoftwareDelay (TCP_SEND_DELAY_TIME, BSP_DELAY_MILLISECS);
 			#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
 				printf(">> TCP Sending Completed\n\n");
@@ -353,7 +363,9 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 				printf(">> TCP Sending: EDSData\n");
 			#endif
 			EDSData[0] = 0xCCCC;
-			TCP_SendingData(TCP_CONNID, EDSData, (EDS_DATA_LENGTH) * 2);
+			#if ENABLE_TCP == MODE_ENABLE
+				TCP_SendingData(TCP_CONNID, EDSData, (EDS_DATA_LENGTH) * 2);
+			#endif
 			R_BSP_SoftwareDelay (TCP_SEND_DELAY_TIME, BSP_DELAY_MILLISECS);
 			#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
 				printf(">> TCP Sending Completed\n\n");
@@ -372,7 +384,9 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 				printf(">> TCP Sending: HLTempData\n");
 			#endif
 			HLTempData[0] = 0xDD;
-			TCP_SendingData(TCP_CONNID, HLTempData, (TEMP_DATA_LENGTH) * 2);
+			#if ENABLE_TCP == MODE_ENABLE
+				TCP_SendingData(TCP_CONNID, HLTempData, (TEMP_DATA_LENGTH) * 2);
+			#endif
 			R_BSP_SoftwareDelay (TCP_SEND_DELAY_TIME, BSP_DELAY_MILLISECS);
 			#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
 				printf(">> TCP Sending Completed\n\n");
@@ -389,6 +403,7 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 			DATA_RDY[DATA_RDY_IND_VIBR] && 
 			DATA_RDY[DATA_RDY_IND_FREQ] && 
 			DATA_RDY[DATA_RDY_IND_EDS] && 
+			DATA_RDY[DATA_RDY_IND_EDS2] && 
 			DATA_RDY[DATA_RDY_IND_TEMP]
 		)
 	){
@@ -396,7 +411,9 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 			printf(">> TCP Sending: Error Logging\n");
 		#endif
 		DATA_RDY[0] = 0xEE;
-		TCP_SendingData(TCP_CONNID, DATA_RDY, DATA_RDY_IND_LENGTH);
+		#if ENABLE_TCP == MODE_ENABLE
+			TCP_SendingData(TCP_CONNID, DATA_RDY, DATA_RDY_IND_LENGTH);
+		#endif
 		R_BSP_SoftwareDelay (TCP_SEND_DELAY_TIME, BSP_DELAY_MILLISECS);
 		#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
 			printf(">> TCP Sending Completed\n\n");
@@ -411,6 +428,7 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 	sprintf(mv.pk, "%5d", vm.pk);
 	sprintf(mv.pkval, " %4.1f", vm.pkval);
 	sprintf(mv.eds, "%5d", vm.eds);
+	sprintf(mv.eds2, "%5d", vm.eds2);
 	sprintf(mv.rms, "%5.1f", vm.rms);
 	sprintf(mv.temp, "%5.1f", vm.temp);
 	
@@ -426,8 +444,12 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 		MQTT_publish(MQTT_CONNID, &Topic_LW0_VRMS, &(mv.rms), MQTT_STRUCT_VALUE_LENGTH);
 	}
 	
-	if(DATA_RDY[DATA_RDY_IND_EDS]){
+	if(!DATA_RDY[DATA_RDY_IND_EDS]){
 		MQTT_publish(MQTT_CONNID, &Topic_LW0_SEDS, &(mv.eds), MQTT_STRUCT_VALUE_LENGTH);
+	}
+	
+	if(!DATA_RDY[DATA_RDY_IND_EDS2]){
+		MQTT_publish(MQTT_CONNID, &Topic_LW0_2EDS, &(mv.eds2), MQTT_STRUCT_VALUE_LENGTH);
 	}
 	
 	if(DATA_RDY[DATA_RDY_IND_TEMP]){
@@ -456,6 +478,7 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 		#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
 			printf(">> Flushing frequencyData\n");
 		#endif
+		
 		flushBuffer(frequencyData, VIBR_DATA_LENGTH / 2);
 		#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
 			printf(">> Flushing EDSRtnRAWData\n");
@@ -466,6 +489,17 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 			printf(">> Flushing EDSData\n");
 		#endif
 		flushBuffer(EDSData, EDS_DATA_LENGTH);
+		
+		#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+			printf(">> Flushing EDS2RtnRAWData\n");
+		#endif
+		flushBuffer(EDS2RtnRAWData, EDS_SENS_RETURN_LENGTH);
+		
+		#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+			printf(">> Flushing EDS2Data\n");
+		#endif
+		flushBuffer(EDS2Data, EDS_DATA_LENGTH);
+		
 		#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
 			printf(">> Flushing TempData\n");
 		#endif

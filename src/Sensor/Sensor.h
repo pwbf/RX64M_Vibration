@@ -42,6 +42,7 @@
 
 #define VIBR_UART_HANDLE		g_my_sci_handle_ch1	//Vibration UART handle function
 #define EDS_UART_HANDLE			g_my_sci_handle_ch2	//EDS UART handle function
+#define EDS2_UART_HANDLE		g_my_sci_handle_ch1	//EDS UART handle function
 #define TEMP_ADC_CH0			ADC_REG_CH7		//Temperature channel 0 ADC reg (AN00x or AN10x) ADC_REG_CHx
 #define TEMP_ADC_CH1			ADC_REG_CH6		//Temperature channel 1 ADC reg (AN00x or AN10x) ADC_REG_CHx
 #define MASK_ADC_CH0			ADC_MASK_CH7		//Temperature channel 0 ADC reg (AN00x or AN10x) ADC_REG_CHx
@@ -55,9 +56,12 @@ static sci_hdl_t   g_my_sci_handle_ch2;
 
 uint8_t vibrSensorSend(void);
 uint8_t edsSensorSend(void);
+uint8_t edsSensorSend2(void);
 uint8_t edsSensorReset(void);
+uint8_t eds2SensorReset(void);
 void vibrSensorProcess(uint8_t status);
 void edsSensorProcess(uint8_t status);
+void eds2SensorProcess(uint8_t status);
 void flushBuffer(uint8_t * aryBuffer, uint16_t length);
 void mergeHLbyte(uint8_t * inputBuffer, int16_t * outputBuffer, uint16_t length, uint16_t inShift, uint16_t outShift);
 void UARTInit(void);
