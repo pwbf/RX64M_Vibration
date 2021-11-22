@@ -99,6 +99,7 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 #if ENABLE_EDS == MODE_ENABLE
 	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
 		printf("-- INIT: [Enabled] UART/CH_EDS\n");
+		edsSensorIDinit();
 	#endif
 #else
 	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE

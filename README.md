@@ -3,7 +3,7 @@
 
 ## Current Function Information:  
 > ## leadwellVibr.master.current:  
->> Version: leadwellVibr.master.v1.2.2  
+>> Version: leadwellVibr.master.v1.2.4  
 - [x] Ethernet  
 - [x] TCP  
 - [x] MQTT  
@@ -17,6 +17,9 @@
 - [x] Long term Testing  
 
 ## Highlight: 
+#### EDS Fixed    
+Update 1.2.4  
+Fixed: EDS initial, change ID to 01  
 #### EDS Fixed    
 Update 1.2.2  
 Fixed: Web Data Type(uint8_t -> uint16_t)  

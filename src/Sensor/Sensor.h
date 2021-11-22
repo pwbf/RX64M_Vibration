@@ -54,6 +54,7 @@ static sci_hdl_t   g_my_sci_handle_ch1;
 static sci_hdl_t   g_my_sci_handle_ch2;
 
 uint8_t vibrSensorSend(void);
+uint8_t edsSensorIDinit(void);
 uint8_t edsSensorSend(void);
 uint8_t edsSensorReset(void);
 void vibrSensorProcess(uint8_t status);

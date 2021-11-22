@@ -34,6 +34,25 @@ uint8_t vibrSensorSend(void){
 	return R_SCI_Send(VIBR_UART_HANDLE, cmd, HOST_SEND_LENGTH);
 }
 
+uint8_t edsSensorIDinit(void){
+	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+		printf(">> Initial EDS ID\n");
+	#endif
+	uint8_t cmd[HOST_SEND_LENGTH]={
+		SENS_ST, 
+		00, 	//Global ID
+		02, 	//Change ID command
+		01, 	//Target ID
+		SENS_TB1, 
+		SENS_TB2, 
+		SENS_TB3, 
+		(SENS_ST + 00 + 02 + 01 + SENS_TB1 + SENS_TB2 + SENS_TB3), 
+		//Check Byte (checksum, the sum of [START][ID][STS][BYTE0][BYTE1][BYTE2][BYTE3])
+		SENS_END
+	};
+	return R_SCI_Send(EDS_UART_HANDLE, cmd, HOST_SEND_LENGTH);
+}
+
 uint8_t edsSensorSend(void){
 	#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
 		printf(">> Send Command EDS\n");
