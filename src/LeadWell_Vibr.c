@@ -8,6 +8,7 @@ extern volatile uint16_t EDSData[EDS_DATA_LENGTH];
 extern volatile uint16_t TempData[TEMP_DATA_LENGTH];
 
 extern volatile int8_t HLvibrateData[HL_VIBR_DATA_LENGTH];
+extern volatile int8_t HLEDSData[HL_EDS_DATA_LENGTH];
 extern volatile int8_t HLTempData[HL_TEMP_DATA_LENGTH];
 
 extern bool ProgramStatusIndicator;
