@@ -1,0 +1,44 @@
+伺服器IP: 210.66.194.19
+接收端Python程式: /home/rd/Desktop/VibrBot_1.0.py
+Web檔案: /usr/share/nginx/html/
+伺服器帳號密碼: 
+	U:root P:leadwell
+	U:rd P:leadwell
+	
+MySQL資料庫帳號密碼:
+	U:admin P:leadwell
+	
+資料庫名稱:
+	vibrSystem
+	
+=========================
+SSH到server (在麗偉內網)
+1. 開cmd (win+R > cmd)
+2. 指令: 
+ssh root@210.66.194.19
+
+=========================
+搜尋接收程式的執行續
+> netstat -tulpn | grep 8120
+//若是沒有回傳東西代表沒有在執行
+//若是有(以下範例) 6351那個欄位的數字即為PID(Process ID)
+tcp        0      0 0.0.0.0:8120            0.0.0.0:*               LISTEN      6351/python3
+=========================
+檢查裝置是否有連上
+> ss | grep 8120
+//若是沒有回傳東西代表沒有
+//若是有(以下範例)
+tcp    ESTAB      0      0      172.31.37.246:8120                 210.241.243.244:61440
+協定    TCP狀態   接收佇列 發送佇列   本地IP:本地port                     來源IP:來源port
+TCP狀態為ESTAB代表已連上(若是板子重啟後此訊息還在應重啟接收端軟體)
+=========================
+強制停止該程式
+> kill PID
+=========================
+執行該程式(背景執行)
+//若是沒有在背景執行而關閉cmd的話 程式會停止
+> nohup python3 /home/rd/Desktop/VibrBot_1.0.py &
+=========================
+執行該程式(主控台執行)
+> python3 /home/rd/Desktop/VibrBot_1.0.py
+//ctrl+C 會強制離開
