@@ -14,7 +14,7 @@
 #define		USING_MQTT_PRIVATE_IP		(MODE_ENABLE)
 
 #define		DEGUB_SERVER_IP			10,0,0,178
-#define		REAL_SERVER_IP			172,31,37,246		
+#define		REAL_SERVER_IP			210,66,194,19		
 #define		MQTT_PRIVATE_IP			210,66,194,20		//LeadWell MQTT Private IP
 #define		MQTT_PUBLIC_IP			210,241,243,252		//LeadWell MQTT Public IP
 

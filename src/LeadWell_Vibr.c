@@ -281,6 +281,8 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 		
 		LED_EDS_RX	= LED_ON;
 		edsSensorProcess(0);
+		EDSData[0] = 0xCCCC;
+		conv_int16_int8_E(EDSData, HLEDSData, HL_EDS_DATA_LENGTH);
 		LED_EDS_RX	= LED_OFF;
 		R_BSP_SoftwareDelay (SENSOR_DELAY_TIME, BSP_DELAY_MILLISECS);
 		
@@ -310,7 +312,7 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 	printf("RMS Value:%f\n", vm.rms);
 	printf("AVG Value:%f\n", vm.avg);
 	printf("Temp Value:%f\n", vm.temp);
-	printf("EDS Value:%d vm:0x%04X EDS:0x%04X\n", vm.eds,vm.eds,EDSData[1]);
+	printf("EDS Value:%d vm:0x%04X\n", vm.eds,vm.eds);
 	printf("-----------------------\n\n");
 //#endif
 
@@ -354,8 +356,7 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 			#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
 				printf(">> TCP Sending: EDSData\n");
 			#endif
-			EDSData[0] = 0xCCCC;
-			TCP_SendingData(TCP_CONNID, EDSData, (EDS_DATA_LENGTH) * 2);
+			TCP_SendingData(TCP_CONNID, HLEDSData, HL_EDS_DATA_LENGTH);
 			R_BSP_SoftwareDelay (TCP_SEND_DELAY_TIME, BSP_DELAY_MILLISECS);
 			#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
 				printf(">> TCP Sending Completed\n\n");
@@ -468,6 +469,11 @@ tcp && tcp.flags.syn && ip.dst == 10.0.0.178 && ip.src == 10.0.0.0/24
 			printf(">> Flushing EDSData\n");
 		#endif
 		flushBuffer(EDSData, EDS_DATA_LENGTH);
+		
+		#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
+			printf(">> Flushing HLEDSData\n");
+		#endif
+		flushBuffer(HLEDSData, EDS_DATA_LENGTH);
 		#if PRINT_DEBUGGING_MESSAGE == MODE_ENABLE
 			printf(">> Flushing TempData\n");
 		#endif
@@ -592,6 +598,13 @@ void conv_int16_int8(int16_t * inputBuffer, int8_t * outputBuffer, uint16_t leng
 	for(int idx = 0; idx < length; idx++){
 		*(outputBuffer + 2*idx) = (*(inputBuffer + idx) >> 8 ) & 0xFF;	//High Byte
 		*(outputBuffer + 2*idx+1) = (*(inputBuffer + idx) & 0xFF);	//Low Byte
+	}
+}
+
+void conv_int16_int8_E(int16_t * inputBuffer, int8_t * outputBuffer, uint16_t length){
+	for(int idx = 0; idx < length; idx++){
+		*(outputBuffer + 2*idx+1) = (*(inputBuffer + idx) >> 8 ) & 0xFF;	//High Byte
+		*(outputBuffer + 2*idx) = (*(inputBuffer + idx) & 0xFF);	//Low Byte
 	}
 }
 

@@ -1,9 +1,12 @@
 # LeadWell - Vibration  
-##### Frontend :  [VIBRATION ASTARC](http://vibr.astarc.tk/)  
+##### Frontend(ASTARC) :  [VIBRATION ASTARC](http://vibr.astarc.tk/)  
+##### Frontend(Leadwell) :  [VIBRATION Leadwell](http://210.66.194.19)  
+### Receiver Server: 210.66.194.19  
+### Database Server: 210.66.194.19  
 
 ## Current Function Information:  
 > ## leadwellVibr.master.current:  
->> Version: leadwellVibr.master.v1.2.4  
+>> Version: leadwellVibr.master.v1.2.4b  
 - [x] Ethernet  
 - [x] TCP  
 - [x] MQTT  
@@ -18,8 +21,15 @@
 
 ## Highlight: 
 #### EDS Fixed    
-Update 1.2.4  
+Date: 2021/11/25  
+Update 1.2.4b  
+Fixed: EDS byte swapping problem  
+
+#### EDS Fixed    
+Date: 2021/11/24  
+Update 1.2.4a  
 Fixed: EDS initial, change ID to 01  
+
 #### EDS Fixed    
 Update 1.2.2  
 Fixed: Web Data Type(uint8_t -> uint16_t)  

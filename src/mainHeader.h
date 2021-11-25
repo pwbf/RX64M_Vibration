@@ -46,6 +46,7 @@
 #include "MainSetting.h"
 
 void conv_int16_int8(int16_t * inputBuffer, int8_t * outputBuffer, uint16_t length);
+void conv_int16_int8_E(int16_t * inputBuffer, int8_t * outputBuffer, uint16_t length);
 void conv_int32_int8(int32_t * inputBuffer, int8_t * outputBuffer, uint16_t length);
 void Rx64MInitPorts(void);
 void MQTT_Packet_Init(void);

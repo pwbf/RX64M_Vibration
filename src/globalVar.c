@@ -42,6 +42,7 @@ volatile uint16_t EDSData[EDS_DATA_LENGTH];
 volatile uint16_t TempData[TEMP_DATA_LENGTH];
 
 volatile int8_t HLvibrateData[HL_VIBR_DATA_LENGTH];
+volatile uint8_t HLEDSData[HL_EDS_DATA_LENGTH];
 volatile int8_t HLTempData[HL_TEMP_DATA_LENGTH];
 
 volatile MQTT_PAYLOAD mp;

@@ -30,7 +30,7 @@
 #define SENS_TB2			(0)		//Sensor TX bytes 2
 #define SENS_TB3			(0)		//Sensor TX bytes 3
 #define VIBR_SENS_CMD			(64)		//Vibration Command
-#define EDS_SENS_CMD			(21)		//EDS Command
+#define EDS_SENS_CMD			(23)		//EDS Command
 #define SENS_END			(35)		//End code
 
 #define EDS_RTN_B0			(0)		//EDS return byte 0
